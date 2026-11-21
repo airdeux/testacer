@@ -55,6 +55,7 @@ npm install -g firebase-tools
 firebase login
 dart pub global activate flutterfire_cli
 flutterfire configure --project=<your-project-id> --platforms=android,web
+flutter pub add firebase_core           # firebase_options.dart imports it; without it `flutter analyze` fails
 firebase use --add                      # choose the project, alias: default
 firebase deploy --only firestore:rules,firestore:indexes
 ```
