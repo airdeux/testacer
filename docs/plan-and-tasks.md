@@ -1,6 +1,6 @@
 # Plan and tasks – TestAcer
 
-_Last updated: 2026-11-21 · Phases 0–3 done · next: Phase 4 (web deploy)_
+_Last updated: 2026-11-21 · Phases 0–3 done · Phase 4 (web deploy) built, waiting for the owner's steps (Pages on, workflow file, push)_
 
 ## Owner's answers (2026-11-21)
 
@@ -76,8 +76,10 @@ _Last updated: 2026-11-21 · Phases 0–3 done · next: Phase 4 (web deploy)_
 
 ## Phase 4 – Web deploy → M1
 
-- [ ] GitHub Actions workflow: `flutter build web --release --base-href /TestAcer/` → GitHub Pages
-- [ ] Add `<user>.github.io` to the Firebase Auth authorised domains
+- [x] GitHub Actions workflow `deploy-web.yml`: after CI passes on `main`, `flutter build web --release --base-href /TestAcer/` → GitHub Pages (also by hand) – 2026-11-21
+- [x] Web shell: Hungarian language tag, description and theme colour in `index.html` / `manifest.json` – 2026-11-21
+- [x] Add `airdeux.github.io` to the Firebase Auth authorised domains (done in Phase 2) – 2026-11-21
+- [ ] Owner: paste the workflow file, turn on Pages (Source: GitHub Actions), push (docs/setup.md § 6)
 - [ ] Smoke test: desktop Chrome / Edge / Firefox, mobile Chrome
 - [ ] Invite the first 2–3 users
 

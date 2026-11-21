@@ -145,9 +145,10 @@ Android shows at most 3 action buttons, so the notification shows **one statemen
 
 ## Web
 
-- `flutter build web --release --base-href /TestAcer/`, deployed by a GitHub Actions workflow to GitHub Pages.
+- `flutter build web --release --base-href /TestAcer/`, deployed to GitHub Pages by `.github/workflows/deploy-web.yml`. It runs after the *CI* workflow passes for a push to `main` (`workflow_run`), builds the commit CI tested, and publishes with `actions/upload-pages-artifact` + `actions/deploy-pages` (or by hand: *Run workflow*).
 - Flutter's default hash URLs (`…/TestAcer/#/quiz`) avoid 404 errors on reload, which GitHub Pages cannot rewrite.
-- `<user>.github.io` is added to the Firebase Auth authorised domains; Google sign-in uses a popup.
+- `airdeux.github.io` is in the Firebase Auth authorised domains; Google sign-in uses a popup.
+- Address: https://airdeux.github.io/TestAcer/ (also `webAppUrl` in `lib/src/config.dart`, the return address of sign-in links).
 - No reminders on the web in the MVP: that would need FCM web push plus a server-side scheduler.
 
 ## Later: server-side push (FCM)

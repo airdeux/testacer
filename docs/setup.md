@@ -1,4 +1,4 @@
-# Setup – owner's steps (Phase 0)
+# Setup – owner's steps (Phases 0–4)
 
 These steps need your computer, your GitHub account or your Google account. Run the commands in **PowerShell** in `C:\Work\misc\judo\TestAcer`, in this order.
 
@@ -85,6 +85,20 @@ Copy the **SHA1** and **SHA256** values to Firebase console → Project settings
 
    Check: https://testacer-892b3.firebaseapp.com/.well-known/assetlinks.json shows the file.
 4. **Try it:** `flutter run -d chrome` and `flutter run -d <android-device>`; sign in all three ways (see the QA log's release checklist).
+
+## 6. Web deploy to GitHub Pages (Phase 4)
+
+1. **Workflow file:** create `.github/workflows/deploy-web.yml` with the content Claude provides (Claude cannot write into `.github/workflows/`).
+2. **Turn on Pages:** GitHub → the repository → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+3. **Push to `main`.** The *CI* workflow runs first; when it passes, *Deploy web* builds the app and publishes it. To publish without a new commit: **Actions → Deploy web → Run workflow**.
+4. **Check:** https://airdeux.github.io/TestAcer/ shows the sign-in screen; the *Deploy web* run shows the address under *deploy*.
+
+How it works:
+
+- *Deploy web* starts when *CI* finishes on a push to `main`, and only builds if CI passed; it builds the exact commit CI tested (`flutter build web --release --base-href /TestAcer/`).
+- Pushes to other branches and pull requests are tested by CI but not published.
+- GitHub Pages caches files for about 10 minutes; after a deploy, reload the page (Ctrl+F5) if the old version still shows.
+- The Firebase web config in `lib/firebase_options.dart` is public by design; access is protected by the sign-in, the allowlist and the Firestore rules.
 
 ## Firestore rules tests (optional, also run by CI)
 
