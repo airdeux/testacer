@@ -1,6 +1,6 @@
 # Plan and tasks – TestAcer
 
-_Last updated: 2026-11-21 · Current phase: 0 (setup)_
+_Last updated: 2026-11-21 · Phase 0 and Phase 1 done · Next: Phase 2 (sign-in)_
 
 ## Owner's answers (2026-11-21)
 
@@ -31,9 +31,10 @@ _Last updated: 2026-11-21 · Current phase: 0 (setup)_
 - [x] Owner: public GitHub repository [airdeux/TestAcer](https://github.com/airdeux/TestAcer), first push, CI green – 2026-11-21
 - [x] Owner: Firebase project `testacer-892b3` (Spark), Email/Password + email link + Google sign-in, Firestore in the EU, first admin in `allowlist` – 2026-11-21
 - [x] Owner: Firebase CLI 15.37.0, `flutterfire configure` (Android + web apps registered), Firestore rules and indexes deployed – 2026-11-21
-- [ ] Owner: debug SHA-1/SHA-256 fingerprints in Firebase ([setup.md § 4](setup.md#4-android-fingerprints-for-google-sign-in))
+- [x] Owner: debug SHA-1/SHA-256 fingerprints in Firebase – 2026-11-21
+- [x] `firebase_core` added; CI green again (run 44926868343) – 2026-11-21
 
-**Done when:** the empty app runs in Chrome and on an Android device, and CI is green.
+**Done when:** the empty app runs in Chrome and on an Android device, and CI is green. ✔ 2026-11-21
 
 ## Phase 1 – Question format and parser
 

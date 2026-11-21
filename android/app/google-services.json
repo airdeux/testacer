@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "386828959446-3mf3ui3m1uis0ge0qussgpltv37a4ugb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.airdeux.testacer",
+            "certificate_hash": "6be060823ec3c4d1508a53f28454b7308c9c1acc"
+          }
+        },
+        {
           "client_id": "386828959446-3hvfjeu0cmu2lug45g23pejde1f66qci.apps.googleusercontent.com",
           "client_type": 3
         }
