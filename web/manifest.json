@@ -1,6 +1,6 @@
 {
-    "name": "testacer",
-    "short_name": "testacer",
+    "name": "Test Acer",
+    "short_name": "Test Acer",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

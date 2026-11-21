@@ -8,6 +8,15 @@ import 'package:testacer/src/auth/auth_models.dart';
 import 'package:testacer/src/auth/auth_service.dart';
 import 'package:testacer/src/auth/email_link_store.dart';
 import 'package:testacer/src/localization.dart';
+import 'package:testacer/src/app_services.dart';
+import 'package:testacer/src/auth/email_link_controller.dart';
+import 'package:testacer/src/import/file_picker_service.dart';
+import 'package:testacer/src/question_format/question_format.dart';
+import 'package:testacer/src/questions/question_set_repository.dart';
+import 'package:testacer/src/quiz/progress.dart';
+import 'package:testacer/src/quiz/progress_repository.dart';
+import 'package:testacer/src/quiz/quiz_length.dart';
+import 'package:testacer/src/settings/user_settings.dart';
 
 /// Hungarian texts, for finding widgets by their label.
 final AppLocalizations hu = lookupAppLocalizations(const Locale('hu'));
@@ -129,3 +138,147 @@ class FakeAccessRepository implements AccessRepository {
   @override
   Future<void> revoke(String email) async => calls.add('revoke:$email');
 }
+
+/// A value whose stream emits the current value first, then every change.
+class Latest<T> {
+  Latest(this._value);
+
+  T _value;
+  final _changes = StreamController<T>.broadcast();
+
+  T get value => _value;
+
+  set value(T value) {
+    _value = value;
+    _changes.add(value);
+  }
+
+  Stream<T> get stream async* {
+    yield _value;
+    yield* _changes.stream;
+  }
+}
+
+class FakeQuestionSetRepository implements QuestionSetRepository {
+  final sets = Latest<List<QuestionSetInfo>>(const []);
+  final questions = <String, List<Question>>{};
+  final imports = <String>[];
+
+  /// Adds a set with [items] and returns its info.
+  QuestionSetInfo add(String id, String title, List<Question> items) {
+    final info = QuestionSetInfo(id: id, title: title, questionCount: items.length);
+    questions[id] = items;
+    sets.value = [...sets.value, info];
+    return info;
+  }
+
+  @override
+  Stream<List<QuestionSetInfo>> watchSets() => sets.stream;
+
+  @override
+  Future<List<Question>> loadQuestions(String setId) async => questions[setId] ?? const [];
+
+  @override
+  Future<String> importSet({
+    String? setId,
+    required String title,
+    required String sourceFile,
+    required List<Question> questions,
+  }) async {
+    final id = setId ?? 'set${sets.value.length + 1}';
+    imports.add('$id:$title:$sourceFile:${questions.length}');
+    this.questions[id] = questions;
+    return id;
+  }
+}
+
+class FakeProgressRepository implements ProgressRepository {
+  final data = <String, Map<String, ItemProgress>>{};
+  final saves = <String>[];
+
+  @override
+  Future<Map<String, ItemProgress>> load(String uid, String setId) async =>
+      Map.of(data[setId] ?? const {});
+
+  @override
+  Future<void> save(String uid, String setId, String key, ItemProgress item) async {
+    (data[setId] ??= {})[key] = item;
+    saves.add('$setId:$key:box${item.box}:skip${item.skippable}');
+  }
+}
+
+class FakeUserSettingsRepository implements UserSettingsRepository {
+  final settings = Latest<UserSettings>(const UserSettings());
+
+  @override
+  Stream<UserSettings> watch(String uid) => settings.stream;
+
+  @override
+  Future<void> update(String uid, {String? activeSetId, QuizLength? quizLength}) async {
+    final current = settings.value;
+    settings.value = UserSettings(
+      activeSetId: activeSetId ?? current.activeSetId,
+      quizLength: quizLength ?? current.quizLength,
+    );
+  }
+}
+
+class FakeFilePicker implements FilePickerService {
+  PickedTextFile? next;
+  bool notText = false;
+
+  @override
+  Future<PickedTextFile?> pickMarkdown() async {
+    if (notText) throw const FormatException('not UTF-8');
+    return next;
+  }
+}
+
+/// All fakes, plus the [AppServices] made of them.
+class TestServices {
+  final auth = FakeAuthService();
+  final access = FakeAccessRepository();
+  final emailLinkStore = FakeEmailLinkStore();
+  final questionSets = FakeQuestionSetRepository();
+  final progress = FakeProgressRepository();
+  final settings = FakeUserSettingsRepository();
+  final filePicker = FakeFilePicker();
+
+  late final AppServices services = AppServices(
+    auth: auth,
+    access: access,
+    emailLinks: EmailLinkController(
+      auth: auth,
+      store: emailLinkStore,
+      links: const Stream<Uri>.empty(),
+    ),
+    questionSets: questionSets,
+    progress: progress,
+    settings: settings,
+    filePicker: filePicker,
+  );
+}
+
+/// Questions parsed from Markdown, for screen tests.
+List<Question> sampleQuestions() => parseQuestionSet('''
+## 1.
+
+1. ✔ A ***„Yoshi”*** jelentése, **fojtasd.**
+2. A „Yoshi” jelentése, állj.
+3. A „Yoshi” jelentése, rajta.
+4. A „Yoshi” jelentése, ne mozdulj.
+
+## 2.
+
+1. ✔ A 2. kyu övszíne **kék.**
+2. A 2. kyu övszíne citromsárga.
+3. A 2. kyu övszíne barna.
+4. A 2. kyu övszíne zöld. *(megjegyzés)*
+
+## 3.
+
+1. ✔ A ***„Tatami”*** a gyakorló szőnyeget jelenti.
+2. A „Judoka” a gyakorló szőnyeget jelenti.
+3. A „Dojo” a gyakorló szőnyeget jelenti.
+4. A „Rei” a gyakorló szőnyeget jelenti.
+''').questionSet.questions;

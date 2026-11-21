@@ -97,7 +97,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In hu, this message translates to:
-  /// **'TestAcer'**
+  /// **'Test Acer'**
   String get appTitle;
 
   /// No description provided for @signInTitle.
@@ -382,12 +382,6 @@ abstract class AppLocalizations {
   /// **'Szia, {name}!'**
   String homeGreeting(String name);
 
-  /// No description provided for @homeComingSoon.
-  ///
-  /// In hu, this message translates to:
-  /// **'A gyakorlás a következő fejlesztési lépésben érkezik.'**
-  String get homeComingSoon;
-
   /// No description provided for @roleAdmin.
   ///
   /// In hu, this message translates to:
@@ -459,6 +453,342 @@ abstract class AppLocalizations {
   /// In hu, this message translates to:
   /// **'Még nincs meghívás.'**
   String get noInvitations;
+
+  /// No description provided for @startQuiz.
+  ///
+  /// In hu, this message translates to:
+  /// **'Gyakorlás indítása'**
+  String get startQuiz;
+
+  /// No description provided for @noQuestionSets.
+  ///
+  /// In hu, this message translates to:
+  /// **'Még nincs kérdéssor.'**
+  String get noQuestionSets;
+
+  /// No description provided for @noQuestionSetsAdmin.
+  ///
+  /// In hu, this message translates to:
+  /// **'Importálj egyet a „Kérdéssor importálása” gombbal (fent).'**
+  String get noQuestionSetsAdmin;
+
+  /// No description provided for @questionSetLabel.
+  ///
+  /// In hu, this message translates to:
+  /// **'Kérdéssor'**
+  String get questionSetLabel;
+
+  /// No description provided for @questionCount.
+  ///
+  /// In hu, this message translates to:
+  /// **'{count} kérdés'**
+  String questionCount(int count);
+
+  /// No description provided for @quizLengthLabel.
+  ///
+  /// In hu, this message translates to:
+  /// **'Kérdések száma'**
+  String get quizLengthLabel;
+
+  /// No description provided for @quizLengthAll.
+  ///
+  /// In hu, this message translates to:
+  /// **'Mind'**
+  String get quizLengthAll;
+
+  /// No description provided for @quizLengthEndless.
+  ///
+  /// In hu, this message translates to:
+  /// **'Végtelen'**
+  String get quizLengthEndless;
+
+  /// No description provided for @importTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Kérdéssor importálása'**
+  String get importTitle;
+
+  /// No description provided for @progressTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Haladás'**
+  String get progressTitle;
+
+  /// No description provided for @quizQuestionOf.
+  ///
+  /// In hu, this message translates to:
+  /// **'{current}. kérdés / {total}'**
+  String quizQuestionOf(int current, int total);
+
+  /// No description provided for @quizQuestionEndless.
+  ///
+  /// In hu, this message translates to:
+  /// **'{current}. kérdés'**
+  String quizQuestionEndless(int current);
+
+  /// No description provided for @defaultPrompt.
+  ///
+  /// In hu, this message translates to:
+  /// **'Melyik állítás helyes?'**
+  String get defaultPrompt;
+
+  /// No description provided for @answerCorrect.
+  ///
+  /// In hu, this message translates to:
+  /// **'Helyes!'**
+  String get answerCorrect;
+
+  /// No description provided for @answerWrong.
+  ///
+  /// In hu, this message translates to:
+  /// **'Nem ez a helyes válasz.'**
+  String get answerWrong;
+
+  /// No description provided for @correctAnswerLabel.
+  ///
+  /// In hu, this message translates to:
+  /// **'A helyes válasz:'**
+  String get correctAnswerLabel;
+
+  /// No description provided for @markSkippable.
+  ///
+  /// In hu, this message translates to:
+  /// **'Bébikönnyű – ne kérdezd többet'**
+  String get markSkippable;
+
+  /// No description provided for @nextQuestion.
+  ///
+  /// In hu, this message translates to:
+  /// **'Következő'**
+  String get nextQuestion;
+
+  /// No description provided for @finishQuiz.
+  ///
+  /// In hu, this message translates to:
+  /// **'Eredmény'**
+  String get finishQuiz;
+
+  /// No description provided for @closeQuiz.
+  ///
+  /// In hu, this message translates to:
+  /// **'Gyakorlás befejezése'**
+  String get closeQuiz;
+
+  /// No description provided for @summaryTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Kész!'**
+  String get summaryTitle;
+
+  /// No description provided for @summaryScore.
+  ///
+  /// In hu, this message translates to:
+  /// **'{correct} / {answered} helyes válasz'**
+  String summaryScore(int correct, int answered);
+
+  /// No description provided for @summaryNothingAsked.
+  ///
+  /// In hu, this message translates to:
+  /// **'Nem volt mit kérdezni.'**
+  String get summaryNothingAsked;
+
+  /// No description provided for @newRound.
+  ///
+  /// In hu, this message translates to:
+  /// **'Új kör'**
+  String get newRound;
+
+  /// No description provided for @backButton.
+  ///
+  /// In hu, this message translates to:
+  /// **'Vissza'**
+  String get backButton;
+
+  /// No description provided for @allSkipped.
+  ///
+  /// In hu, this message translates to:
+  /// **'Minden kérdés bébikönnyűnek van jelölve. A Haladás oldalon visszaveheted őket.'**
+  String get allSkipped;
+
+  /// No description provided for @loadError.
+  ///
+  /// In hu, this message translates to:
+  /// **'Nem sikerült betölteni. Ellenőrizd az internetkapcsolatot.'**
+  String get loadError;
+
+  /// No description provided for @progressSeen.
+  ///
+  /// In hu, this message translates to:
+  /// **'Megnézett kérdések: {seen} / {total}'**
+  String progressSeen(int seen, int total);
+
+  /// No description provided for @progressAccuracy.
+  ///
+  /// In hu, this message translates to:
+  /// **'Találati arány: {percent}%'**
+  String progressAccuracy(int percent);
+
+  /// No description provided for @progressBoxesTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Hol tartasz'**
+  String get progressBoxesTitle;
+
+  /// No description provided for @progressUnseen.
+  ///
+  /// In hu, this message translates to:
+  /// **'Még nem láttad'**
+  String get progressUnseen;
+
+  /// No description provided for @progressBox0.
+  ///
+  /// In hu, this message translates to:
+  /// **'Új vagy legutóbb rontott'**
+  String get progressBox0;
+
+  /// No description provided for @progressBox1.
+  ///
+  /// In hu, this message translates to:
+  /// **'1× jó'**
+  String get progressBox1;
+
+  /// No description provided for @progressBox2.
+  ///
+  /// In hu, this message translates to:
+  /// **'2× jó egymás után'**
+  String get progressBox2;
+
+  /// No description provided for @progressBox3.
+  ///
+  /// In hu, this message translates to:
+  /// **'3× jó egymás után'**
+  String get progressBox3;
+
+  /// No description provided for @progressBox4.
+  ///
+  /// In hu, this message translates to:
+  /// **'Jól megy (4× jó)'**
+  String get progressBox4;
+
+  /// No description provided for @progressWeakTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Ezeket rontod a legtöbbször'**
+  String get progressWeakTitle;
+
+  /// No description provided for @progressWeakItem.
+  ///
+  /// In hu, this message translates to:
+  /// **'{wrong} hiba / {seen} válasz'**
+  String progressWeakItem(int wrong, int seen);
+
+  /// No description provided for @progressNoWeak.
+  ///
+  /// In hu, this message translates to:
+  /// **'Még nincs rontott kérdés.'**
+  String get progressNoWeak;
+
+  /// No description provided for @progressSkippedTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Bébikönnyűnek jelölt kérdések'**
+  String get progressSkippedTitle;
+
+  /// No description provided for @progressNoSkipped.
+  ///
+  /// In hu, this message translates to:
+  /// **'Nincs bébikönnyűnek jelölt kérdés.'**
+  String get progressNoSkipped;
+
+  /// No description provided for @undoSkippable.
+  ///
+  /// In hu, this message translates to:
+  /// **'Visszavétel'**
+  String get undoSkippable;
+
+  /// No description provided for @pickFile.
+  ///
+  /// In hu, this message translates to:
+  /// **'Fájl kiválasztása (.md)'**
+  String get pickFile;
+
+  /// No description provided for @importFileLabel.
+  ///
+  /// In hu, this message translates to:
+  /// **'Fájl: {name}'**
+  String importFileLabel(String name);
+
+  /// No description provided for @importTitleLabel.
+  ///
+  /// In hu, this message translates to:
+  /// **'Kérdéssor neve'**
+  String get importTitleLabel;
+
+  /// No description provided for @importTargetLabel.
+  ///
+  /// In hu, this message translates to:
+  /// **'Cél'**
+  String get importTargetLabel;
+
+  /// No description provided for @importTargetNew.
+  ///
+  /// In hu, this message translates to:
+  /// **'Új kérdéssor'**
+  String get importTargetNew;
+
+  /// No description provided for @importButton.
+  ///
+  /// In hu, this message translates to:
+  /// **'Importálás'**
+  String get importButton;
+
+  /// No description provided for @importDone.
+  ///
+  /// In hu, this message translates to:
+  /// **'Importálva: {count} kérdés.'**
+  String importDone(int count);
+
+  /// No description provided for @importHasErrors.
+  ///
+  /// In hu, this message translates to:
+  /// **'A fájlban hibák vannak. Javítsd őket, és válaszd ki újra.'**
+  String get importHasErrors;
+
+  /// No description provided for @importIssuesTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Ellenőrzés'**
+  String get importIssuesTitle;
+
+  /// No description provided for @importNoIssues.
+  ///
+  /// In hu, this message translates to:
+  /// **'Nincs hiba.'**
+  String get importNoIssues;
+
+  /// No description provided for @importPreviewTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Előnézet'**
+  String get importPreviewTitle;
+
+  /// No description provided for @importReadError.
+  ///
+  /// In hu, this message translates to:
+  /// **'A fájlt nem sikerült beolvasni (UTF-8 szöveg kell).'**
+  String get importReadError;
+
+  /// No description provided for @importReplaceNote.
+  ///
+  /// In hu, this message translates to:
+  /// **'Meglévő kérdéssor frissítésekor a változatlan kérdések haladása megmarad.'**
+  String get importReplaceNote;
+
+  /// No description provided for @importMoreIssues.
+  ///
+  /// In hu, this message translates to:
+  /// **'… és még {count}'**
+  String importMoreIssues(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -1,9 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../access/access_repository.dart';
+import '../app_services.dart';
 import '../auth/auth_models.dart';
-import '../auth/auth_service.dart';
-import '../auth/email_link_controller.dart';
 import 'centered_panel.dart';
 import 'home_screen.dart';
 import 'sign_in_screen.dart';
@@ -13,23 +12,16 @@ import 'status_screens.dart';
 /// signed out → sign-in; unverified password account → verify e-mail;
 /// otherwise the access check ([AccessGate]).
 class AuthGate extends StatefulWidget {
-  const AuthGate({
-    super.key,
-    required this.auth,
-    required this.access,
-    required this.emailLinks,
-  });
+  const AuthGate({super.key, required this.services});
 
-  final AuthService auth;
-  final AccessRepository access;
-  final EmailLinkController emailLinks;
+  final AppServices services;
 
   @override
   State<AuthGate> createState() => _AuthGateState();
 }
 
 class _AuthGateState extends State<AuthGate> {
-  late final Stream<AppUser?> _users = widget.auth.userChanges();
+  late final Stream<AppUser?> _users = widget.services.auth.userChanges();
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +33,17 @@ class _AuthGateState extends State<AuthGate> {
         }
         final user = snapshot.data;
         if (user == null) {
-          return SignInScreen(auth: widget.auth, emailLinks: widget.emailLinks);
+          return SignInScreen(
+            auth: widget.services.auth,
+            emailLinks: widget.services.emailLinks,
+          );
         }
         if (user.needsEmailVerification) {
-          return VerifyEmailScreen(auth: widget.auth, user: user);
+          return VerifyEmailScreen(auth: widget.services.auth, user: user);
         }
         return AccessGate(
           key: ValueKey(user.email),
-          auth: widget.auth,
-          access: widget.access,
+          services: widget.services,
           user: user,
         );
       },
@@ -60,15 +54,9 @@ class _AuthGateState extends State<AuthGate> {
 /// Lets the user in only if their address is on the allowlist; switches
 /// automatically when the admin invites them.
 class AccessGate extends StatefulWidget {
-  const AccessGate({
-    super.key,
-    required this.auth,
-    required this.access,
-    required this.user,
-  });
+  const AccessGate({super.key, required this.services, required this.user});
 
-  final AuthService auth;
-  final AccessRepository access;
+  final AppServices services;
   final AppUser user;
 
   @override
@@ -76,10 +64,10 @@ class AccessGate extends StatefulWidget {
 }
 
 class _AccessGateState extends State<AccessGate> {
-  late Stream<AccessRole?> _role = widget.access.watchRole(widget.user.email);
+  late Stream<AccessRole?> _role = widget.services.access.watchRole(widget.user.email);
 
   void _retry() =>
-      setState(() => _role = widget.access.watchRole(widget.user.email));
+      setState(() => _role = widget.services.access.watchRole(widget.user.email));
 
   @override
   Widget build(BuildContext context) {
@@ -87,21 +75,16 @@ class _AccessGateState extends State<AccessGate> {
       stream: _role,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return AccessErrorScreen(auth: widget.auth, onRetry: _retry);
+          return AccessErrorScreen(auth: widget.services.auth, onRetry: _retry);
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const LoadingScreen();
         }
         final role = snapshot.data;
         if (role == null) {
-          return NotInvitedScreen(auth: widget.auth, user: widget.user);
+          return NotInvitedScreen(auth: widget.services.auth, user: widget.user);
         }
-        return HomeScreen(
-          auth: widget.auth,
-          access: widget.access,
-          user: widget.user,
-          role: role,
-        );
+        return HomeScreen(services: widget.services, user: widget.user, role: role);
       },
     );
   }

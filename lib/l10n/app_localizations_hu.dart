@@ -10,7 +10,7 @@ class AppLocalizationsHu extends AppLocalizations {
   AppLocalizationsHu([String locale = 'hu']) : super(locale);
 
   @override
-  String get appTitle => 'TestAcer';
+  String get appTitle => 'Test Acer';
 
   @override
   String get signInTitle => 'Bejelentkezés';
@@ -171,10 +171,6 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get homeComingSoon =>
-      'A gyakorlás a következő fejlesztési lépésben érkezik.';
-
-  @override
   String get roleAdmin => 'Adminisztrátor';
 
   @override
@@ -213,4 +209,198 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get noInvitations => 'Még nincs meghívás.';
+
+  @override
+  String get startQuiz => 'Gyakorlás indítása';
+
+  @override
+  String get noQuestionSets => 'Még nincs kérdéssor.';
+
+  @override
+  String get noQuestionSetsAdmin =>
+      'Importálj egyet a „Kérdéssor importálása” gombbal (fent).';
+
+  @override
+  String get questionSetLabel => 'Kérdéssor';
+
+  @override
+  String questionCount(int count) {
+    return '$count kérdés';
+  }
+
+  @override
+  String get quizLengthLabel => 'Kérdések száma';
+
+  @override
+  String get quizLengthAll => 'Mind';
+
+  @override
+  String get quizLengthEndless => 'Végtelen';
+
+  @override
+  String get importTitle => 'Kérdéssor importálása';
+
+  @override
+  String get progressTitle => 'Haladás';
+
+  @override
+  String quizQuestionOf(int current, int total) {
+    return '$current. kérdés / $total';
+  }
+
+  @override
+  String quizQuestionEndless(int current) {
+    return '$current. kérdés';
+  }
+
+  @override
+  String get defaultPrompt => 'Melyik állítás helyes?';
+
+  @override
+  String get answerCorrect => 'Helyes!';
+
+  @override
+  String get answerWrong => 'Nem ez a helyes válasz.';
+
+  @override
+  String get correctAnswerLabel => 'A helyes válasz:';
+
+  @override
+  String get markSkippable => 'Bébikönnyű – ne kérdezd többet';
+
+  @override
+  String get nextQuestion => 'Következő';
+
+  @override
+  String get finishQuiz => 'Eredmény';
+
+  @override
+  String get closeQuiz => 'Gyakorlás befejezése';
+
+  @override
+  String get summaryTitle => 'Kész!';
+
+  @override
+  String summaryScore(int correct, int answered) {
+    return '$correct / $answered helyes válasz';
+  }
+
+  @override
+  String get summaryNothingAsked => 'Nem volt mit kérdezni.';
+
+  @override
+  String get newRound => 'Új kör';
+
+  @override
+  String get backButton => 'Vissza';
+
+  @override
+  String get allSkipped =>
+      'Minden kérdés bébikönnyűnek van jelölve. A Haladás oldalon visszaveheted őket.';
+
+  @override
+  String get loadError =>
+      'Nem sikerült betölteni. Ellenőrizd az internetkapcsolatot.';
+
+  @override
+  String progressSeen(int seen, int total) {
+    return 'Megnézett kérdések: $seen / $total';
+  }
+
+  @override
+  String progressAccuracy(int percent) {
+    return 'Találati arány: $percent%';
+  }
+
+  @override
+  String get progressBoxesTitle => 'Hol tartasz';
+
+  @override
+  String get progressUnseen => 'Még nem láttad';
+
+  @override
+  String get progressBox0 => 'Új vagy legutóbb rontott';
+
+  @override
+  String get progressBox1 => '1× jó';
+
+  @override
+  String get progressBox2 => '2× jó egymás után';
+
+  @override
+  String get progressBox3 => '3× jó egymás után';
+
+  @override
+  String get progressBox4 => 'Jól megy (4× jó)';
+
+  @override
+  String get progressWeakTitle => 'Ezeket rontod a legtöbbször';
+
+  @override
+  String progressWeakItem(int wrong, int seen) {
+    return '$wrong hiba / $seen válasz';
+  }
+
+  @override
+  String get progressNoWeak => 'Még nincs rontott kérdés.';
+
+  @override
+  String get progressSkippedTitle => 'Bébikönnyűnek jelölt kérdések';
+
+  @override
+  String get progressNoSkipped => 'Nincs bébikönnyűnek jelölt kérdés.';
+
+  @override
+  String get undoSkippable => 'Visszavétel';
+
+  @override
+  String get pickFile => 'Fájl kiválasztása (.md)';
+
+  @override
+  String importFileLabel(String name) {
+    return 'Fájl: $name';
+  }
+
+  @override
+  String get importTitleLabel => 'Kérdéssor neve';
+
+  @override
+  String get importTargetLabel => 'Cél';
+
+  @override
+  String get importTargetNew => 'Új kérdéssor';
+
+  @override
+  String get importButton => 'Importálás';
+
+  @override
+  String importDone(int count) {
+    return 'Importálva: $count kérdés.';
+  }
+
+  @override
+  String get importHasErrors =>
+      'A fájlban hibák vannak. Javítsd őket, és válaszd ki újra.';
+
+  @override
+  String get importIssuesTitle => 'Ellenőrzés';
+
+  @override
+  String get importNoIssues => 'Nincs hiba.';
+
+  @override
+  String get importPreviewTitle => 'Előnézet';
+
+  @override
+  String get importReadError =>
+      'A fájlt nem sikerült beolvasni (UTF-8 szöveg kell).';
+
+  @override
+  String get importReplaceNote =>
+      'Meglévő kérdéssor frissítésekor a változatlan kérdések haladása megmarad.';
+
+  @override
+  String importMoreIssues(int count) {
+    return '… és még $count';
+  }
 }

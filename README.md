@@ -2,7 +2,7 @@
 
 A small practice-quiz app for exam preparation. First use case: the theory test of the judo 2nd dan exam (149 multiple-choice questions). One Flutter codebase builds the **web app** and the **Android app**; the Android app adds scheduled quiz reminders.
 
-> **Status:** setup, question parser and sign-in (Google, e-mail + password, e-mail link; invite-only) done; next: Phase 3 – the quiz. See [docs/plan-and-tasks.md](docs/plan-and-tasks.md).
+> **Status:** sign-in and the quiz (import, practice, progress) are built; next: the owner's test with the real question set, then Phase 4 – web deploy. See [docs/plan-and-tasks.md](docs/plan-and-tasks.md).
 
 ## Planned features
 

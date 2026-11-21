@@ -27,12 +27,18 @@ lib/
    ├─ app.dart                    MaterialApp: theme, Hungarian locale, AuthGate
    ├─ config.dart                 web app URL, Android package, link domain
    ├─ localization.dart           delegate list (see note below)
+   ├─ app_services.dart           bundle of all services (Firebase or fakes)
    ├─ auth/                       AuthService interface + Firebase implementation,
    │                              e-mail link controller and store, models
    ├─ access/                     AccessRepository interface + Firestore allowlist
    ├─ question_format/            Markdown question parser (Phase 1)
-   └─ ui/                         AuthGate/AccessGate, sign-in, status, home,
-                                  invitations screens
+   ├─ questions/                  QuestionSetRepository + Firestore codec
+   ├─ quiz/                       progress records, Leitner picker, QuizSession,
+   │                              ProgressRepository
+   ├─ settings/                   UserSettings (active set, quiz length)
+   ├─ import/                     file picker wrapper
+   └─ ui/                         gate, sign-in, status, home, quiz, progress,
+                                  import, invitations screens
 ```
 
 - Services are interfaces (`AuthService`, `AccessRepository`, `EmailLinkStore`); widget tests use fakes from `test/support/fakes.dart`, so no Firebase is needed in `flutter test`.
@@ -51,7 +57,9 @@ users/{uid}/progress/{setId}           { items: { <key>: { box, seen, correct, w
 - `key` – stable hash of the normalised correct-answer text ([question-format.md](question-format.md#question-key)), so re-importing an edited file keeps progress for unchanged questions.
 - `marks[]` – emphasis ranges of the correct answer (`subject`, `differs`); used only in the feedback view.
 - Progress for a whole set is **one document** (149 small entries, roughly 15 KB): one read when a session starts, far below the free daily quota.
-- `settings`: `quizLength`, `notifications { enabled, mode: "open" | "trueFalse", windows: [ { days: [1..7], start: "09:00", end: "22:00", everyMinutes: 60 } ] }`.
+- `settings`: `quizLength` (`one`, `five`, `ten`, `all`, `endless`), later `notifications { enabled, mode: "open" | "trueFalse", windows: [ { days: [1..7], start: "09:00", end: "22:00", everyMinutes: 60 } ] }`.
+- Progress records store `lastAt` as milliseconds since the epoch (the quiz code stays plain Dart).
+- Writes are not awaited by the UI: offline, Firestore completes a write only after reconnecting, but the local cache (also enabled on the web) already has it.
 
 ## Security rules (sketch)
 

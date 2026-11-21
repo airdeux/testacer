@@ -1,6 +1,6 @@
 {
   "@@locale": "hu",
-  "appTitle": "TestAcer",
+  "appTitle": "Test Acer",
   "signInTitle": "Bejelentkezés",
   "signInWithGoogle": "Belépés Google-fiókkal",
   "orDivider": "vagy",
@@ -83,7 +83,6 @@
       }
     }
   },
-  "homeComingSoon": "A gyakorlás a következő fejlesztési lépésben érkezik.",
   "roleAdmin": "Adminisztrátor",
   "roleLearner": "Tanuló",
   "invitationsTitle": "Meghívások",
@@ -109,5 +108,143 @@
   },
   "revokeButton": "Visszavonás",
   "youLabel": "(te)",
-  "noInvitations": "Még nincs meghívás."
+  "noInvitations": "Még nincs meghívás.",
+  "startQuiz": "Gyakorlás indítása",
+  "noQuestionSets": "Még nincs kérdéssor.",
+  "noQuestionSetsAdmin": "Importálj egyet a „Kérdéssor importálása” gombbal (fent).",
+  "questionSetLabel": "Kérdéssor",
+  "questionCount": "{count} kérdés",
+  "@questionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quizLengthLabel": "Kérdések száma",
+  "quizLengthAll": "Mind",
+  "quizLengthEndless": "Végtelen",
+  "importTitle": "Kérdéssor importálása",
+  "progressTitle": "Haladás",
+  "quizQuestionOf": "{current}. kérdés / {total}",
+  "@quizQuestionOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "quizQuestionEndless": "{current}. kérdés",
+  "@quizQuestionEndless": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "defaultPrompt": "Melyik állítás helyes?",
+  "answerCorrect": "Helyes!",
+  "answerWrong": "Nem ez a helyes válasz.",
+  "correctAnswerLabel": "A helyes válasz:",
+  "markSkippable": "Bébikönnyű – ne kérdezd többet",
+  "nextQuestion": "Következő",
+  "finishQuiz": "Eredmény",
+  "closeQuiz": "Gyakorlás befejezése",
+  "summaryTitle": "Kész!",
+  "summaryScore": "{correct} / {answered} helyes válasz",
+  "@summaryScore": {
+    "placeholders": {
+      "correct": {
+        "type": "int"
+      },
+      "answered": {
+        "type": "int"
+      }
+    }
+  },
+  "summaryNothingAsked": "Nem volt mit kérdezni.",
+  "newRound": "Új kör",
+  "backButton": "Vissza",
+  "allSkipped": "Minden kérdés bébikönnyűnek van jelölve. A Haladás oldalon visszaveheted őket.",
+  "loadError": "Nem sikerült betölteni. Ellenőrizd az internetkapcsolatot.",
+  "progressSeen": "Megnézett kérdések: {seen} / {total}",
+  "@progressSeen": {
+    "placeholders": {
+      "seen": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "progressAccuracy": "Találati arány: {percent}%",
+  "@progressAccuracy": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "progressBoxesTitle": "Hol tartasz",
+  "progressUnseen": "Még nem láttad",
+  "progressBox0": "Új vagy legutóbb rontott",
+  "progressBox1": "1× jó",
+  "progressBox2": "2× jó egymás után",
+  "progressBox3": "3× jó egymás után",
+  "progressBox4": "Jól megy (4× jó)",
+  "progressWeakTitle": "Ezeket rontod a legtöbbször",
+  "progressWeakItem": "{wrong} hiba / {seen} válasz",
+  "@progressWeakItem": {
+    "placeholders": {
+      "wrong": {
+        "type": "int"
+      },
+      "seen": {
+        "type": "int"
+      }
+    }
+  },
+  "progressNoWeak": "Még nincs rontott kérdés.",
+  "progressSkippedTitle": "Bébikönnyűnek jelölt kérdések",
+  "progressNoSkipped": "Nincs bébikönnyűnek jelölt kérdés.",
+  "undoSkippable": "Visszavétel",
+  "pickFile": "Fájl kiválasztása (.md)",
+  "importFileLabel": "Fájl: {name}",
+  "@importFileLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "importTitleLabel": "Kérdéssor neve",
+  "importTargetLabel": "Cél",
+  "importTargetNew": "Új kérdéssor",
+  "importButton": "Importálás",
+  "importDone": "Importálva: {count} kérdés.",
+  "@importDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importHasErrors": "A fájlban hibák vannak. Javítsd őket, és válaszd ki újra.",
+  "importIssuesTitle": "Ellenőrzés",
+  "importNoIssues": "Nincs hiba.",
+  "importPreviewTitle": "Előnézet",
+  "importReadError": "A fájlt nem sikerült beolvasni (UTF-8 szöveg kell).",
+  "importReplaceNote": "Meglévő kérdéssor frissítésekor a változatlan kérdések haladása megmarad.",
+  "importMoreIssues": "… és még {count}",
+  "@importMoreIssues": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -1,24 +1,15 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../l10n/app_localizations.dart';
-import 'access/access_repository.dart';
-import 'auth/auth_service.dart';
-import 'auth/email_link_controller.dart';
+import 'app_services.dart';
 import 'localization.dart';
 import 'ui/auth_gate.dart';
 
 /// The app shell: theme, Hungarian localisation, and the sign-in gate.
 class TestAcerApp extends StatelessWidget {
-  const TestAcerApp({
-    super.key,
-    required this.auth,
-    required this.access,
-    required this.emailLinks,
-  });
+  const TestAcerApp({super.key, required this.services});
 
-  final AuthService auth;
-  final AccessRepository access;
-  final EmailLinkController emailLinks;
+  final AppServices services;
 
   static const _seed = Color(0xFF1F3A93);
 
@@ -37,7 +28,7 @@ class TestAcerApp extends StatelessWidget {
       locale: const Locale('hu'),
       localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: appSupportedLocales,
-      home: AuthGate(auth: auth, access: access, emailLinks: emailLinks),
+      home: AuthGate(services: services),
     );
   }
 }

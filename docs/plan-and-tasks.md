@@ -1,6 +1,6 @@
 # Plan and tasks – TestAcer
 
-_Last updated: 2026-11-21 · Phases 0–2 done · Next: Phase 3 (quiz)_
+_Last updated: 2026-11-21 · Phases 0–2 done · Phase 3 (quiz) built, waiting for the owner's test with the real question set_
 
 ## Owner's answers (2026-11-21)
 
@@ -63,13 +63,14 @@ _Last updated: 2026-11-21 · Phases 0–2 done · Next: Phase 3 (quiz)_
 
 ## Phase 3 – Quiz (shared UI for web and Android)
 
-- [ ] Admin import screen: pick an .md file → validate → preview → upload (batched writes); re-import keeps keys and progress
-- [ ] Question-set picker (active set per user)
-- [ ] Selection engine (D-006) with unit tests: skippable never chosen, wrong ones clearly more frequent, no repeats within 5
-- [ ] Quiz screen: shuffled options, answer, feedback with emphasis and note, skippable toggle, next / close
-- [ ] Quiz length setting: 1 / 5 / 10 / all / endless
-- [ ] Progress screen: overall accuracy, questions per box, weak questions, skipped list with undo
-- [ ] Offline support: Firestore persistence; progress written after each answer (debounced)
+- [x] Admin import screen: pick an .md file → validate → preview → upload (batched writes); re-import keeps keys and progress, removes questions no longer in the file – 2026-11-21
+- [x] Question-set picker (active set per user, synced in `users/{uid}`) – 2026-11-21
+- [x] Selection engine (D-006) with unit tests: skippable never chosen, box 0 ≈ 16× as likely as box 4, no repeats within 5 (none at all within a fixed-length quiz) – 2026-11-21
+- [x] Quiz screen: shuffled options (A–D), answer, feedback with emphasis and note, skippable switch, next / result, close (endless mode shows the score so far) – 2026-11-21
+- [x] Quiz length setting: 1 / 5 / 10 / Mind / ∞ – 2026-11-21
+- [x] Progress screen: seen count, accuracy, questions per box, weakest 20, skippable list with undo – 2026-11-21
+- [x] Offline support: Firestore persistence also on the web; each answer is saved at once without waiting for the server – 2026-11-21
+- [ ] Owner: import `gyakorlo_teszt_osszes_valasz.md` in the app, do a 10-question quiz on web and Android, check the progress page
 
 **Done when:** a 10-question quiz works on web and Android, progress persists, statistics are correct.
 

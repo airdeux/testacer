@@ -1,0 +1,362 @@
+import 'dart:async';
+import 'dart:math';
+
+import 'package:material_ui/material_ui.dart';
+
+import '../../l10n/app_localizations.dart';
+import '../app_services.dart';
+import '../auth/auth_models.dart';
+import '../question_format/models.dart';
+import '../questions/question_set_repository.dart';
+import '../quiz/progress.dart';
+import '../quiz/quiz_length.dart';
+import '../quiz/quiz_session.dart';
+import 'centered_panel.dart';
+import 'emphasized_text.dart';
+
+/// Colours for right and wrong answers.
+const _correctColor = Color(0xFF2E7D32);
+
+/// One quiz run over the chosen question set.
+class QuizScreen extends StatefulWidget {
+  const QuizScreen({
+    super.key,
+    required this.services,
+    required this.user,
+    required this.questionSet,
+    required this.length,
+    this.random,
+  });
+
+  final AppServices services;
+  final AppUser user;
+  final QuestionSetInfo questionSet;
+  final QuizLength length;
+
+  /// Fixed in tests for predictable shuffling.
+  final Random? random;
+
+  @override
+  State<QuizScreen> createState() => _QuizScreenState();
+}
+
+class _QuizScreenState extends State<QuizScreen> {
+  QuizSession? _session;
+  bool _loading = true;
+  bool _failed = false;
+  bool _finished = false;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_start());
+  }
+
+  Future<void> _start() async {
+    setState(() {
+      _loading = true;
+      _failed = false;
+      _finished = false;
+    });
+    try {
+      final setId = widget.questionSet.id;
+      final questions = await widget.services.questionSets.loadQuestions(setId);
+      final progress =
+          await widget.services.progress.load(widget.user.uid, setId);
+      final session = QuizSession(
+        questions: questions,
+        progress: progress,
+        length: widget.length,
+        random: widget.random,
+      );
+      if (!mounted) return;
+      setState(() {
+        _session = session;
+        _finished = !session.next();
+        _loading = false;
+      });
+    } on Exception catch (error) {
+      debugPrint('Quiz load failed: $error');
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _failed = true;
+        });
+      }
+    }
+  }
+
+  void _save(String key, ItemProgress item) {
+    // Not awaited: offline, Firestore completes the write only on reconnect.
+    unawaited(
+      widget.services.progress
+          .save(widget.user.uid, widget.questionSet.id, key, item)
+          .catchError((Object error) => debugPrint('Progress save failed: $error')),
+    );
+  }
+
+  void _answer(int index) {
+    final session = _session!;
+    final item = session.answer(index);
+    _save(session.current!.question.key, item);
+    setState(() {});
+  }
+
+  void _setSkippable(bool value) {
+    final session = _session!;
+    final key = session.current!.question.key;
+    _save(key, session.setSkippable(key, value));
+    setState(() {});
+  }
+
+  void _next() => setState(() => _finished = !_session!.next());
+
+  void _close() {
+    if ((_session?.answered ?? 0) > 0 && !_finished) {
+      setState(() => _finished = true);
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final session = _session;
+    if (_loading) return const LoadingScreen();
+    if (_failed || session == null) {
+      return CenteredPanel(
+        appBar: AppBar(title: Text(widget.questionSet.title)),
+        children: [
+          Text(l10n.loadError, textAlign: TextAlign.center),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: _start, child: Text(l10n.retry)),
+        ],
+      );
+    }
+    if (_finished) return _summary(l10n, session);
+
+    final current = session.current!;
+    final total = session.total;
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          tooltip: l10n.closeQuiz,
+          icon: const Icon(Icons.close),
+          onPressed: _close,
+        ),
+        title: Text(
+          total == null
+              ? l10n.quizQuestionEndless(session.number)
+              : l10n.quizQuestionOf(session.number, total),
+        ),
+        bottom: total == null
+            ? null
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(4),
+                child: LinearProgressIndicator(value: session.number / total),
+              ),
+      ),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                Text(
+                  current.question.prompt ?? l10n.defaultPrompt,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 12),
+                for (var i = 0; i < current.options.length; i++)
+                  _OptionCard(
+                    letter: String.fromCharCode(65 + i),
+                    option: current.options[i],
+                    state: _optionState(current, i),
+                    onTap: current.isAnswered ? null : () => _answer(i),
+                  ),
+                if (current.isAnswered)
+                  _Feedback(
+                    current: current,
+                    skippable:
+                        session.progress[current.question.key]?.skippable ?? false,
+                    onSkippable: _setSkippable,
+                    isLast: total != null && session.number >= total,
+                    onNext: _next,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _summary(AppLocalizations l10n, QuizSession session) {
+    final nothingAsked = session.answered == 0;
+    return CenteredPanel(
+      appBar: AppBar(title: Text(widget.questionSet.title)),
+      children: [
+        Text(
+          l10n.summaryTitle,
+          style: Theme.of(context).textTheme.headlineMedium,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          nothingAsked
+              ? (session.total == 0 ? l10n.allSkipped : l10n.summaryNothingAsked)
+              : l10n.summaryScore(session.correctAnswers, session.answered),
+          style: Theme.of(context).textTheme.titleMedium,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 24),
+        FilledButton.icon(
+          onPressed: _start,
+          icon: const Icon(Icons.replay),
+          label: Text(l10n.newRound),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.backButton),
+        ),
+      ],
+    );
+  }
+
+  static _OptionState _optionState(CurrentQuestion current, int index) {
+    if (!current.isAnswered) return _OptionState.open;
+    if (index == current.correctIndex) return _OptionState.correct;
+    if (index == current.chosenIndex) return _OptionState.wrongChoice;
+    return _OptionState.other;
+  }
+}
+
+enum _OptionState { open, correct, wrongChoice, other }
+
+class _OptionCard extends StatelessWidget {
+  const _OptionCard({
+    required this.letter,
+    required this.option,
+    required this.state,
+    required this.onTap,
+  });
+
+  final String letter;
+  final QuestionOption option;
+  final _OptionState state;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final (Color border, Color? background, IconData? icon) = switch (state) {
+      _OptionState.open => (scheme.outline, null, null),
+      _OptionState.correct =>
+        (_correctColor, _correctColor.withValues(alpha: 0.12), Icons.check_circle),
+      _OptionState.wrongChoice =>
+        (scheme.error, scheme.error.withValues(alpha: 0.12), Icons.cancel),
+      _OptionState.other => (scheme.outlineVariant, null, null),
+    };
+    final note = state == _OptionState.open ? null : option.note;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: background ?? Colors.transparent,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: border, width: state == _OptionState.open ? 1 : 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(radius: 13, child: Text(letter)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(option.text),
+                      if (note != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            note,
+                            style: const TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (icon != null) ...[
+                  const SizedBox(width: 8),
+                  Icon(icon, color: border),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Feedback extends StatelessWidget {
+  const _Feedback({
+    required this.current,
+    required this.skippable,
+    required this.onSkippable,
+    required this.isLast,
+    required this.onNext,
+  });
+
+  final CurrentQuestion current;
+  final bool skippable;
+  final ValueChanged<bool> onSkippable;
+  final bool isLast;
+  final VoidCallback onNext;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final correct = current.isCorrect;
+    return Card(
+      margin: const EdgeInsets.only(top: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              correct ? l10n.answerCorrect : l10n.answerWrong,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: correct ? _correctColor : theme.colorScheme.error,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(l10n.correctAnswerLabel, style: theme.textTheme.labelLarge),
+            const SizedBox(height: 4),
+            EmphasizedText(current.question.correct),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.markSkippable),
+              value: skippable,
+              onChanged: onSkippable,
+            ),
+            FilledButton(
+              onPressed: onNext,
+              child: Text(isLast ? l10n.finishQuiz : l10n.nextQuestion),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
