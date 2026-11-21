@@ -3,8 +3,13 @@ import '../access/access_repository.dart';
 import '../auth/auth_models.dart';
 
 /// User-facing text for a sign-in problem; `null` when there is nothing to
-/// report (the user cancelled).
-String? authErrorMessage(AppLocalizations l10n, AuthErrorKind kind) =>
+/// report (the user cancelled). For an unexpected error the original error
+/// [code], when known, is shown to help troubleshooting.
+String? authErrorMessage(
+  AppLocalizations l10n,
+  AuthErrorKind kind, [
+  String? code,
+]) =>
     switch (kind) {
       AuthErrorKind.invalidEmail => l10n.errorInvalidEmail,
       AuthErrorKind.userDisabled => l10n.errorUserDisabled,
@@ -18,7 +23,9 @@ String? authErrorMessage(AppLocalizations l10n, AuthErrorKind kind) =>
       AuthErrorKind.notAllowed => l10n.errorNotAllowed,
       AuthErrorKind.accountExists => l10n.errorAccountExists,
       AuthErrorKind.cancelled => null,
-      AuthErrorKind.unknown => l10n.errorUnknown,
+      AuthErrorKind.unknown => code == null || code.isEmpty
+          ? l10n.errorUnknown
+          : l10n.errorUnknownWithCode(code),
     };
 
 String roleLabel(AppLocalizations l10n, AccessRole role) => switch (role) {

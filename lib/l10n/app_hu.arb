@@ -49,6 +49,15 @@
   "errorNotAllowed": "Ez a belépési mód nincs bekapcsolva.",
   "errorAccountExists": "Ehhez a címhez másik belépési mód tartozik. Lépj be azzal.",
   "errorUnknown": "Váratlan hiba történt. Próbáld újra.",
+  "errorUnknownWithCode": "Váratlan hiba történt ({code}). Próbáld újra.",
+  "@errorUnknownWithCode": {
+    "description": "Unexpected sign-in error; code is the Firebase error code, shown to help troubleshooting.",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "verifyEmailTitle": "Erősítsd meg az e-mail-címed",
   "verifyEmailBody": "Küldtünk egy megerősítő levelet ide: {email}. Kattints a benne lévő linkre, majd nyomd meg a „Megerősítettem” gombot.",
   "@verifyEmailBody": {

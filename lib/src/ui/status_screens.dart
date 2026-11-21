@@ -31,7 +31,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       message = await action();
     } on AuthFailure catch (failure) {
       if (mounted) {
-        message = authErrorMessage(AppLocalizations.of(context), failure.kind);
+        message = authErrorMessage(
+          AppLocalizations.of(context),
+          failure.kind,
+          failure.code,
+        );
       }
     }
     if (mounted) {

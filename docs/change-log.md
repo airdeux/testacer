@@ -12,6 +12,10 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 - 2026-11-21 – Phase 0/1 files: `.gitignore`, `firebase.json`, Firestore rules and indexes, CI workflow, question-format parser (`lib/src/question_format/`) with unit tests, validator `tool/validate_questions.dart`, owner's setup guide `docs/setup.md`. Verified with Flutter 3.50.1: analyze clean, 17/17 tests pass.
 - 2026-11-21 – Planning documents: README, project brief, architecture, plan and tasks, decision log, question format, QA log, change log, user guide draft.
 
+### Fixed
+
+- 2026-11-21 – E-mail link sign-in failed with „Váratlan hiba történt” on every platform: the request set `linkDomain` to the default Hosting domain, which Firebase rejects (`INVALID_HOSTING_LINK_DOMAIN`). `linkDomain` removed; Firebase uses that domain by default. Unexpected sign-in errors now show the Firebase error code, e.g. „Váratlan hiba történt (invalid-hosting-link-domain)”; 1 new test.
+
 ### Changed
 
 - 2026-11-21 – Web address in lower case: https://airdeux.github.io/testacer/ (repository renamed `TestAcer` → `testacer`; GitHub Pages paths are case-sensitive). Updated: deploy workflow base path, `webAppUrl` (sign-in link return address), Firebase Hosting redirect page, docs.

@@ -69,7 +69,11 @@ class _SignInScreenState extends State<SignInScreen> {
       await action();
       if (mounted && onSuccess != null) setState(() => _info = onSuccess);
     } on AuthFailure catch (failure) {
-      if (mounted) setState(() => _error = authErrorMessage(_l10n, failure.kind));
+      if (mounted) {
+        setState(
+          () => _error = authErrorMessage(_l10n, failure.kind, failure.code),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

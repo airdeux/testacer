@@ -25,7 +25,7 @@ lib/
 ├─ l10n/                          app_hu.arb + generated AppLocalizations
 └─ src/
    ├─ app.dart                    MaterialApp: theme, Hungarian locale, AuthGate
-   ├─ config.dart                 web app URL, Android package, link domain
+   ├─ config.dart                 web app URL, Android package
    ├─ localization.dart           delegate list (see note below)
    ├─ app_services.dart           bundle of all services (Firebase or fakes)
    ├─ auth/                       AuthService interface + Firebase implementation,

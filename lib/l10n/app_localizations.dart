@@ -304,6 +304,12 @@ abstract class AppLocalizations {
   /// **'Váratlan hiba történt. Próbáld újra.'**
   String get errorUnknown;
 
+  /// Unexpected sign-in error; code is the Firebase error code, shown to help troubleshooting.
+  ///
+  /// In hu, this message translates to:
+  /// **'Váratlan hiba történt ({code}). Próbáld újra.'**
+  String errorUnknownWithCode(String code);
+
   /// No description provided for @verifyEmailTitle.
   ///
   /// In hu, this message translates to:

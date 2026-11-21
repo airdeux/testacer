@@ -8,8 +8,9 @@ const webAppUrl = 'https://airdeux.github.io/testacer/';
 /// Android application ID; sign-in links open the app with this package.
 const androidPackageName = 'com.airdeux.testacer';
 
-/// Firebase Hosting domain that e-mail sign-in links go through
-/// (Dynamic Links shut down in 2025). It serves
-/// `/.well-known/assetlinks.json` from firebase/hosting, so the links open
-/// the Android app.
-const authLinkDomain = 'testacer-892b3.firebaseapp.com';
+// E-mail sign-in links go through the project's default Firebase Hosting
+// domain, testacer-892b3.firebaseapp.com (Dynamic Links shut down in 2025).
+// Firebase picks it by itself; it must not be passed as `linkDomain`.
+// The domain serves `/.well-known/assetlinks.json` from firebase/hosting, so
+// the links open the Android app (see the intent filter in
+// AndroidManifest.xml).

@@ -124,6 +124,11 @@ class AppLocalizationsHu extends AppLocalizations {
   String get errorUnknown => 'Váratlan hiba történt. Próbáld újra.';
 
   @override
+  String errorUnknownWithCode(String code) {
+    return 'Váratlan hiba történt ($code). Próbáld újra.';
+  }
+
+  @override
   String get verifyEmailTitle => 'Erősítsd meg az e-mail-címed';
 
   @override

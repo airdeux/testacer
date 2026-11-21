@@ -86,7 +86,9 @@ class FirebaseAuthService implements AuthService {
             androidPackageName: androidPackageName,
             androidInstallApp: true,
             androidMinimumVersion: '1',
-            linkDomain: authLinkDomain,
+            // No linkDomain: Firebase uses the default Hosting domain
+            // (testacer-892b3.firebaseapp.com) and rejects it when it is set
+            // explicitly (INVALID_HOSTING_LINK_DOMAIN).
           ),
         ),
       );

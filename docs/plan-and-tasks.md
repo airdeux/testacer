@@ -81,7 +81,7 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 - [x] Add `airdeux.github.io` to the Firebase Auth authorised domains (done in Phase 2) – 2026-11-21
 - [x] Owner: workflow file in place, Pages on (Source: GitHub Actions), push – first deploy green (Deploy web #1) – 2026-11-21
 - [x] Live site check (Claude, built-in browser): sign-in screen renders; all app files 200 under `/TestAcer/`; title „Test Acer”, `lang=hu` – 2026-11-21
-- [ ] Owner: rename the repository `TestAcer` → `testacer` for a lower-case address (docs/setup.md § 6); redeploy web and Hosting
+- [x] Owner: repository renamed `TestAcer` → `testacer` for a lower-case address; web and Hosting redeployed; checked by Claude – 2026-11-21
 - [ ] Smoke test: desktop Chrome / Edge / Firefox, mobile Chrome
 - [ ] Invite the first 2–3 users
 

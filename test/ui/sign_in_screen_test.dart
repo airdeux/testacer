@@ -71,6 +71,22 @@ void main() {
     expect(find.text(hu.errorUnknown), findsNothing);
   });
 
+  testWidgets('an unexpected error shows its code', (tester) async {
+    auth.nextFailure = const AuthFailure(
+      AuthErrorKind.unknown,
+      'invalid-hosting-link-domain',
+    );
+    await pumpScreen(tester);
+
+    await enter(tester, hu.emailLabel, 'tanulo@example.com');
+    await tapVisible(tester, find.text(hu.sendSignInLink));
+
+    expect(
+      find.text(hu.errorUnknownWithCode('invalid-hosting-link-domain')),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('registration requires at least 6 characters', (tester) async {
     await pumpScreen(tester);
 
