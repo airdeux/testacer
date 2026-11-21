@@ -31,7 +31,7 @@ git init -b main
 git add .
 git status                 # data/ must NOT be listed
 git commit -m "Initial setup: docs, Flutter project, question parser"
-git remote add origin https://github.com/<your-user>/TestAcer.git
+git remote add origin https://github.com/<your-user>/testacer.git
 git push -u origin main
 ```
 
@@ -91,11 +91,18 @@ Copy the **SHA1** and **SHA256** values to Firebase console → Project settings
 1. **Workflow file:** create `.github/workflows/deploy-web.yml` with the content Claude provides (Claude cannot write into `.github/workflows/`).
 2. **Turn on Pages:** GitHub → the repository → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 3. **Push to `main`.** The *CI* workflow runs first; when it passes, *Deploy web* builds the app and publishes it. To publish without a new commit: **Actions → Deploy web → Run workflow**.
-4. **Check:** https://airdeux.github.io/TestAcer/ shows the sign-in screen; the *Deploy web* run shows the address under *deploy*.
+4. **Check:** https://airdeux.github.io/testacer/ shows the sign-in screen; the *Deploy web* run shows the address under *deploy*.
+
+Lower-case address (one-off, 2026-11-21): the Pages path is the repository name, case-sensitively. To move from `/TestAcer/` to `/testacer/`:
+
+1. GitHub → the repository → **Settings → General → Repository name**: `testacer` → **Rename**. GitHub redirects the old repository and clone addresses, but the old Pages address stops working.
+2. Point your clone at the new name: `git remote set-url origin https://airdeux@github.com/airdeux/testacer.git`
+3. Apply the two `TestAcer` → `testacer` changes in `.github/workflows/deploy-web.yml` (comment and `--base-href`), then commit and push; *Deploy web* publishes to the new address.
+4. `firebase deploy --only hosting` (the redirect page on testacer-892b3.web.app now points to the new address).
 
 How it works:
 
-- *Deploy web* starts when *CI* finishes on a push to `main`, and only builds if CI passed; it builds the exact commit CI tested (`flutter build web --release --base-href /TestAcer/`).
+- *Deploy web* starts when *CI* finishes on a push to `main`, and only builds if CI passed; it builds the exact commit CI tested (`flutter build web --release --base-href /testacer/`).
 - Pushes to other branches and pull requests are tested by CI but not published.
 - GitHub Pages caches files for about 10 minutes; after a deploy, reload the page (Ctrl+F5) if the old version still shows.
 - The Firebase web config in `lib/firebase_options.dart` is public by design; access is protected by the sign-in, the allowlist and the Firestore rules.

@@ -4,7 +4,7 @@
 
 ## 1. Getting access
 
-- **Web:** open https://airdeux.github.io/TestAcer/ in any browser (on a phone you can add it to the home screen). **Android:** install the app from the link the admin sends.
+- **Web:** open https://airdeux.github.io/testacer/ in any browser (on a phone you can add it to the home screen). **Android:** install the app from the link the admin sends.
 - Ask the admin for an invitation (they need your email address).
 - Sign in with **Google**, with **email + password**, or with an **email link**: type your email address and open the link you receive – on the same phone or browser where you asked for it.
 - With a password account, open the verification email once before the first sign-in.

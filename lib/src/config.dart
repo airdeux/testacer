@@ -3,7 +3,7 @@
 /// Used as the "continue URL" of sign-in links sent from the Android app.
 /// The domain must be listed under Firebase Authentication → Settings →
 /// Authorized domains.
-const webAppUrl = 'https://airdeux.github.io/TestAcer/';
+const webAppUrl = 'https://airdeux.github.io/testacer/';
 
 /// Android application ID; sign-in links open the app with this package.
 const androidPackageName = 'com.airdeux.testacer';

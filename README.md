@@ -2,7 +2,7 @@
 
 A small practice-quiz app for exam preparation. First use case: the theory test of the judo 2nd dan exam (149 multiple-choice questions). One Flutter codebase builds the **web app** and the **Android app**; the Android app adds scheduled quiz reminders.
 
-> **Status:** sign-in and the quiz (import, practice, progress) work on web and Android; every push to `main` that passes CI is published at **https://airdeux.github.io/TestAcer/** (Phase 4); next: Phase 5 – Android reminders. See [docs/plan-and-tasks.md](docs/plan-and-tasks.md).
+> **Status:** sign-in and the quiz (import, practice, progress) work on web and Android; every push to `main` that passes CI is published at **https://airdeux.github.io/testacer/** (Phase 4); next: Phase 5 – Android reminders. See [docs/plan-and-tasks.md](docs/plan-and-tasks.md).
 
 ## Planned features
 
@@ -65,7 +65,7 @@ flutter run -d chrome                           # web
 flutter run -d <android-device-id>              # Android
 firebase emulators:start --only auth,firestore  # local backend
 cd firebase; npm ci; npm test                   # Firestore rules tests
-flutter build web --release --base-href /TestAcer/
+flutter build web --release --base-href /testacer/
 ```
 
 Publishing: every push to `main` that passes CI is deployed to GitHub Pages by `.github/workflows/deploy-web.yml` (see docs/setup.md § 6).

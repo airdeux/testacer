@@ -1,6 +1,6 @@
 # Plan and tasks – TestAcer
 
-_Last updated: 2026-11-21 · Phases 0–3 done · Phase 4 (web deploy) built, waiting for the owner's steps (Pages on, workflow file, push)_
+_Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https://airdeux.github.io/testacer/; waiting for the owner's browser checks and the first invitations_
 
 ## Owner's answers (2026-11-21)
 
@@ -76,10 +76,12 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4 (web deploy) built, wa
 
 ## Phase 4 – Web deploy → M1
 
-- [x] GitHub Actions workflow `deploy-web.yml`: after CI passes on `main`, `flutter build web --release --base-href /TestAcer/` → GitHub Pages (also by hand) – 2026-11-21
+- [x] GitHub Actions workflow `deploy-web.yml`: after CI passes on `main`, `flutter build web --release --base-href /testacer/` → GitHub Pages (also by hand) – 2026-11-21
 - [x] Web shell: Hungarian language tag, description and theme colour in `index.html` / `manifest.json` – 2026-11-21
 - [x] Add `airdeux.github.io` to the Firebase Auth authorised domains (done in Phase 2) – 2026-11-21
-- [ ] Owner: paste the workflow file, turn on Pages (Source: GitHub Actions), push (docs/setup.md § 6)
+- [x] Owner: workflow file in place, Pages on (Source: GitHub Actions), push – first deploy green (Deploy web #1) – 2026-11-21
+- [x] Live site check (Claude, built-in browser): sign-in screen renders; all app files 200 under `/TestAcer/`; title „Test Acer”, `lang=hu` – 2026-11-21
+- [ ] Owner: rename the repository `TestAcer` → `testacer` for a lower-case address (docs/setup.md § 6); redeploy web and Hosting
 - [ ] Smoke test: desktop Chrome / Edge / Firefox, mobile Chrome
 - [ ] Invite the first 2–3 users
 

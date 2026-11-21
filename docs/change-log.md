@@ -14,6 +14,7 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Changed
 
+- 2026-11-21 – Web address in lower case: https://airdeux.github.io/testacer/ (repository renamed `TestAcer` → `testacer`; GitHub Pages paths are case-sensitive). Updated: deploy workflow base path, `webAppUrl` (sign-in link return address), Firebase Hosting redirect page, docs.
 - 2026-11-21 – UI text: the app name is shown as „Test Acer” (app bar, sign-in screen, browser tab, web manifest, Android launcher label); the skippable switch and lists say „Bébikönnyű” instead of „Ismert”.
 - 2026-11-21 – Owner's answers recorded: public repo + GitHub Pages, email as login name, single admin, Hungarian UI and user guide, notification buttons Igaz / Hamis / Összes válasz, no iOS in v1 (D-012 added; all decisions D-001 – D-012 accepted). Architecture: the rolling reminder schedule is explained in detail.
 - 2026-11-21 – Email link (passwordless) added as a third sign-in method (D-013): decision log, architecture § Sign-in, brief, plan (Phase 2), README, setup, QA checklist, user guide.
