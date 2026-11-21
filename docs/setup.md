@@ -73,6 +73,23 @@ keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -alias and
 
 Copy the **SHA1** and **SHA256** values to Firebase console → Project settings → Your apps → the Android app → **Add fingerprint**. The release key's fingerprints are added in Phase 5.
 
-## 5. Done
+## 5. Sign-in setup (Phase 2)
 
-Commit and push, then tell Claude – Phase 2 (sign-in) starts from here.
+1. **Authorised domain:** Firebase console → Authentication → **Settings → Authorized domains → Add domain**: `airdeux.github.io`. Sign-in links sent from the Android app lead back to the web app there (and Google sign-in on the published web app needs it).
+2. **Packages:** `flutter pub get`.
+3. **Sign-in links open the app:** the debug key's SHA-256 goes into `firebase/hosting/.well-known/assetlinks.json` (Claude prepares it from the `SHA256:` line of the `keytool` command in § 4). Then:
+
+   ```powershell
+   firebase deploy --only hosting
+   ```
+
+   Check: https://testacer-892b3.firebaseapp.com/.well-known/assetlinks.json shows the file.
+4. **Try it:** `flutter run -d chrome` and `flutter run -d <android-device>`; sign in all three ways (see the QA log's release checklist).
+
+## Firestore rules tests (optional, also run by CI)
+
+```powershell
+cd firebase
+npm ci
+npm test        # starts the Firestore emulator (needs Java 21+) and runs firebase/test
+```

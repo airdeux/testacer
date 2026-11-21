@@ -6,6 +6,7 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Added
 
+- 2026-11-21 – Phase 2, sign-in: Google, e-mail + password (with verification and password reset) and e-mail link sign-in; allowlist access gate with "not invited" and "verify e-mail" screens; admin invitations page; Hungarian texts (`lib/l10n/app_hu.arb`); Android App Links filter for sign-in links; minimal Firebase Hosting site for `assetlinks.json`; Firestore rules tests (`firebase/test`) and a CI job for them; 27 new Flutter tests.
 - 2026-11-21 – Phase 0/1 files: `.gitignore`, `firebase.json`, Firestore rules and indexes, CI workflow, question-format parser (`lib/src/question_format/`) with unit tests, validator `tool/validate_questions.dart`, owner's setup guide `docs/setup.md`. Verified with Flutter 3.50.1: analyze clean, 17/17 tests pass.
 - 2026-11-21 – Planning documents: README, project brief, architecture, plan and tasks, decision log, question format, QA log, change log, user guide draft.
 

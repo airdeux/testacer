@@ -2,7 +2,7 @@
 
 A small practice-quiz app for exam preparation. First use case: the theory test of the judo 2nd dan exam (149 multiple-choice questions). One Flutter codebase builds the **web app** and the **Android app**; the Android app adds scheduled quiz reminders.
 
-> **Status:** setup done (Flutter project, GitHub CI, Firebase `testacer-892b3`), question parser done; next: Phase 2 – sign-in. See [docs/plan-and-tasks.md](docs/plan-and-tasks.md).
+> **Status:** setup, question parser and sign-in (Google, e-mail + password, e-mail link; invite-only) done; next: Phase 3 – the quiz. See [docs/plan-and-tasks.md](docs/plan-and-tasks.md).
 
 ## Planned features
 
@@ -64,5 +64,6 @@ flutter test                                    # parser, selection engine, plan
 flutter run -d chrome                           # web
 flutter run -d <android-device-id>              # Android
 firebase emulators:start --only auth,firestore  # local backend
+cd firebase; npm ci; npm test                   # Firestore rules tests
 flutter build web --release --base-href /TestAcer/
 ```

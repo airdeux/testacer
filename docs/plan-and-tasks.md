@@ -1,6 +1,6 @@
 # Plan and tasks – TestAcer
 
-_Last updated: 2026-11-21 · Phase 0 and Phase 1 done · Next: Phase 2 (sign-in)_
+_Last updated: 2026-11-21 · Phases 0–2 done · Next: Phase 3 (quiz)_
 
 ## Owner's answers (2026-11-21)
 
@@ -49,13 +49,17 @@ _Last updated: 2026-11-21 · Phase 0 and Phase 1 done · Next: Phase 2 (sign-in)
 
 ## Phase 2 – Sign-in and access
 
-- [ ] Sign-in screen: email + password (sign-up, sign-in, reset password, email verification) and Google
-- [ ] Email link sign-in (D-013): send the link (`ActionCodeSettings`: web app URL, Android package, `handleCodeInApp`), finish sign-in on the web and in the app; Android App Links intent filter for `<project-id>.firebaseapp.com/__/auth/links`; check whether Firebase Hosting must be initialised for that domain
-- [ ] Allowlist check and a "not invited yet" screen
-- [ ] Firestore rules ([architecture § Security rules](architecture.md#security-rules-sketch)) with emulator tests
-- [ ] Admin: invite by email (writes the allowlist entry)
+- [x] Sign-in screen: email + password (sign-up, sign-in, reset password, email verification) and Google – 2026-11-21
+- [x] Email link sign-in (D-013): send the link, finish sign-in on the web and in the app (`app_links`); Android App Links intent filter for `testacer-892b3.firebaseapp.com/__/auth/links` – 2026-11-21
+- [x] `firebase/hosting/.well-known/assetlinks.json` with the debug key's SHA-256 – 2026-11-21 (the release key is added in Phase 5)
+- [x] Hosting deployed; `https://testacer-892b3.firebaseapp.com/.well-known/assetlinks.json` serves the file – 2026-11-21
+- [x] Allowlist check, "not invited yet" and "verify your e-mail" screens – 2026-11-21
+- [x] Firestore rules tests against the emulator (`firebase/test`, 12 tests) and a CI job for them – 2026-11-21
+- [x] Admin: invitations page (invite with role, revoke with confirmation, own address protected) – 2026-11-21
+- [x] Hungarian UI texts in `lib/l10n/app_hu.arb` (D-010) – 2026-11-21
+- [x] Owner: `airdeux.github.io` in the Auth authorised domains; rules-test job in CI; local analyze + tests; sign-in tried – 2026-11-21
 
-**Done when:** an invited user can sign in all three ways on web and Android; a non-invited account cannot read anything (rules tests).
+**Done when:** an invited user can sign in all three ways on web and Android; a non-invited account cannot read anything (rules tests). ✔ 2026-11-21
 
 ## Phase 3 – Quiz (shared UI for web and Android)
 

@@ -1,0 +1,113 @@
+{
+  "@@locale": "hu",
+  "appTitle": "TestAcer",
+  "signInTitle": "Bejelentkezés",
+  "signInWithGoogle": "Belépés Google-fiókkal",
+  "orDivider": "vagy",
+  "emailLabel": "E-mail-cím",
+  "passwordLabel": "Jelszó",
+  "showPassword": "Jelszó megjelenítése",
+  "hidePassword": "Jelszó elrejtése",
+  "signInWithPassword": "Belépés jelszóval",
+  "register": "Regisztráció",
+  "forgotPassword": "Elfelejtett jelszó",
+  "sendSignInLink": "Belépési link küldése e-mailben",
+  "signInLinkSent": "Elküldtük a belépési linket ide: {email}. Ezen az eszközön nyisd meg.",
+  "@signInLinkSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "passwordResetSent": "Elküldtük a jelszó-visszaállító levelet ide: {email}.",
+  "@passwordResetSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "emailRequired": "Add meg az e-mail-címed.",
+  "emailInvalid": "Ez nem érvényes e-mail-cím.",
+  "passwordRequired": "Add meg a jelszavad.",
+  "passwordTooShort": "A jelszó legalább 6 karakter legyen.",
+  "linkNeedsEmailTitle": "Melyik címre kérted a linket?",
+  "linkNeedsEmailBody": "A linket másik eszközön vagy böngészőben kérted. Add meg ugyanazt az e-mail-címet.",
+  "continueButton": "Tovább",
+  "cancelButton": "Mégse",
+  "signingInWithLink": "Belépés a linkkel…",
+  "errorInvalidEmail": "Érvénytelen e-mail-cím.",
+  "errorUserDisabled": "Ez a fiók le van tiltva.",
+  "errorWrongCredentials": "Hibás e-mail-cím vagy jelszó.",
+  "errorEmailInUse": "Ezzel a címmel már van fiók. Lépj be, vagy kérj belépési linket.",
+  "errorWeakPassword": "Túl gyenge jelszó (legalább 6 karakter).",
+  "errorTooManyRequests": "Túl sok próbálkozás. Várj egy kicsit, és próbáld újra.",
+  "errorNetwork": "Nincs internetkapcsolat.",
+  "errorInvalidLink": "A link érvénytelen vagy lejárt. Kérj újat.",
+  "errorPopupBlocked": "A böngésző letiltotta a felugró ablakot. Engedélyezd, és próbáld újra.",
+  "errorNotAllowed": "Ez a belépési mód nincs bekapcsolva.",
+  "errorAccountExists": "Ehhez a címhez másik belépési mód tartozik. Lépj be azzal.",
+  "errorUnknown": "Váratlan hiba történt. Próbáld újra.",
+  "verifyEmailTitle": "Erősítsd meg az e-mail-címed",
+  "verifyEmailBody": "Küldtünk egy megerősítő levelet ide: {email}. Kattints a benne lévő linkre, majd nyomd meg a „Megerősítettem” gombot.",
+  "@verifyEmailBody": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "verifyEmailDone": "Megerősítettem",
+  "verifyEmailResend": "Újraküldés",
+  "verifyEmailResent": "Újra elküldtük a megerősítő levelet.",
+  "verifyEmailNotYet": "Még nincs megerősítve. Nézd meg a levélszemét mappát is.",
+  "signOut": "Kijelentkezés",
+  "notInvitedTitle": "Még nincs meghívásod",
+  "notInvitedBody": "A(z) {email} címmel még nincs meghívásod. Kérd meg az adminisztrátort, hogy hívjon meg – utána ez az oldal magától továbblép.",
+  "@notInvitedBody": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "accessErrorTitle": "Nem sikerült ellenőrizni a hozzáférést",
+  "accessErrorBody": "Ellenőrizd az internetkapcsolatot, és próbáld újra.",
+  "retry": "Újra",
+  "homeGreeting": "Szia, {name}!",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "homeComingSoon": "A gyakorlás a következő fejlesztési lépésben érkezik.",
+  "roleAdmin": "Adminisztrátor",
+  "roleLearner": "Tanuló",
+  "invitationsTitle": "Meghívások",
+  "inviteEmailLabel": "Meghívandó e-mail-cím",
+  "inviteButton": "Meghívás",
+  "invited": "Meghívva: {email}",
+  "@invited": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "revokeTooltip": "Meghívás visszavonása",
+  "revokeConfirmTitle": "Visszavonod a meghívást?",
+  "revokeConfirmBody": "{email} ezután nem fér hozzá az alkalmazáshoz.",
+  "@revokeConfirmBody": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "revokeButton": "Visszavonás",
+  "youLabel": "(te)",
+  "noInvitations": "Még nincs meghívás."
+}

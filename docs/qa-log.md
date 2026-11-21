@@ -12,6 +12,9 @@
 ## Release checklist (run before every release)
 
 - [ ] Sign-in on web and Android: email + password (new account, existing, password reset), email link (same device; another device asks for the address), and Google
+- [ ] Email link on Android opens the app (not the browser) – needs the Hosting `assetlinks.json`
+- [ ] A password account sees "verify your e-mail" until verified; after "Megerősítettem" it gets in
+- [ ] Admin: inviting a waiting user lets them in without reload; revoking needs confirmation; own address cannot be revoked
 - [ ] A non-invited account sees "not invited yet" and cannot read any data
 - [ ] Import of the real question file: 149 questions, no errors
 - [ ] Quiz: options shuffled, no emphasis before answering, emphasis and note in feedback
@@ -31,4 +34,6 @@
 | 2026-11-21 | – | Parser (Dart) | `flutter analyze`, `flutter test`, validator on the real file – on a temporary copy after `flutter create` (Flutter 3.50.1, Dart 3.14.0, Linux) | Pass | analyze: no issues; 17/17 tests (16 parser + the template widget test) after fixing one test fixture (2 options → 4); validator: 149 questions, 149 × 4 options, 0 warnings |
 | 2026-11-21 | – | Project setup (owner, Windows) | `flutter create`, `flutter test`, validator – Flutter 3.50.1 | Pass | 17/17 tests; validator 149 × 4, 0 warnings |
 | 2026-11-21 | – | CI (GitHub Actions) | first push: `flutter analyze`, `flutter test` | Pass | run 44921409780; `data/` confirmed absent from the repository |
+| 2026-11-21 | – | Phase 2 (sign-in) | `flutter analyze`, `flutter test`, `flutter build web`, rules tests – Flutter 3.50.1, firebase-tools 15.37.0, Java 21 (Claude's workspace) | Pass | analyze clean; 44/44 Flutter tests (models, e-mail link controller, sign-in, invitations, app gate, parser); web release build OK; 12/12 Firestore rules tests against the emulator. Not yet tested on a device: real Google / password / e-mail-link sign-in |
+| 2026-11-21 | – | Phase 2 – manual (owner) | sign-in on the live project; `flutter analyze`, `flutter test` on Windows | Pass | admin home screen reached ("Szia, Gábor Erdei!", role Adminisztrátor); Hosting `assetlinks.json` served |
 | 2026-11-21 | – | CI (GitHub Actions) | push fe19dde (Firebase config) | Fail → fixed | `flutter analyze`: `lib/firebase_options.dart` imports `firebase_core`, which was not a dependency; fix `flutter pub add firebase_core` (checked: analyze clean, 17/17 tests). Also `actions/checkout` v4 → v5 (Node 20 deprecation warning) |
