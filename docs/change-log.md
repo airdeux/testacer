@@ -18,7 +18,7 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Changed
 
-- 2026-11-21 – Display name „Kvíz-kimaxoló” (also the Firebase public-facing name, used in the sign-in e-mails) instead of „Test Acer”: app bar, sign-in screen, browser tab, web manifest, Android launcher label, Hosting redirect page, user guide. Repository, web address, package and code names stay `testacer` / `TestAcer`.
+- 2026-11-21 – Display name „Kvíz-maxoló” (also the Firebase public-facing name, used in the sign-in e-mails) instead of „Test Acer”: app bar, sign-in screen, browser tab, web manifest, Android launcher label, Hosting redirect page, user guide. Repository, web address, package and code names stay `testacer` / `TestAcer`.
 - 2026-11-21 – Sign-in, verification and password e-mails are requested in Hungarian (`setLanguageCode('hu')`); owner sets the project's public-facing name so the e-mails no longer say „project-386828959446” (docs/setup.md § 5).
 - 2026-11-21 – Web address in lower case: https://airdeux.github.io/testacer/ (repository renamed `TestAcer` → `testacer`; GitHub Pages paths are case-sensitive). Updated: deploy workflow base path, `webAppUrl` (sign-in link return address), Firebase Hosting redirect page, docs.
 - 2026-11-21 – UI text: the app name is shown as „Test Acer” (app bar, sign-in screen, browser tab, web manifest, Android launcher label); the skippable switch and lists say „Bébikönnyű” instead of „Ismert”.

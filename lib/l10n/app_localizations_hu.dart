@@ -10,7 +10,7 @@ class AppLocalizationsHu extends AppLocalizations {
   AppLocalizationsHu([String locale = 'hu']) : super(locale);
 
   @override
-  String get appTitle => 'Kvíz-kimaxoló';
+  String get appTitle => 'Kvíz-maxoló';
 
   @override
   String get signInTitle => 'Bejelentkezés';

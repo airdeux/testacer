@@ -1,4 +1,4 @@
-# Kvíz-kimaxoló – User guide
+# Kvíz-maxoló – User guide
 
 > **Draft.** This outline describes the planned behaviour. It is completed, with screenshots, in Phase 8 (see [docs/plan-and-tasks.md](docs/plan-and-tasks.md)). The final guide will be in Hungarian.
 
@@ -33,7 +33,7 @@
 - Allow notifications when the app asks.
 - In **Settings → Reminders**, add one or more time windows, e.g. every day 09:00–22:00, every 60 minutes. Use "send a test notification" to check.
 - Tapping a reminder opens a short quiz that starts with the question from the notification.
-- If reminders arrive late or not at all: exclude Kvíz-kimaxoló from battery optimisation (Android settings → Apps → Kvíz-kimaxoló → Battery → Unrestricted). Exact names differ by phone brand.
+- If reminders arrive late or not at all: exclude Kvíz-maxoló from battery optimisation (Android settings → Apps → Kvíz-maxoló → Battery → Unrestricted). Exact names differ by phone brand.
 
 ## 6. Answering in the notification (optional)
 
