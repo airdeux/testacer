@@ -1,5 +1,6 @@
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -19,6 +20,9 @@ import 'src/settings/firestore_user_settings_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // Sign-in link, verification and password reset e-mails in Hungarian
+  // (D-010); the app name in them is the project's public-facing name.
+  await FirebaseAuth.instance.setLanguageCode('hu');
   // Offline cache on the web too (Android has it by default): questions and
   // progress stay available, and answers sync when the connection returns.
   FirebaseFirestore.instance.settings = const Settings(persistenceEnabled: true);

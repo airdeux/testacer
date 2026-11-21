@@ -84,7 +84,8 @@ Copy the **SHA1** and **SHA256** values to Firebase console → Project settings
    ```
 
    Check: https://testacer-892b3.firebaseapp.com/.well-known/assetlinks.json shows the file.
-4. **Try it:** `flutter run -d chrome` and `flutter run -d <android-device>`; sign in all three ways (see the QA log's release checklist).
+4. **E-mail texts:** Firebase console → ⚙ **Project settings → General → Public-facing name**: `Test Acer` (it replaces „project-386828959446” in the sign-in e-mails). Optionally **Authentication → Templates**: for each template, ✏ → **Sender name**: `Test Acer`. The app asks Firebase for Hungarian e-mails (`setLanguageCode('hu')` in `lib/main.dart`).
+5. **Try it:** `flutter run -d chrome` and `flutter run -d <android-device>`; sign in all three ways (see the QA log's release checklist).
 
 ## 6. Web deploy to GitHub Pages (Phase 4)
 
