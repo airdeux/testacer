@@ -4,6 +4,7 @@ import 'auth/email_link_controller.dart';
 import 'import/file_picker_service.dart';
 import 'questions/question_set_repository.dart';
 import 'quiz/progress_repository.dart';
+import 'reminders/reminder_service.dart';
 import 'settings/user_settings.dart';
 
 /// Everything the screens use, created in main.dart (Firebase) or in the
@@ -17,6 +18,7 @@ class AppServices {
     required this.progress,
     required this.settings,
     required this.filePicker,
+    required this.reminders,
   });
 
   final AuthService auth;
@@ -26,4 +28,7 @@ class AppServices {
   final ProgressRepository progress;
   final UserSettingsRepository settings;
   final FilePickerService filePicker;
+
+  /// Android reminders; [NoReminders] on the web.
+  final Reminders reminders;
 }

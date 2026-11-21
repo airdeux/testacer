@@ -15,6 +15,7 @@ import 'src/auth/url_cleaner.dart';
 import 'src/import/file_picker_service.dart';
 import 'src/questions/firestore_question_set_repository.dart';
 import 'src/quiz/firestore_progress_repository.dart';
+import 'src/reminders/reminder_setup.dart';
 import 'src/settings/firestore_user_settings_repository.dart';
 
 Future<void> main() async {
@@ -36,16 +37,25 @@ Future<void> main() async {
     onSignInLink: removeQueryFromUrl,
   )..start();
 
+  final questionSets = FirestoreQuestionSetRepository();
+  final progress = FirestoreProgressRepository();
+  // Android only; also picks up the reminder whose tap started the app.
+  final reminders = await startReminders(
+    questionSets: questionSets,
+    progress: progress,
+  );
+
   runApp(
     TestAcerApp(
       services: AppServices(
         auth: auth,
         access: FirestoreAccessRepository(),
         emailLinks: emailLinks,
-        questionSets: FirestoreQuestionSetRepository(),
-        progress: FirestoreProgressRepository(),
+        questionSets: questionSets,
+        progress: progress,
         settings: FirestoreUserSettingsRepository(),
         filePicker: PlatformFilePickerService(),
+        reminders: reminders,
       ),
     ),
   );

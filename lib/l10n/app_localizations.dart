@@ -795,6 +795,228 @@ abstract class AppLocalizations {
   /// In hu, this message translates to:
   /// **'… és még {count}'**
   String importMoreIssues(int count);
+
+  /// No description provided for @remindersTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Emlékeztetők'**
+  String get remindersTitle;
+
+  /// No description provided for @remindersEnable.
+  ///
+  /// In hu, this message translates to:
+  /// **'Emlékeztetők bekapcsolása'**
+  String get remindersEnable;
+
+  /// No description provided for @remindersEnableHint.
+  ///
+  /// In hu, this message translates to:
+  /// **'A telefon a beállított időablakokban kérdést küld; koppints rá, és válaszolj.'**
+  String get remindersEnableHint;
+
+  /// No description provided for @remindersTimeZoneNote.
+  ///
+  /// In hu, this message translates to:
+  /// **'Az időpontok magyar idő szerint értendők.'**
+  String get remindersTimeZoneNote;
+
+  /// No description provided for @remindersWindowTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'{number}. időablak'**
+  String remindersWindowTitle(int number);
+
+  /// No description provided for @remindersDays.
+  ///
+  /// In hu, this message translates to:
+  /// **'Napok'**
+  String get remindersDays;
+
+  /// No description provided for @dayShort1.
+  ///
+  /// In hu, this message translates to:
+  /// **'H'**
+  String get dayShort1;
+
+  /// No description provided for @dayShort2.
+  ///
+  /// In hu, this message translates to:
+  /// **'K'**
+  String get dayShort2;
+
+  /// No description provided for @dayShort3.
+  ///
+  /// In hu, this message translates to:
+  /// **'Sze'**
+  String get dayShort3;
+
+  /// No description provided for @dayShort4.
+  ///
+  /// In hu, this message translates to:
+  /// **'Cs'**
+  String get dayShort4;
+
+  /// No description provided for @dayShort5.
+  ///
+  /// In hu, this message translates to:
+  /// **'P'**
+  String get dayShort5;
+
+  /// No description provided for @dayShort6.
+  ///
+  /// In hu, this message translates to:
+  /// **'Szo'**
+  String get dayShort6;
+
+  /// No description provided for @dayShort7.
+  ///
+  /// In hu, this message translates to:
+  /// **'V'**
+  String get dayShort7;
+
+  /// No description provided for @remindersFrom.
+  ///
+  /// In hu, this message translates to:
+  /// **'Első'**
+  String get remindersFrom;
+
+  /// No description provided for @remindersTo.
+  ///
+  /// In hu, this message translates to:
+  /// **'Utolsó'**
+  String get remindersTo;
+
+  /// No description provided for @remindersEvery.
+  ///
+  /// In hu, this message translates to:
+  /// **'Gyakoriság'**
+  String get remindersEvery;
+
+  /// No description provided for @everyMinutes.
+  ///
+  /// In hu, this message translates to:
+  /// **'{minutes} percenként'**
+  String everyMinutes(int minutes);
+
+  /// No description provided for @everyHour.
+  ///
+  /// In hu, this message translates to:
+  /// **'óránként'**
+  String get everyHour;
+
+  /// No description provided for @everyHours.
+  ///
+  /// In hu, this message translates to:
+  /// **'{hours} óránként'**
+  String everyHours(int hours);
+
+  /// No description provided for @remindersPerDay.
+  ///
+  /// In hu, this message translates to:
+  /// **'Naponta {count} emlékeztető'**
+  String remindersPerDay(int count);
+
+  /// No description provided for @remindersAddWindow.
+  ///
+  /// In hu, this message translates to:
+  /// **'Időablak hozzáadása'**
+  String get remindersAddWindow;
+
+  /// No description provided for @remindersRemoveWindow.
+  ///
+  /// In hu, this message translates to:
+  /// **'Időablak törlése'**
+  String get remindersRemoveWindow;
+
+  /// No description provided for @remindersEndBeforeStart.
+  ///
+  /// In hu, this message translates to:
+  /// **'Az utolsó időpont nem lehet korábbi az elsőnél.'**
+  String get remindersEndBeforeStart;
+
+  /// No description provided for @remindersNoDays.
+  ///
+  /// In hu, this message translates to:
+  /// **'Válassz legalább egy napot.'**
+  String get remindersNoDays;
+
+  /// No description provided for @saveButton.
+  ///
+  /// In hu, this message translates to:
+  /// **'Mentés'**
+  String get saveButton;
+
+  /// No description provided for @remindersSaved.
+  ///
+  /// In hu, this message translates to:
+  /// **'Elmentve – az emlékeztetők ütemezése frissül.'**
+  String get remindersSaved;
+
+  /// No description provided for @remindersTest.
+  ///
+  /// In hu, this message translates to:
+  /// **'Próbaértesítés küldése'**
+  String get remindersTest;
+
+  /// No description provided for @remindersTestSent.
+  ///
+  /// In hu, this message translates to:
+  /// **'Elküldve – nézd meg az értesítéseket.'**
+  String get remindersTestSent;
+
+  /// No description provided for @remindersTestFailed.
+  ///
+  /// In hu, this message translates to:
+  /// **'Nem sikerült értesítést küldeni.'**
+  String get remindersTestFailed;
+
+  /// No description provided for @remindersPermissionDenied.
+  ///
+  /// In hu, this message translates to:
+  /// **'Az értesítések le vannak tiltva. Engedélyezd őket a telefon beállításaiban: Alkalmazások → {app} → Értesítések.'**
+  String remindersPermissionDenied(String app);
+
+  /// No description provided for @remindersBatteryHint.
+  ///
+  /// In hu, this message translates to:
+  /// **'Ha az emlékeztetők késnek vagy elmaradnak: Beállítások → Alkalmazások → {app} → Akkumulátor → Nem korlátozott. A menük neve telefononként eltérhet.'**
+  String remindersBatteryHint(String app);
+
+  /// Title of a reminder notification.
+  ///
+  /// In hu, this message translates to:
+  /// **'Jöhet egy kérdés?'**
+  String get reminderTitle;
+
+  /// No description provided for @reminderBodySubject.
+  ///
+  /// In hu, this message translates to:
+  /// **'Téma: {subject} – koppints, és válaszolj!'**
+  String reminderBodySubject(String subject);
+
+  /// No description provided for @reminderBodyPlain.
+  ///
+  /// In hu, this message translates to:
+  /// **'Koppints, és válaszolj egy kérdésre!'**
+  String get reminderBodyPlain;
+
+  /// Android notification channel name.
+  ///
+  /// In hu, this message translates to:
+  /// **'Emlékeztetők'**
+  String get reminderChannelName;
+
+  /// No description provided for @reminderChannelDescription.
+  ///
+  /// In hu, this message translates to:
+  /// **'Gyakorló kérdések a beállított időablakokban'**
+  String get reminderChannelDescription;
+
+  /// No description provided for @reminderSetMissing.
+  ///
+  /// In hu, this message translates to:
+  /// **'Ez a kérdéssor már nem érhető el.'**
+  String get reminderSetMissing;
 }
 
 class _AppLocalizationsDelegate

@@ -33,6 +33,31 @@ void main() {
         clock: () => at,
       );
 
+  test('a reminder quiz starts with its question unless it is skippable', () {
+    final key = questions[7].key;
+    final quiz = QuizSession(
+      questions: questions,
+      progress: const {},
+      length: QuizLength.endless,
+      firstKey: key,
+      random: Random(1),
+    );
+    expect(quiz.next(), isTrue);
+    expect(quiz.current!.question.key, key);
+    expect(quiz.next(), isTrue);
+    expect(quiz.current!.question.key, isNot(key));
+
+    final skipped = QuizSession(
+      questions: questions,
+      progress: {key: const ItemProgress(skippable: true)},
+      length: QuizLength.endless,
+      firstKey: key,
+      random: Random(1),
+    );
+    skipped.next();
+    expect(skipped.current!.question.key, isNot(key));
+  });
+
   test('a 10-question quiz asks 10 different questions, then ends', () {
     final quiz = session(QuizLength.ten);
     final seen = <String>{};

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../quiz/quiz_length.dart';
+import '../reminders/reminder_settings.dart';
 import 'user_settings.dart';
 
 class FirestoreUserSettingsRepository implements UserSettingsRepository {
@@ -19,13 +20,23 @@ class FirestoreUserSettingsRepository implements UserSettingsRepository {
         return UserSettings(
           activeSetId: data['activeSetId'] as String?,
           quizLength: QuizLength.fromName(settings['quizLength']),
+          reminders: ReminderSettings.fromMap(settings['notifications']),
         );
       });
 
   @override
-  Future<void> update(String uid, {String? activeSetId, QuizLength? quizLength}) =>
+  Future<void> update(
+    String uid, {
+    String? activeSetId,
+    QuizLength? quizLength,
+    ReminderSettings? reminders,
+  }) =>
       _doc(uid).set({
         'activeSetId': ?activeSetId,
-        if (quizLength != null) 'settings': {'quizLength': quizLength.name},
+        if (quizLength != null || reminders != null)
+          'settings': {
+            'quizLength': ?quizLength?.name,
+            'notifications': ?reminders?.toMap(),
+          },
       }, SetOptions(merge: true));
 }

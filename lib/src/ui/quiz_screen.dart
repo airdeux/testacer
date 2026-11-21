@@ -25,6 +25,7 @@ class QuizScreen extends StatefulWidget {
     required this.user,
     required this.questionSet,
     required this.length,
+    this.startKey,
     this.random,
   });
 
@@ -32,6 +33,9 @@ class QuizScreen extends StatefulWidget {
   final AppUser user;
   final QuestionSetInfo questionSet;
   final QuizLength length;
+
+  /// The question to start with (from a tapped reminder).
+  final String? startKey;
 
   /// Fixed in tests for predictable shuffling.
   final Random? random;
@@ -67,6 +71,7 @@ class _QuizScreenState extends State<QuizScreen> {
         questions: questions,
         progress: progress,
         length: widget.length,
+        firstKey: widget.startKey,
         random: widget.random,
       );
       if (!mounted) return;

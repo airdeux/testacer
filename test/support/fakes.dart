@@ -16,6 +16,9 @@ import 'package:testacer/src/questions/question_set_repository.dart';
 import 'package:testacer/src/quiz/progress.dart';
 import 'package:testacer/src/quiz/progress_repository.dart';
 import 'package:testacer/src/quiz/quiz_length.dart';
+import 'package:testacer/src/reminders/reminder_notifications.dart';
+import 'package:testacer/src/reminders/reminder_service.dart';
+import 'package:testacer/src/reminders/reminder_settings.dart';
 import 'package:testacer/src/settings/user_settings.dart';
 
 /// Hungarian texts, for finding widgets by their label.
@@ -214,11 +217,17 @@ class FakeUserSettingsRepository implements UserSettingsRepository {
   Stream<UserSettings> watch(String uid) => settings.stream;
 
   @override
-  Future<void> update(String uid, {String? activeSetId, QuizLength? quizLength}) async {
+  Future<void> update(
+    String uid, {
+    String? activeSetId,
+    QuizLength? quizLength,
+    ReminderSettings? reminders,
+  }) async {
     final current = settings.value;
     settings.value = UserSettings(
       activeSetId: activeSetId ?? current.activeSetId,
       quizLength: quizLength ?? current.quizLength,
+      reminders: reminders ?? current.reminders,
     );
   }
 }
@@ -234,6 +243,84 @@ class FakeFilePicker implements FilePickerService {
   }
 }
 
+/// Records what the screens ask of the reminders.
+class FakeReminders implements Reminders {
+  @override
+  bool supported = true;
+
+  @override
+  final launches = ReminderLaunches();
+
+  final syncs = <(String setId, ReminderSettings settings)>[];
+  int tests = 0;
+  int clears = 0;
+  bool permission = true;
+  bool enabled = true;
+
+  @override
+  Future<void> sync({
+    required String uid,
+    required QuestionSetInfo set,
+    required ReminderSettings settings,
+  }) async =>
+      syncs.add((set.id, settings));
+
+  @override
+  Future<void> replanFromStore() async {}
+
+  @override
+  Future<bool> sendTest({
+    required String uid,
+    required QuestionSetInfo set,
+  }) async {
+    tests++;
+    return true;
+  }
+
+  @override
+  Future<bool> requestPermission() async => enabled = permission;
+
+  @override
+  Future<bool> notificationsEnabled() async => enabled;
+
+  @override
+  Future<void> clear() async => clears++;
+}
+
+/// Records scheduled and shown notifications.
+class FakeReminderNotifications implements ReminderNotifications {
+  final scheduled = <ReminderNotice>[];
+  final shown = <ReminderNotice>[];
+  ReminderLaunch? launch;
+  void Function(ReminderLaunch)? onTap;
+
+  @override
+  Future<void> initialize({void Function(ReminderLaunch launch)? onTap}) async =>
+      this.onTap = onTap;
+
+  @override
+  Future<ReminderLaunch?> launchedBy() async => launch;
+
+  @override
+  Future<bool> requestPermission() async => true;
+
+  @override
+  Future<bool> areEnabled() async => true;
+
+  @override
+  Future<void> schedule(List<ReminderNotice> notices) async {
+    scheduled
+      ..clear()
+      ..addAll(notices);
+  }
+
+  @override
+  Future<void> cancelScheduled() async => scheduled.clear();
+
+  @override
+  Future<void> showNow(ReminderNotice notice) async => shown.add(notice);
+}
+
 /// All fakes, plus the [AppServices] made of them.
 class TestServices {
   final auth = FakeAuthService();
@@ -243,6 +330,7 @@ class TestServices {
   final progress = FakeProgressRepository();
   final settings = FakeUserSettingsRepository();
   final filePicker = FakeFilePicker();
+  final reminders = FakeReminders();
 
   late final AppServices services = AppServices(
     auth: auth,
@@ -256,6 +344,7 @@ class TestServices {
     progress: progress,
     settings: settings,
     filePicker: filePicker,
+    reminders: reminders,
   );
 }
 

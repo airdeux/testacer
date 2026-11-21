@@ -1,6 +1,6 @@
 # Plan and tasks – TestAcer
 
-_Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https://airdeux.github.io/testacer/; waiting for the owner's browser checks and the first invitations_
+_Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https://airdeux.github.io/testacer/, owner checks pending · Phase 5 (Android reminders) built, waiting for the owner's device test_
 
 ## Owner's answers (2026-11-21)
 
@@ -87,12 +87,15 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 
 ## Phase 5 – Android reminders → M2
 
-- [ ] Notification settings: windows (days, start, end, interval), mode (open / true-false), "send a test notification now"
-- [ ] Planner: next 48 slots in Europe/Budapest, pre-picked questions, `zonedSchedule` (inexact, allow while idle); unit tests incl. daylight-saving changes
-- [ ] Refill triggers: app start, settings change, notification interaction, daily `workmanager` job, reboot, time-zone change
-- [ ] Notification tap → deep link into the quick quiz starting with that question
-- [ ] Permission flow (Android 13+) and a hint about battery optimisation
-- [ ] Signed release APK; distribute via Firebase App Distribution (or a direct APK)
+- [x] Notification settings: on/off, windows (days, first/last time, interval 15 min – 4 h), "send a test notification now"; synced in `users/{uid}.settings.notifications` (the mode choice comes with Phase 6) – 2026-11-21
+- [x] Planner: next 48 slots in Europe/Budapest, pre-picked questions, `zonedSchedule` (inexact, allow while idle); unit tests incl. daylight-saving changes – 2026-11-21
+- [x] Refill triggers: home page, set or settings change, after each quiz, `workmanager` job every 12 h (from a snapshot on the phone), reboot and app update (plugin's boot receiver); sign-out cancels; time-zone change not needed (fixed zone) – 2026-11-21
+- [x] Notification tap → endless quick quiz starting with that question (also when the tap starts the app) – 2026-11-21
+- [x] Permission flow (Android 13+) and a hint about battery optimisation – 2026-11-21
+- [x] Release signing config (`android/key.properties`, falls back to the debug key) and distribution steps (docs/setup.md § 7) – 2026-11-21
+- [ ] Owner: try reminders on the phone (debug build, docs/setup.md § 7.1)
+- [ ] Owner: release key, fingerprints to Firebase, SHA-256 to Claude for `assetlinks.json` (§ 7.2)
+- [ ] Owner: release APK to the first testers via Firebase App Distribution (§ 7.3)
 
 ## Phase 6 – Answering in the notification → M3
 

@@ -13,6 +13,7 @@ import 'invitations_screen.dart';
 import 'messages.dart';
 import 'progress_screen.dart';
 import 'quiz_screen.dart';
+import 'reminder_settings_screen.dart';
 
 /// Start page: choose the question set and quiz length, start practising,
 /// see progress. Admins also import sets and manage invitations.
@@ -58,7 +59,11 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             tooltip: l10n.signOut,
             icon: const Icon(Icons.logout),
-            onPressed: services.auth.signOut,
+            onPressed: () async {
+              // Reminders belong to the signed-in user.
+              await services.reminders.clear();
+              await services.auth.signOut();
+            },
           ),
         ],
       ),
@@ -100,6 +105,88 @@ class _PracticePanelState extends State<_PracticePanel> {
   late final Stream<UserSettings> _settings =
       widget.services.settings.watch(widget.user.uid);
 
+  /// Latest data, for re-planning reminders and opening tapped ones.
+  List<QuestionSetInfo>? _latestSets;
+  QuestionSetInfo? _active;
+  UserSettings? _current;
+  Object? _syncedFor;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.services.reminders.launches.addListener(_openLaunch);
+  }
+
+  @override
+  void dispose() {
+    widget.services.reminders.launches.removeListener(_openLaunch);
+    super.dispose();
+  }
+
+  /// Re-plans the reminders when the set or the reminder settings changed,
+  /// or always when [force] (progress may have changed).
+  void _syncReminders({bool force = false}) {
+    final active = _active;
+    final settings = _current;
+    final reminders = widget.services.reminders;
+    if (active == null || settings == null || !reminders.supported) return;
+    final key = (active.id, active.importedAt, settings.reminders);
+    if (!force && key == _syncedFor) return;
+    _syncedFor = key;
+    reminders.sync(
+      uid: widget.user.uid,
+      set: active,
+      settings: settings.reminders,
+    );
+  }
+
+  /// Opens the quick quiz of a tapped reminder, once the sets are loaded.
+  void _openLaunch() {
+    final sets = _latestSets;
+    if (sets == null || !mounted) return;
+    final launch = widget.services.reminders.launches.take();
+    if (launch == null) return;
+    final set = sets.where((set) => set.id == launch.setId).firstOrNull;
+    if (set == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).reminderSetMissing)),
+      );
+      return;
+    }
+    _openQuiz(set, QuizLength.endless, startKey: launch.key);
+  }
+
+  void _openQuiz(QuestionSetInfo set, QuizLength length, {String? startKey}) {
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute<void>(
+            builder: (_) => QuizScreen(
+              services: widget.services,
+              user: widget.user,
+              questionSet: set,
+              length: length,
+              startKey: startKey,
+            ),
+          ),
+        )
+        .then((_) => _syncReminders(force: true));
+  }
+
+  void _afterBuild(
+    List<QuestionSetInfo> sets,
+    QuestionSetInfo active,
+    UserSettings settings,
+  ) {
+    _latestSets = sets;
+    _active = active;
+    _current = settings;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _syncReminders();
+      if (widget.services.reminders.launches.pending != null) _openLaunch();
+    });
+  }
+
   void _update({String? activeSetId, QuizLength? quizLength}) =>
       widget.services.settings.update(
         widget.user.uid,
@@ -135,6 +222,7 @@ class _PracticePanelState extends State<_PracticePanel> {
               (set) => set.id == settings.activeSetId,
               orElse: () => sets.first,
             );
+            if (settingsSnapshot.hasData) _afterBuild(sets, active, settings);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -189,15 +277,7 @@ class _PracticePanelState extends State<_PracticePanel> {
                 ),
                 const SizedBox(height: 20),
                 FilledButton.icon(
-                  onPressed: () => widget.open(
-                    context,
-                    QuizScreen(
-                      services: widget.services,
-                      user: widget.user,
-                      questionSet: active,
-                      length: settings.quizLength,
-                    ),
-                  ),
+                  onPressed: () => _openQuiz(active, settings.quizLength),
                   icon: const Icon(Icons.play_arrow),
                   label: Text(l10n.startQuiz),
                 ),
@@ -214,6 +294,22 @@ class _PracticePanelState extends State<_PracticePanel> {
                   icon: const Icon(Icons.insights),
                   label: Text(l10n.progressTitle),
                 ),
+                if (widget.services.reminders.supported) ...[
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: () => widget.open(
+                      context,
+                      ReminderSettingsScreen(
+                        services: widget.services,
+                        user: widget.user,
+                        questionSet: active,
+                        initial: settings.reminders,
+                      ),
+                    ),
+                    icon: const Icon(Icons.notifications_outlined),
+                    label: Text(l10n.remindersTitle),
+                  ),
+                ],
               ],
             );
           },

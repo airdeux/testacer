@@ -408,4 +408,133 @@ class AppLocalizationsHu extends AppLocalizations {
   String importMoreIssues(int count) {
     return '… és még $count';
   }
+
+  @override
+  String get remindersTitle => 'Emlékeztetők';
+
+  @override
+  String get remindersEnable => 'Emlékeztetők bekapcsolása';
+
+  @override
+  String get remindersEnableHint =>
+      'A telefon a beállított időablakokban kérdést küld; koppints rá, és válaszolj.';
+
+  @override
+  String get remindersTimeZoneNote =>
+      'Az időpontok magyar idő szerint értendők.';
+
+  @override
+  String remindersWindowTitle(int number) {
+    return '$number. időablak';
+  }
+
+  @override
+  String get remindersDays => 'Napok';
+
+  @override
+  String get dayShort1 => 'H';
+
+  @override
+  String get dayShort2 => 'K';
+
+  @override
+  String get dayShort3 => 'Sze';
+
+  @override
+  String get dayShort4 => 'Cs';
+
+  @override
+  String get dayShort5 => 'P';
+
+  @override
+  String get dayShort6 => 'Szo';
+
+  @override
+  String get dayShort7 => 'V';
+
+  @override
+  String get remindersFrom => 'Első';
+
+  @override
+  String get remindersTo => 'Utolsó';
+
+  @override
+  String get remindersEvery => 'Gyakoriság';
+
+  @override
+  String everyMinutes(int minutes) {
+    return '$minutes percenként';
+  }
+
+  @override
+  String get everyHour => 'óránként';
+
+  @override
+  String everyHours(int hours) {
+    return '$hours óránként';
+  }
+
+  @override
+  String remindersPerDay(int count) {
+    return 'Naponta $count emlékeztető';
+  }
+
+  @override
+  String get remindersAddWindow => 'Időablak hozzáadása';
+
+  @override
+  String get remindersRemoveWindow => 'Időablak törlése';
+
+  @override
+  String get remindersEndBeforeStart =>
+      'Az utolsó időpont nem lehet korábbi az elsőnél.';
+
+  @override
+  String get remindersNoDays => 'Válassz legalább egy napot.';
+
+  @override
+  String get saveButton => 'Mentés';
+
+  @override
+  String get remindersSaved => 'Elmentve – az emlékeztetők ütemezése frissül.';
+
+  @override
+  String get remindersTest => 'Próbaértesítés küldése';
+
+  @override
+  String get remindersTestSent => 'Elküldve – nézd meg az értesítéseket.';
+
+  @override
+  String get remindersTestFailed => 'Nem sikerült értesítést küldeni.';
+
+  @override
+  String remindersPermissionDenied(String app) {
+    return 'Az értesítések le vannak tiltva. Engedélyezd őket a telefon beállításaiban: Alkalmazások → $app → Értesítések.';
+  }
+
+  @override
+  String remindersBatteryHint(String app) {
+    return 'Ha az emlékeztetők késnek vagy elmaradnak: Beállítások → Alkalmazások → $app → Akkumulátor → Nem korlátozott. A menük neve telefononként eltérhet.';
+  }
+
+  @override
+  String get reminderTitle => 'Jöhet egy kérdés?';
+
+  @override
+  String reminderBodySubject(String subject) {
+    return 'Téma: $subject – koppints, és válaszolj!';
+  }
+
+  @override
+  String get reminderBodyPlain => 'Koppints, és válaszolj egy kérdésre!';
+
+  @override
+  String get reminderChannelName => 'Emlékeztetők';
+
+  @override
+  String get reminderChannelDescription =>
+      'Gyakorló kérdések a beállított időablakokban';
+
+  @override
+  String get reminderSetMissing => 'Ez a kérdéssor már nem érhető el.';
 }

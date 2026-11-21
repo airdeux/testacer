@@ -255,5 +255,97 @@
         "type": "int"
       }
     }
-  }
+  },
+  "remindersTitle": "Emlékeztetők",
+  "remindersEnable": "Emlékeztetők bekapcsolása",
+  "remindersEnableHint": "A telefon a beállított időablakokban kérdést küld; koppints rá, és válaszolj.",
+  "remindersTimeZoneNote": "Az időpontok magyar idő szerint értendők.",
+  "remindersWindowTitle": "{number}. időablak",
+  "@remindersWindowTitle": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "remindersDays": "Napok",
+  "dayShort1": "H",
+  "dayShort2": "K",
+  "dayShort3": "Sze",
+  "dayShort4": "Cs",
+  "dayShort5": "P",
+  "dayShort6": "Szo",
+  "dayShort7": "V",
+  "remindersFrom": "Első",
+  "remindersTo": "Utolsó",
+  "remindersEvery": "Gyakoriság",
+  "everyMinutes": "{minutes} percenként",
+  "@everyMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "everyHour": "óránként",
+  "everyHours": "{hours} óránként",
+  "@everyHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "remindersPerDay": "Naponta {count} emlékeztető",
+  "@remindersPerDay": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remindersAddWindow": "Időablak hozzáadása",
+  "remindersRemoveWindow": "Időablak törlése",
+  "remindersEndBeforeStart": "Az utolsó időpont nem lehet korábbi az elsőnél.",
+  "remindersNoDays": "Válassz legalább egy napot.",
+  "saveButton": "Mentés",
+  "remindersSaved": "Elmentve – az emlékeztetők ütemezése frissül.",
+  "remindersTest": "Próbaértesítés küldése",
+  "remindersTestSent": "Elküldve – nézd meg az értesítéseket.",
+  "remindersTestFailed": "Nem sikerült értesítést küldeni.",
+  "remindersPermissionDenied": "Az értesítések le vannak tiltva. Engedélyezd őket a telefon beállításaiban: Alkalmazások → {app} → Értesítések.",
+  "@remindersPermissionDenied": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "remindersBatteryHint": "Ha az emlékeztetők késnek vagy elmaradnak: Beállítások → Alkalmazások → {app} → Akkumulátor → Nem korlátozott. A menük neve telefononként eltérhet.",
+  "@remindersBatteryHint": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderTitle": "Jöhet egy kérdés?",
+  "@reminderTitle": {
+    "description": "Title of a reminder notification."
+  },
+  "reminderBodySubject": "Téma: {subject} – koppints, és válaszolj!",
+  "@reminderBodySubject": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderBodyPlain": "Koppints, és válaszolj egy kérdésre!",
+  "reminderChannelName": "Emlékeztetők",
+  "@reminderChannelName": {
+    "description": "Android notification channel name."
+  },
+  "reminderChannelDescription": "Gyakorló kérdések a beállított időablakokban",
+  "reminderSetMissing": "Ez a kérdéssor már nem érhető el."
 }

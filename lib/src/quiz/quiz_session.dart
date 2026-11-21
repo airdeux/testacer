@@ -27,6 +27,7 @@ class QuizSession {
     required List<Question> questions,
     required Map<String, ItemProgress> progress,
     required this.length,
+    this.firstKey,
     QuestionPicker? picker,
     Random? random,
     DateTime Function()? clock,
@@ -52,6 +53,10 @@ class QuizSession {
   final Random _random;
   final DateTime Function() _clock;
   final QuizLength length;
+
+  /// Asked first if it exists and is not skippable (the question of a
+  /// tapped reminder).
+  final String? firstKey;
   final _asked = <String>[];
 
   /// Number of questions in this quiz; `null` for an endless quiz.
@@ -77,12 +82,18 @@ class QuizSession {
       current = null;
       return false;
     }
-    final key = _picker.pick(
-      _byKey.keys.toList(),
-      _progress,
-      recent: _asked,
-      exclude: length == QuizLength.endless ? const {} : _asked.toSet(),
-    );
+    final first = firstKey;
+    final key = _asked.isEmpty &&
+            first != null &&
+            _byKey.containsKey(first) &&
+            !(_progress[first]?.skippable ?? false)
+        ? first
+        : _picker.pick(
+            _byKey.keys.toList(),
+            _progress,
+            recent: _asked,
+            exclude: length == QuizLength.endless ? const {} : _asked.toSet(),
+          );
     if (key == null) {
       current = null;
       return false;

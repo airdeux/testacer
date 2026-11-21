@@ -1,4 +1,4 @@
-# Setup – owner's steps (Phases 0–4)
+# Setup – owner's steps (Phases 0–5)
 
 These steps need your computer, your GitHub account or your Google account. Run the commands in **PowerShell** in `C:\Work\misc\judo\TestAcer`, in this order.
 
@@ -71,7 +71,7 @@ keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -alias and
 
 (`keytool` ships with the JDK in Android Studio, e.g. `C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe`.)
 
-Copy the **SHA1** and **SHA256** values to Firebase console → Project settings → Your apps → the Android app → **Add fingerprint**. The release key's fingerprints are added in Phase 5.
+Copy the **SHA1** and **SHA256** values to Firebase console → Project settings → Your apps → the Android app → **Add fingerprint**. The release key's fingerprints are added in § 7.2.
 
 ## 5. Sign-in setup (Phase 2)
 
@@ -107,6 +107,57 @@ How it works:
 - Pushes to other branches and pull requests are tested by CI but not published.
 - GitHub Pages caches files for about 10 minutes; after a deploy, reload the page (Ctrl+F5) if the old version still shows.
 - The Firebase web config in `lib/firebase_options.dart` is public by design; access is protected by the sign-in, the allowlist and the Firestore rules.
+
+## 7. Android reminders and release build (Phase 5)
+
+### 7.1 Try the reminders on your phone (debug build)
+
+1. `flutter pub get`, then `flutter run -d <android-device>`.
+   - The notification plugin needs **Android SDK platform 37**. If Gradle stops with "Failed to find target … android-37", install it in Android Studio → **Settings → Languages & Frameworks → Android SDK → SDK Platforms → Android 17 (API 37)**, then run again.
+2. In the app: **Emlékeztetők** → switch on → allow notifications → **Mentés**. **Próbaértesítés küldése** shows one at once; tapping it opens a quiz with that question.
+3. To see a scheduled one soon, add a window with today's next few minutes as *Első* and *Utolsó* (e.g. 21:40–21:55, every 15 minutes).
+
+### 7.2 Release signing key (once)
+
+Create the key **outside the repository** and keep a backup – updates must be signed with the same key:
+
+```powershell
+mkdir "$env:USERPROFILE\keys"
+keytool -genkeypair -v -keystore "$env:USERPROFILE\keys\testacer-upload.jks" -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
+`keytool` asks for a password and your name; remember the password. Then create `android/key.properties` (git-ignored, never commit it):
+
+```properties
+storePassword=<the password>
+keyPassword=<the password>
+keyAlias=upload
+storeFile=C:/Users/<you>/keys/testacer-upload.jks
+```
+
+Without this file, release builds are signed with the debug key (fine for trying, not for distribution).
+
+**Fingerprints** – show them with:
+
+```powershell
+keytool -list -v -keystore "$env:USERPROFILE\keys\testacer-upload.jks" -alias upload
+```
+
+1. Copy **SHA1** and **SHA256** to Firebase console → Project settings → Your apps → the Android app → **Add fingerprint** (Google sign-in in the release app needs them), then run `flutterfire configure` again (as in § 3) to refresh `google-services.json`.
+2. Send Claude the **SHA256** line: it goes into `firebase/hosting/.well-known/assetlinks.json` next to the debug key, so sign-in links open the release app too. Then `firebase deploy --only hosting`.
+
+### 7.3 Build and distribute
+
+1. Raise the version in `pubspec.yaml` for every release, e.g. `version: 1.0.0+1` → `1.0.1+2` (the number after `+` must grow).
+2. Build: `flutter build apk --release` → `build\app\outputs\flutter-apk\app-release.apk`.
+3. First time only: Firebase console → **App Distribution** → choose the Android app → **Get started**.
+4. Upload and invite testers:
+
+   ```powershell
+   firebase appdistribution:distribute build\app\outputs\flutter-apk\app-release.apk --app 1:386828959446:android:8cbac790d88f4bc9755377 --testers "elso@example.com,masodik@example.com" --release-notes "Emlékeztetők"
+   ```
+
+   Testers get an e-mail; they install the app through the **App Tester** app or the download page, and allow installing from that source when Android asks. Their e-mail addresses must also be invited in the app itself (allowlist).
 
 ## Firestore rules tests (optional, also run by CI)
 

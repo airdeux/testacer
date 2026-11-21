@@ -35,10 +35,12 @@ lib/
    ├─ questions/                  QuestionSetRepository + Firestore codec
    ├─ quiz/                       progress records, Leitner picker, QuizSession,
    │                              ProgressRepository
-   ├─ settings/                   UserSettings (active set, quiz length)
+   ├─ settings/                   UserSettings (active set, quiz length, reminders)
+   ├─ reminders/                  reminder settings, planner, snapshot store,
+   │                              notifications wrapper, service, background job
    ├─ import/                     file picker wrapper
    └─ ui/                         gate, sign-in, status, home, quiz, progress,
-                                  import, invitations screens
+                                  import, invitations, reminder settings screens
 ```
 
 - Services are interfaces (`AuthService`, `AccessRepository`, `EmailLinkStore`); widget tests use fakes from `test/support/fakes.dart`, so no Firebase is needed in `flutter test`.
@@ -57,7 +59,7 @@ users/{uid}/progress/{setId}           { items: { <key>: { box, seen, correct, w
 - `key` – stable hash of the normalised correct-answer text ([question-format.md](question-format.md#question-key)), so re-importing an edited file keeps progress for unchanged questions.
 - `marks[]` – emphasis ranges of the correct answer (`subject`, `differs`); used only in the feedback view.
 - Progress for a whole set is **one document** (149 small entries, roughly 15 KB): one read when a session starts, far below the free daily quota.
-- `settings`: `quizLength` (`one`, `five`, `ten`, `all`, `endless`), later `notifications { enabled, mode: "open" | "trueFalse", windows: [ { days: [1..7], start: "09:00", end: "22:00", everyMinutes: 60 } ] }`.
+- `settings`: `quizLength` (`one`, `five`, `ten`, `all`, `endless`), `notifications { enabled, mode: "open" | "trueFalse", windows: [ { days: [1..7], start: "09:00", end: "22:00", everyMinutes: 60 } ] }` (Monday = 1; `end` is the last reminder of the day; `mode` is used from Phase 6).
 - Progress records store `lastAt` as milliseconds since the epoch (the quiz code stays plain Dart).
 - Writes are not awaited by the UI: offline, Firestore completes a write only after reconnecting, but the local cache (also enabled on the web) already has it.
 
@@ -126,13 +128,17 @@ Example – window: every day 09:00–22:00, every 60 minutes (14 reminders a da
 | Sun 09:00 | #55 |
 | … | … until 48 slots are filled (about 3½ days) |
 
-- **Planner** – computes the next 48 slots from the windows in Europe/Budapest time, picks a question for each with the selection engine (D-006, no repeats among nearby slots), and schedules them with `zonedSchedule` (inexact, allowed while idle).
-- **Re-planning** – cancels the slots that have not been shown yet and plans them again: on every app start, on a settings change, after each answer given in a notification, from a daily background job (`workmanager`), and after a reboot or time-zone change. This keeps the picks fresh: a question answered right in the meantime moves to a higher box, and one marked skippable drops out.
+- **Planner** (`lib/src/reminders/planner.dart`) – computes the next 48 slots from the windows in Europe/Budapest time (`timezone` package; a 09:00 reminder stays at 09:00 local time across daylight-saving changes), picks a question for each with the selection engine (D-006: skippable never, no repeats among the 48 while enough questions are left), and schedules them with `zonedSchedule` (inexact, allowed while idle). Notification id = minutes since the epoch of the slot, so a re-plan never collides with a reminder already on screen.
+- **Re-planning** – cancels the slots that have not been shown yet (`cancelAllPendingNotifications`; shown ones stay) and plans them again: when the home page opens, when the active set or the reminder settings change, after every quiz, after each answer given in a notification (Phase 6), and from a background job every 12 hours (`workmanager`). After a reboot or an app update the plugin's boot receiver restores the scheduled reminders. A time-zone change needs nothing: slots are absolute instants computed in Europe/Budapest. Signing out cancels everything. This keeps the picks fresh: a question answered right in the meantime moves to a higher box, and one marked skippable drops out.
+- **Snapshot on the phone** – the background job runs without Firebase, so each sync stores the active set's questions, the progress and the settings in shared_preferences (`ReminderSnapshot`). Questions are read from Firestore again only when the set changes (its `importedAt`), progress on every sync (one document).
+- **Content** – title „Jöhet egy kérdés?”; text: the question's prompt, otherwise its ***subject*** („Téma: Katame-no-Kata – koppints, és válaszolj!”), so the answer is not given away. Channel „Emlékeztetők”, high importance; status-bar icon `res/drawable/ic_stat_reminder.xml` (kept in release builds by `res/raw/keep.xml`).
+- **Settings** – `users/{uid}.settings.notifications` (synced; each phone plans its own): on/off, windows (days, first and last time, every 15 min – 4 h). Screen: **Emlékeztetők** on the home page (Android only), with a test notification and a battery-optimisation hint.
 - **If the app cannot run for days** (phone off, background job blocked by an aggressive battery saver), reminders continue until the last planned slot and then pause until the app is opened again.
 - **Why 48** – Android limits how many alarms one app may have scheduled (roughly 500); 48 covers several days with a wide margin.
 - **Alternative considered** – wake the app at every slot (`android_alarm_manager_plus`) and pick the question right then. That always uses the latest progress, but it starts the Flutter engine in the background every hour, and battery savers stop such jobs more often. Can be revisited if the rolling schedule is not good enough.
-- **Tap** on the notification body → the app opens the quick quiz (deep link `testacer://quiz?q=<key>`), starting with that question.
-- **Permissions** – `POST_NOTIFICATIONS` (asked at runtime on Android 13+), `RECEIVE_BOOT_COMPLETED`. No exact-alarm permission: it is restricted on recent Android versions and not needed for hourly reminders (a few minutes' delay is acceptable).
+- **Tap** on the notification body → the app opens an endless quick quiz starting with that question. The notification payload is `{"set": <setId>, "q": <key>}`; a tap that starts the app is read with `getNotificationAppLaunchDetails`, one while it runs arrives through the plugin's callback; the home page opens the quiz once the sets are loaded.
+- **Permissions** – `POST_NOTIFICATIONS` (asked when reminders are switched on or a test is sent, Android 13+), `RECEIVE_BOOT_COMPLETED`. No exact-alarm permission: it is restricted on recent Android versions and not needed for hourly reminders (a few minutes' delay is acceptable).
+- **Build requirements** – `flutter_local_notifications` 23 needs core library desugaring and `compileSdk` ≥ 37 (`android/app/build.gradle.kts`).
 
 ### Answering in the notification (mode `trueFalse`, D-005)
 
