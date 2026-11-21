@@ -1,6 +1,6 @@
 # Plan and tasks – TestAcer
 
-_Last updated: 2026-11-21 · Phases 0–2 done · Phase 3 (quiz) built, waiting for the owner's test with the real question set_
+_Last updated: 2026-11-21 · Phases 0–3 done · next: Phase 4 (web deploy)_
 
 ## Owner's answers (2026-11-21)
 
@@ -70,9 +70,9 @@ _Last updated: 2026-11-21 · Phases 0–2 done · Phase 3 (quiz) built, waiting 
 - [x] Quiz length setting: 1 / 5 / 10 / Mind / ∞ – 2026-11-21
 - [x] Progress screen: seen count, accuracy, questions per box, weakest 20, skippable list with undo – 2026-11-21
 - [x] Offline support: Firestore persistence also on the web; each answer is saved at once without waiting for the server – 2026-11-21
-- [ ] Owner: import `gyakorlo_teszt_osszes_valasz.md` in the app, do a 10-question quiz on web and Android, check the progress page
+- [x] Owner: import `gyakorlo_teszt_osszes_valasz.md` in the app, do a 10-question quiz on web and Android, check the progress page – 2026-11-21
 
-**Done when:** a 10-question quiz works on web and Android, progress persists, statistics are correct.
+**Done when:** a 10-question quiz works on web and Android, progress persists, statistics are correct. ✔ 2026-11-21
 
 ## Phase 4 – Web deploy → M1
 
