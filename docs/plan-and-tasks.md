@@ -29,8 +29,9 @@ _Last updated: 2026-11-21 · Current phase: 0 (setup)_
 - [x] `.gitignore` (Flutter defaults + `data/`), `firebase.json`, Firestore rules and indexes, CI workflow (`flutter analyze` + `flutter test`) – prepared 2026-11-21
 - [x] Owner: `flutter create` (Flutter 3.50.1; Android app ID `com.airdeux.testacer`), `flutter pub add crypto`, tests and validator pass – 2026-11-21
 - [x] Owner: public GitHub repository [airdeux/TestAcer](https://github.com/airdeux/TestAcer), first push, CI green – 2026-11-21
-- [ ] Owner: Firebase project (Spark), Email/Password + Google sign-in, Firestore in the EU, first admin in `allowlist` ([setup.md § 3](setup.md#3-firebase-project))
-- [ ] Owner: Firebase CLI, `flutterfire configure`, rules deployed, debug SHA-1/SHA-256 fingerprints ([setup.md § 3–4](setup.md#4-android-fingerprints-for-google-sign-in))
+- [x] Owner: Firebase project `testacer-892b3` (Spark), Email/Password + email link + Google sign-in, Firestore in the EU, first admin in `allowlist` – 2026-11-21
+- [x] Owner: Firebase CLI 15.37.0, `flutterfire configure` (Android + web apps registered), Firestore rules and indexes deployed – 2026-11-21
+- [ ] Owner: debug SHA-1/SHA-256 fingerprints in Firebase ([setup.md § 4](setup.md#4-android-fingerprints-for-google-sign-in))
 
 **Done when:** the empty app runs in Chrome and on an Android device, and CI is green.
 

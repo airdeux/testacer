@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "386828959446",
+    "project_id": "testacer-892b3",
+    "storage_bucket": "testacer-892b3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386828959446:android:8cbac790d88f4bc9755377",
+        "android_client_info": {
+          "package_name": "com.airdeux.testacer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386828959446-3hvfjeu0cmu2lug45g23pejde1f66qci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBV05JtgBsOmnVt5WKkxpDe4HNostHDOfQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386828959446-3hvfjeu0cmu2lug45g23pejde1f66qci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
