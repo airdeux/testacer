@@ -5,7 +5,8 @@
 ## 1. Getting access
 
 - Ask the admin for an invitation (they need your email address).
-- Sign in with **Google**, or with **email + password**. With a password account, open the verification email once before the first sign-in.
+- Sign in with **Google**, with **email + password**, or with an **email link**: type your email address and open the link you receive – on the same phone or browser where you asked for it.
+- With a password account, open the verification email once before the first sign-in.
 - If you see "not invited yet", the admin has not added your email address.
 
 ## 2. Choosing a question set
@@ -52,6 +53,8 @@
 | Google sign-in fails | make sure the email of that Google account is the one you were invited with |
 | No reminders | check notification permission, battery optimisation, and that a reminder window covers the current time |
 | Progress missing on the other device | open the Android app once while online so it can sync |
+| Sign-in link does not arrive | check the spam folder; the sender is a `firebaseapp.com` address |
+| Sign-in link asks for the email again | it was opened on another device or browser; enter the same address, or request a new link on this device |
 
 ## 9. For the admin
 

@@ -11,6 +11,7 @@ _Last updated: 2026-11-21 · Current phase: 0 (setup)_
 5. Notification answering: **Igaz / Hamis**, plus a third button **Összes válasz** that opens the app with a dialog of the 4 single-select options (D-005 Accepted, changed).
 6. iOS: **not in v1** (D-012).
 7. All other recommendations: **accepted** – every decision in [decision-log.md](decision-log.md) is now Accepted.
+8. Email link (passwordless) sign-in: **yes**, as a third method next to email + password and Google (D-013).
 
 ## Milestones
 
@@ -27,7 +28,7 @@ _Last updated: 2026-11-21 · Current phase: 0 (setup)_
 - [x] Confirm the decisions in the decision log (2026-11-21)
 - [x] `.gitignore` (Flutter defaults + `data/`), `firebase.json`, Firestore rules and indexes, CI workflow (`flutter analyze` + `flutter test`) – prepared 2026-11-21
 - [x] Owner: `flutter create` (Flutter 3.50.1; Android app ID `com.airdeux.testacer`), `flutter pub add crypto`, tests and validator pass – 2026-11-21
-- [ ] Owner: public GitHub repository `TestAcer`, first push, CI green ([setup.md § 2](setup.md#2-github-repository))
+- [x] Owner: public GitHub repository [airdeux/TestAcer](https://github.com/airdeux/TestAcer), first push, CI green – 2026-11-21
 - [ ] Owner: Firebase project (Spark), Email/Password + Google sign-in, Firestore in the EU, first admin in `allowlist` ([setup.md § 3](setup.md#3-firebase-project))
 - [ ] Owner: Firebase CLI, `flutterfire configure`, rules deployed, debug SHA-1/SHA-256 fingerprints ([setup.md § 3–4](setup.md#4-android-fingerprints-for-google-sign-in))
 
@@ -47,11 +48,12 @@ _Last updated: 2026-11-21 · Current phase: 0 (setup)_
 ## Phase 2 – Sign-in and access
 
 - [ ] Sign-in screen: email + password (sign-up, sign-in, reset password, email verification) and Google
+- [ ] Email link sign-in (D-013): send the link (`ActionCodeSettings`: web app URL, Android package, `handleCodeInApp`), finish sign-in on the web and in the app; Android App Links intent filter for `<project-id>.firebaseapp.com/__/auth/links`; check whether Firebase Hosting must be initialised for that domain
 - [ ] Allowlist check and a "not invited yet" screen
 - [ ] Firestore rules ([architecture § Security rules](architecture.md#security-rules-sketch)) with emulator tests
 - [ ] Admin: invite by email (writes the allowlist entry)
 
-**Done when:** an invited user can sign in both ways; a non-invited account cannot read anything (rules tests).
+**Done when:** an invited user can sign in all three ways on web and Android; a non-invited account cannot read anything (rules tests).
 
 ## Phase 3 – Quiz (shared UI for web and Android)
 

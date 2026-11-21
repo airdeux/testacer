@@ -17,7 +17,7 @@ A small app that makes short, frequent practice easy: a few questions at a time,
 
 ## Scope – MVP
 
-1. Sign-in with email + password or Google; invite-only.
+1. Sign-in with email + password, email link (passwordless) or Google; invite-only (D-009, D-013).
 2. Import a question set from Markdown ([question-format.md](question-format.md)); re-importing keeps progress.
 3. Quiz on web and Android: shuffled options, feedback after each answer with the emphasized correct answer, "skippable" toggle per question, quiz length setting (1, 5, 10, all, or endless until closed).
 4. Question selection weighted towards questions answered wrong (Leitner boxes, D-006).

@@ -8,7 +8,7 @@ _Status: proposed · 2026-11-21_
 Flutter app (one codebase) ──┬─ web build ──────► GitHub Pages (static files)
                              └─ Android build ──► testers' phones (APK)
         │
-        ├─ Firebase Authentication  (email/password, Google)
+        ├─ Firebase Authentication  (email/password, email link, Google)
         ├─ Cloud Firestore          (question sets, settings, progress; offline cache)
         └─ Android only: flutter_local_notifications + timezone + workmanager
                          (scheduled reminders, notification action buttons)
@@ -51,6 +51,18 @@ match /allowlist/{email}      { allow read: if request.auth.token.email == email
 ```
 
 The Firebase web configuration in the (public) repository is not a secret. Access is controlled by these rules and by the Auth authorised domains.
+
+## Sign-in
+
+| Method | Web | Android | Notes |
+|---|---|---|---|
+| Email + password | ✔ | ✔ | the e-mail must be verified before access |
+| Email link (passwordless, D-013) | ✔ | ✔ | the link returns to the web app URL; on Android it opens the app via App Links on `<project-id>.firebaseapp.com/__/auth/links`; signing in with it verifies the e-mail |
+| Google | ✔ (popup) | ✔ | Android needs the SHA fingerprints in Firebase |
+
+- One account per e-mail address (Firebase's default setting): the methods are alternative ways into the same account.
+- The email link is sent with `ActionCodeSettings`: `url` = the web app address (GitHub Pages), `handleCodeInApp: true`, Android package `com.airdeux.testacer`. The address the link was sent to is kept locally, so a link opened on the same device signs in without asking again.
+- The GitHub Pages domain must be in the Auth authorised domains (also needed for Google sign-in on the web).
 
 ## Quiz flow
 

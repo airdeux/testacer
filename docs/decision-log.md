@@ -2,7 +2,7 @@
 
 Status: **Proposed** (waiting for the owner's OK) · **Accepted** · **Rejected** · **Superseded by D-xxx**.
 Change a status by editing the table and the entry; never delete an entry.
-All decisions D-001 – D-012 were accepted by the owner on 2026-11-21.
+All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 
 | ID | Date | Decision | Status |
 |---|---|---|---|
@@ -18,6 +18,7 @@ All decisions D-001 – D-012 were accepted by the owner on 2026-11-21.
 | D-010 | 2026-11-21 | Hungarian UI and user guide, prepared for translation | Accepted |
 | D-011 | 2026-11-21 | Android distribution via Firebase App Distribution or direct APK | Accepted |
 | D-012 | 2026-11-21 | No iOS app in v1 | Accepted |
+| D-013 | 2026-11-21 | Email link (passwordless) as a third sign-in method | Accepted |
 
 ---
 
@@ -90,3 +91,9 @@ All decisions D-001 – D-012 were accepted by the owner on 2026-11-21.
 ### D-012 – No iOS app in v1
 
 - **Decision (owner, 2026-11-21):** iOS is out of scope for the first version. Flutter keeps it possible later (an iOS build would need an Apple developer account and its own notification permission handling).
+
+### D-013 – Email link sign-in as a third method
+
+- **Context:** the owner enabled "Email link (passwordless sign-in)" in Firebase Authentication and wants it next to email + password and Google.
+- **Decision (owner, 2026-11-21):** the sign-in screen offers Google, email + password, and email link. All three give the same kind of Firebase user, identified by e-mail; the allowlist check is the same.
+- **Consequences:** a link sign-in also verifies the e-mail. On Android the link opens the app through the project's Firebase Hosting domain (`<project-id>.firebaseapp.com`, path `/__/auth/links`), which needs an App Links intent filter and the SHA fingerprints; Firebase Dynamic Links, used for this earlier, shut down in August 2025. The link should be opened on the device where sign-in started, otherwise the app asks for the e-mail again. The sign-in e-mails come from a `firebaseapp.com` address and can land in spam.

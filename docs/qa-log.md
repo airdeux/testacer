@@ -11,7 +11,7 @@
 
 ## Release checklist (run before every release)
 
-- [ ] Sign-in on web and Android: email + password (new account, existing, password reset) and Google
+- [ ] Sign-in on web and Android: email + password (new account, existing, password reset), email link (same device; another device asks for the address), and Google
 - [ ] A non-invited account sees "not invited yet" and cannot read any data
 - [ ] Import of the real question file: 149 questions, no errors
 - [ ] Quiz: options shuffled, no emphasis before answering, emphasis and note in feedback
@@ -30,3 +30,4 @@
 | 2026-11-21 | – | Question format | Format rules checked on the real file with a Python mirror of the parser | Pass | 149 questions, 4 options each, exactly one ✔, 149 unique keys, no unparsed lines or emphasis problems; #3 subject „Yoshi”, differs „fojtasd.”; #15 note found |
 | 2026-11-21 | – | Parser (Dart) | `flutter analyze`, `flutter test`, validator on the real file – on a temporary copy after `flutter create` (Flutter 3.50.1, Dart 3.14.0, Linux) | Pass | analyze: no issues; 17/17 tests (16 parser + the template widget test) after fixing one test fixture (2 options → 4); validator: 149 questions, 149 × 4 options, 0 warnings |
 | 2026-11-21 | – | Project setup (owner, Windows) | `flutter create`, `flutter test`, validator – Flutter 3.50.1 | Pass | 17/17 tests; validator 149 × 4, 0 warnings |
+| 2026-11-21 | – | CI (GitHub Actions) | first push: `flutter analyze`, `flutter test` | Pass | run 44921409780; `data/` confirmed absent from the repository |

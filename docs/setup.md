@@ -44,7 +44,7 @@ GitHub Pages is switched on later, in Phase 4.
 In the console (https://console.firebase.google.com):
 
 1. **Add project** – name `testacer`; Google Analytics is not needed. Stay on the **Spark** (no-cost) plan.
-2. **Build → Authentication → Get started → Sign-in method:** enable **Email/Password** and **Google** (choose your e-mail as the support address).
+2. **Build → Authentication → Get started → Sign-in method:** enable **Email/Password** with **Email link (passwordless sign-in)** switched on (D-013), and **Google** (choose your e-mail as the support address).
 3. **Build → Firestore Database → Create database:** production mode, an **EU location** (e.g. `eur3` or `europe-west1`). The location cannot be changed later.
 4. **Firestore → Data:** start collection `allowlist`, document ID = your e-mail address **in lower case**, fields `role` (string) = `admin`, `invitedAt` (timestamp) = now. This makes you the first admin.
 

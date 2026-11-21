@@ -6,7 +6,7 @@ A small practice-quiz app for exam preparation. First use case: the theory test 
 
 ## Planned features
 
-- Sign in with email + password or a Google account (invite-only, fewer than 10 users at first).
+- Sign in with email + password, an email link (passwordless) or a Google account (invite-only, fewer than 10 users at first).
 - Import a question set from a Markdown file ([format](docs/question-format.md)); the first set is `../gyakorlo_teszt_osszes_valasz.md`.
 - Quiz with shuffled answer options; questions you get wrong come back more often; easy / well-known questions can be marked as skippable.
 - After each answer the correct answer is shown with its emphasis (subject + the words that distinguish it from the wrong answers).
@@ -18,7 +18,7 @@ A small practice-quiz app for exam preparation. First use case: the theory test 
 | Area | Choice | Why (details in the decision log) |
 |---|---|---|
 | App (web + Android) | Flutter | one codebase, native Android build, already known by the team (D-001) |
-| Sign-in | Firebase Authentication (email/password, Google) | no-cost on the Spark plan (D-003) |
+| Sign-in | Firebase Authentication (email/password, email link, Google) | no-cost on the Spark plan (D-003, D-013) |
 | Data | Cloud Firestore | free daily quota is far above what <10 users need; offline cache (D-003) |
 | Reminders | on-device scheduled notifications (`flutter_local_notifications`) | no server and no paid plan needed (D-004) |
 | Web hosting | GitHub Pages, deployed by GitHub Actions | free for public repositories (D-002) |
