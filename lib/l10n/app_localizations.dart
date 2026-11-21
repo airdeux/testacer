@@ -97,7 +97,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In hu, this message translates to:
-  /// **'Test Acer'**
+  /// **'Kvíz-kimaxoló'**
   String get appTitle;
 
   /// No description provided for @signInTitle.
