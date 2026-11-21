@@ -1,0 +1,111 @@
+# Architecture – TestAcer
+
+_Status: proposed · 2026-11-21_
+
+## Components
+
+```
+Flutter app (one codebase) ──┬─ web build ──────► GitHub Pages (static files)
+                             └─ Android build ──► testers' phones (APK)
+        │
+        ├─ Firebase Authentication  (email/password, Google)
+        ├─ Cloud Firestore          (question sets, settings, progress; offline cache)
+        └─ Android only: flutter_local_notifications + timezone + workmanager
+                         (scheduled reminders, notification action buttons)
+```
+
+There is no custom server. Everything runs in the app plus Firebase's managed services, within the no-cost Spark plan.
+
+## Data model (Firestore)
+
+```
+allowlist/{email}                      { invitedAt, role: "admin" | "learner" }
+questionSets/{setId}                   { title, sourceFile, importedAt, version, questionCount }
+questionSets/{setId}/questions/{key}   { order, prompt?, correct: { text, marks[] }, wrong: [ { text, note? } ] }
+users/{uid}                            { displayName, email, activeSetId, settings { … } }
+users/{uid}/progress/{setId}           { items: { <key>: { box, seen, correct, wrong, lastAt, skippable } } }
+```
+
+- `key` – stable hash of the normalised correct-answer text ([question-format.md](question-format.md#question-key)), so re-importing an edited file keeps progress for unchanged questions.
+- `marks[]` – emphasis ranges of the correct answer (`subject`, `differs`); used only in the feedback view.
+- Progress for a whole set is **one document** (149 small entries, roughly 15 KB): one read when a session starts, far below the free daily quota.
+- `settings`: `quizLength`, `notifications { enabled, mode: "open" | "trueFalse", windows: [ { days: [1..7], start: "09:00", end: "22:00", everyMinutes: 60 } ] }`.
+
+## Security rules (sketch)
+
+```
+function invited() {
+  return request.auth != null
+    && (request.auth.token.email_verified || request.auth.token.firebase.sign_in_provider == "google.com")
+    && exists(/databases/$(database)/documents/allowlist/$(request.auth.token.email));
+}
+function admin() {
+  return invited()
+    && get(/databases/$(database)/documents/allowlist/$(request.auth.token.email)).data.role == "admin";
+}
+
+match /questionSets/{rest=**} { allow read: if invited(); allow write: if admin(); }
+match /users/{uid}/{rest=**}  { allow read, write: if invited() && request.auth.uid == uid; }
+match /allowlist/{email}      { allow read: if request.auth.token.email == email || admin();
+                                allow write: if admin(); }
+```
+
+The Firebase web configuration in the (public) repository is not a secret. Access is controlled by these rules and by the Auth authorised domains.
+
+## Quiz flow
+
+1. Load the active set (cache first, then Firestore) and the user's progress document.
+2. Pick the next question (D-006): leave out skippable questions and the last 5 asked; weighted random by Leitner box – box 0 → 8, box 1 → 4, box 2 → 2, box 3 → 1, box 4 → 0.5. Unseen questions start in box 0.
+3. Show the question with the 4 options **shuffled** and **without emphasis** (emphasis would give the answer away, D-007).
+4. After the answer: right/wrong, then the correct answer with emphasis (***subject***, **differs**) and any note. Correct → box + 1 (max 4); wrong → box 0.
+5. "Skippable" toggle on the feedback view; undo from the progress view.
+6. Continue until the chosen quiz length is reached, or until the user closes the quiz (endless mode).
+
+## Reminders (Android)
+
+### Why a rolling schedule
+
+- An Android notification is built completely – title, text, buttons – **at the moment it is scheduled**. When it pops up later, the app does not run; Android just shows what it was given.
+- `flutter_local_notifications` can repeat a notification every day at a fixed time, but then it repeats the **same content**: a daily 09:00 reminder would show the same question every morning.
+- For answering in the notification the question must already be inside the notification, so it has to be chosen in advance.
+
+So the app schedules **one-off notifications, each with its own pre-picked question**, a few days ahead, and re-plans them whenever it gets a chance to run.
+
+Example – window: every day 09:00–22:00, every 60 minutes (14 reminders a day); the plan is made on Saturday at 15:49:
+
+| Slot | Question picked at planning time |
+|---|---|
+| Sat 16:00 | #37 |
+| Sat 17:00 | #102 |
+| … | … |
+| Sat 22:00 | #8 |
+| Sun 09:00 | #55 |
+| … | … until 48 slots are filled (about 3½ days) |
+
+- **Planner** – computes the next 48 slots from the windows in Europe/Budapest time, picks a question for each with the selection engine (D-006, no repeats among nearby slots), and schedules them with `zonedSchedule` (inexact, allowed while idle).
+- **Re-planning** – cancels the slots that have not been shown yet and plans them again: on every app start, on a settings change, after each answer given in a notification, from a daily background job (`workmanager`), and after a reboot or time-zone change. This keeps the picks fresh: a question answered right in the meantime moves to a higher box, and one marked skippable drops out.
+- **If the app cannot run for days** (phone off, background job blocked by an aggressive battery saver), reminders continue until the last planned slot and then pause until the app is opened again.
+- **Why 48** – Android limits how many alarms one app may have scheduled (roughly 500); 48 covers several days with a wide margin.
+- **Alternative considered** – wake the app at every slot (`android_alarm_manager_plus`) and pick the question right then. That always uses the latest progress, but it starts the Flutter engine in the background every hour, and battery savers stop such jobs more often. Can be revisited if the rolling schedule is not good enough.
+- **Tap** on the notification body → the app opens the quick quiz (deep link `testacer://quiz?q=<key>`), starting with that question.
+- **Permissions** – `POST_NOTIFICATIONS` (asked at runtime on Android 13+), `RECEIVE_BOOT_COMPLETED`. No exact-alarm permission: it is restricted on recent Android versions and not needed for hourly reminders (a few minutes' delay is acceptable).
+
+### Answering in the notification (mode `trueFalse`, D-005)
+
+Android shows at most 3 action buttons, so the notification shows **one statement** – either the correct option or a random wrong one – titled "Igaz vagy hamis?", with the buttons **Igaz** / **Hamis** / **Összes válasz**.
+
+- **Igaz / Hamis** – handled in a background isolate, without opening the app: the answer goes into a local queue (shared_preferences or sqlite), the local copy of the progress is updated, the notification is replaced by the result **plus the next statement** (a series until the user dismisses it), and the remaining slots are re-planned. A correctly judged statement counts as a correct answer for its question.
+- **Összes válasz** – the action opens the app (`showsUserInterface: true`) with a dialog: the same question, its 4 options shuffled, single-select. After answering: the usual feedback (emphasis, note, skippable toggle) and the buttons **Bezár** / **Következő**; „Következő” continues as a quick quiz.
+- The queue is synced to Firestore on the next app start (counters are added, `lastAt` takes the later value).
+- The question set is cached on the device, so the background handler never needs the network.
+
+## Web
+
+- `flutter build web --release --base-href /TestAcer/`, deployed by a GitHub Actions workflow to GitHub Pages.
+- Flutter's default hash URLs (`…/TestAcer/#/quiz`) avoid 404 errors on reload, which GitHub Pages cannot rewrite.
+- `<user>.github.io` is added to the Firebase Auth authorised domains; Google sign-in uses a popup.
+- No reminders on the web in the MVP: that would need FCM web push plus a server-side scheduler.
+
+## Later: server-side push (FCM)
+
+Firebase Cloud Messaging itself is no-cost, but scheduled pushes need something that runs on a timer: Cloud Functions (requires the Blaze plan, i.e. a billing account with a payment method) or an external cron job (e.g. a scheduled GitHub Actions workflow, which is not punctual). It is only worth adding for web reminders or for messages to all users ("new question set available").

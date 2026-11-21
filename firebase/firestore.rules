@@ -1,0 +1,56 @@
+rules_version = '2';
+
+// TestAcer – Firestore security rules (see docs/architecture.md § Security rules).
+// Access is invite-only: a user may read data only if allowlist/{their e-mail} exists.
+// Allowlist document IDs must be lower-case e-mail addresses.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userEmail() {
+      return request.auth.token.email.lower();
+    }
+
+    // Password accounts must verify their e-mail first; Google accounts are verified by Google.
+    function verified() {
+      return request.auth.token.email_verified == true
+        || request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+
+    function invited() {
+      return signedIn() && verified()
+        && exists(/databases/$(database)/documents/allowlist/$(userEmail()));
+    }
+
+    function admin() {
+      return invited()
+        && get(/databases/$(database)/documents/allowlist/$(userEmail())).data.role == 'admin';
+    }
+
+    match /allowlist/{email} {
+      allow read: if signedIn() && (userEmail() == email || admin());
+      allow write: if admin();
+    }
+
+    match /questionSets/{setId} {
+      allow read: if invited();
+      allow write: if admin();
+
+      match /questions/{key} {
+        allow read: if invited();
+        allow write: if admin();
+      }
+    }
+
+    match /users/{uid} {
+      allow read, write: if invited() && request.auth.uid == uid;
+
+      match /progress/{setId} {
+        allow read, write: if invited() && request.auth.uid == uid;
+      }
+    }
+  }
+}
