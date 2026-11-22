@@ -218,7 +218,15 @@
     }
   },
   "progressNoWeak": "Még nincs rontott kérdés.",
-  "progressSkippedTitle": "Bébikönnyűnek jelölt kérdések",
+  "progressSkippedRow": "Bébikönnyűnek jelölt",
+  "progressSkippedTitle": "Bébikönnyűnek jelölt kérdések ({count} db)",
+  "@progressSkippedTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "progressNoSkipped": "Nincs bébikönnyűnek jelölt kérdés.",
   "undoSkippable": "Visszavétel",
   "pickFile": "Fájl kiválasztása (.md)",

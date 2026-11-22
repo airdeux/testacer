@@ -350,7 +350,12 @@ class AppLocalizationsHu extends AppLocalizations {
   String get progressNoWeak => 'Még nincs rontott kérdés.';
 
   @override
-  String get progressSkippedTitle => 'Bébikönnyűnek jelölt kérdések';
+  String get progressSkippedRow => 'Bébikönnyűnek jelölt';
+
+  @override
+  String progressSkippedTitle(int count) {
+    return 'Bébikönnyűnek jelölt kérdések ($count db)';
+  }
 
   @override
   String get progressNoSkipped => 'Nincs bébikönnyűnek jelölt kérdés.';

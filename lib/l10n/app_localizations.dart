@@ -694,11 +694,17 @@ abstract class AppLocalizations {
   /// **'Még nincs rontott kérdés.'**
   String get progressNoWeak;
 
+  /// No description provided for @progressSkippedRow.
+  ///
+  /// In hu, this message translates to:
+  /// **'Bébikönnyűnek jelölt'**
+  String get progressSkippedRow;
+
   /// No description provided for @progressSkippedTitle.
   ///
   /// In hu, this message translates to:
-  /// **'Bébikönnyűnek jelölt kérdések'**
-  String get progressSkippedTitle;
+  /// **'Bébikönnyűnek jelölt kérdések ({count} db)'**
+  String progressSkippedTitle(int count);
 
   /// No description provided for @progressNoSkipped.
   ///

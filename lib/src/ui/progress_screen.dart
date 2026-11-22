@@ -109,6 +109,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     count: stats.boxes[box],
                     total: questions.length,
                   ),
+                // Not in any box above, so the rows add up to all questions.
+                _BoxRow(
+                  label: l10n.progressSkippedRow,
+                  count: stats.skipped.length,
+                  total: questions.length,
+                ),
                 const SizedBox(height: 24),
                 Text(l10n.progressWeakTitle, style: theme.textTheme.titleMedium),
                 if (stats.weak.isEmpty)
@@ -128,7 +134,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                   ),
                 const SizedBox(height: 24),
-                Text(l10n.progressSkippedTitle, style: theme.textTheme.titleMedium),
+                Text(
+                  l10n.progressSkippedTitle(stats.skipped.length),
+                  style: theme.textTheme.titleMedium,
+                ),
                 if (stats.skipped.isEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -165,7 +174,16 @@ class _Stats {
   _Stats(List<Question> questions, Map<String, ItemProgress> progress) {
     for (final question in questions) {
       final item = progress[question.key];
-      if (item != null && item.skippable) skipped.add(question);
+      if (item != null && item.skippable) {
+        skipped.add(question);
+        // Counted for „seen” and accuracy, but in no box row.
+        if (item.seen > 0) {
+          seen++;
+          correct += item.correct;
+          answers += item.correct + item.wrong;
+        }
+        continue;
+      }
       if (item == null || item.seen == 0) {
         unseen++;
         continue;
@@ -173,10 +191,8 @@ class _Stats {
       seen++;
       correct += item.correct;
       answers += item.correct + item.wrong;
-      if (!item.skippable) {
-        boxes[item.box]++;
-        if (item.wrong > 0) weak.add(question);
-      }
+      boxes[item.box]++;
+      if (item.wrong > 0) weak.add(question);
     }
     weak.sort((a, b) {
       final pa = progress[a.key]!;
