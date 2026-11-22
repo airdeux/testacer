@@ -324,7 +324,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get progressUnseen => 'Még nem láttad';
 
   @override
-  String get progressBox0 => 'Új vagy legutóbb rontott';
+  String get progressBox0 => 'Legutóbb rontott';
 
   @override
   String get progressBox1 => '1× jó';

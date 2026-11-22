@@ -649,7 +649,7 @@ abstract class AppLocalizations {
   /// No description provided for @progressBox0.
   ///
   /// In hu, this message translates to:
-  /// **'Új vagy legutóbb rontott'**
+  /// **'Legutóbb rontott'**
   String get progressBox0;
 
   /// No description provided for @progressBox1.

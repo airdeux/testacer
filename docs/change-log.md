@@ -22,6 +22,7 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Changed
 
+- 2026-11-23 – Haladás: the row „Új vagy legutóbb rontott” is now „Legutóbb rontott” – new questions are in „Még nem láttad”, so that row only ever held questions whose last answer was wrong.
 - 2026-11-22 – Haladás: new row „Bébikönnyűnek jelölt” under „Hol tartasz” (those questions are in no other row, so the rows add up to all questions); the list title shows the number: „Bébikönnyűnek jelölt kérdések (N db)”.
 - 2026-11-22 – Reminders in „Kvíz megnyitása” mode no longer show the question's subject („Téma: …”): in some questions it gave the answer away (e.g. „dojo”). „Kvíz megnyitása” reminders show only the title „Jöhet egy kérdés?” (plus the question's prompt, if it has one), without „Koppints, és válaszolj egy kérdésre!”.
 - 2026-11-22 – Testers get the Android app through Google Play internal testing instead of Firebase App Distribution (D-014, supersedes D-011): the sideloaded APK triggers Android and Play Protect warnings. Steps in `docs/setup.md` § 7.3; App Distribution stays for the owner's own checks (§ 7.4).
