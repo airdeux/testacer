@@ -47,12 +47,15 @@ TestAcer/
 ├─ test/                    unit + widget tests
 ├─ android/, web/           platform folders (from `flutter create`)
 ├─ firebase/                firestore.rules, firestore.indexes.json, emulator config
-├─ tool/                    dev scripts (e.g. validate a question file)
+├─ tool/                    dev scripts (validate a question file; branding/make_icons.py)
+├─ assets/branding/         app icon sources (SVG) and the Play listing icon
 ├─ .github/workflows/       CI + web deploy to GitHub Pages
 ├─ docs/                    project documents
 ├─ README.md
 └─ USER-GUIDE.md
 ```
+
+**App icon:** a judo belt whose two ends form a check mark, on the app's blue. `assets/branding/icon.svg` is the source; `python3 tool/branding/make_icons.py` (needs `rsvg-convert` and Pillow) regenerates the Android launcher icons (legacy, adaptive, themed), the status-bar icon, the web icons and favicon, and `assets/branding/play-icon-512.png` for the Play listing.
 
 Question files are **not** committed (D-008). Keep them outside the repo or in a git-ignored `data/` folder.
 

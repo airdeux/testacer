@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Status-bar icon of the reminders: a graduation cap (Material "school"),
-     white on transparent as Android requires. -->
+<!-- Status-bar icon of the reminders: the app icon's belt-check mark,
+     white on transparent as Android requires (tool/branding/make_icons.py). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
-    android:viewportHeight="24"
-    android:tint="#FFFFFF">
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M5,13.18v4L12,21l7,-3.82v-4L12,17l-7,-3.82zM12,3L1,9l11,6 9,-4.91V17h2V9L12,3z"/>
+    android:viewportHeight="24">
+    <group android:translateX="9.144" android:translateY="16.953" android:rotation="-135.0">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M-1.867,-1.867h9.777v3.734h-9.777z"/>
+    </group>
+    <group android:translateX="9.144" android:translateY="16.953" android:rotation="-46.6">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M-1.867,-1.867h18.320v3.734h-18.320z"/>
+    </group>
+    <group android:translateX="9.144" android:translateY="16.953" android:rotation="-46.6">
+        <path android:fillColor="#FFFFFFFF" android:pathData="M-2.658,-2.658h5.316v5.316h-5.316z"/>
+    </group>
 </vector>

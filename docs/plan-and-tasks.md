@@ -118,9 +118,9 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 
 - [ ] 1–2 weeks with the testers; record findings in [qa-log.md](qa-log.md)
 - [ ] Fixes; tune weights and default settings
+- [x] App icon instead of the Flutter logo: belt-check mark on blue; Android launcher (legacy, adaptive, themed), status-bar icon, web icons, Play listing icon – 2026-11-22
 - [ ] Accessibility (text scaling, contrast), dark mode
 - [ ] Watch `workmanager_android` for a Built-in Kotlin release (see the 2026-11-22 QA note); if a Flutter upgrade breaks the build first, drop the 12-hour background job – reminders then run about 3 days past the last app open
-- [ ] Optional: smaller downloads with `flutter build apk --release --split-per-abi` (upload the `arm64-v8a` APK)
 - [ ] Version 1.0.0; update [change-log.md](change-log.md)
 
 ## Phase 8 – User guide
