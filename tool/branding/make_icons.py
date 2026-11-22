@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Generates the app icon in every size from one geometry.
 
-The icon: a black judo belt whose two ends form a check mark (a right
-answer), tied at the corner, on the app's blue (seed colour #1F3A93).
+The icon (owner's sketch, 2026-11-22): a slanted „A” – as in TestAcer – drawn
+with three bars. A green check mark (a right answer) and a green–blue cross
+(an X) make the left leg and the crossbar; a red bar is the right leg. White
+background.
 
 Needs `rsvg-convert` (librsvg) and Pillow. Run from the repository root:
 
@@ -25,139 +27,155 @@ from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-BLUE_TOP = '#2A4DB3'
-BLUE_BOTTOM = '#1A317F'
-BLUE = '#1F3A93'
-BELT = '#141414'
-STITCH = '#4A4A4A'
-OUTLINE = '#FFFFFF'
+GREEN = '#3FA34D'
+BLUE = '#1F6FC4'
+RED = '#D9483B'
+BACKGROUND = '#FFFFFF'
 
-# Geometry on a 1024 × 1024 canvas, centred on (512, 512).
-WIDTH = 118          # belt width
-SHORT = (-135.0, 250)  # (angle in degrees, length) of the short end
-LONG = (-46.6, 520)    # the long end
-KNOT = 168           # knot size
-OUTLINE_W = 30       # white rim around belt and knot
-
-
-def _layout(scale=1.0):
-    """Vertex position so that the whole mark is centred."""
-    pts = [(0.0, 0.0)]
-    for angle, length in (SHORT, LONG):
-        a = math.radians(angle)
-        pts.append((math.cos(a) * length, math.sin(a) * length))
-    xs = [p[0] for p in pts]
-    ys = [p[1] for p in pts]
-    cx = (min(xs) + max(xs)) / 2
-    cy = (min(ys) + max(ys)) / 2
-    return 512 - cx * scale, 512 - cy * scale + 18 * scale
+# Geometry of the mark (any units; it is fitted to each canvas).
+WIDTH = 108                 # bar width
+APEX = (760.0, 150.0)       # top of the „A” (centre of the right leg)
+TOP = 118.0                 # flat top of the apex
+BASE = 880.0                # baseline
+FOOT = (230.0, BASE)        # bottom of the left leg
+VERTEX = 0.42               # where the check's corner sits on the left leg
+CROSS_ANGLE = 33.0          # crossbar slope, degrees below horizontal
+SHORT_ARM = 300.0           # the check's short stroke
 
 
-def mark(scale=1.0, *, mono=False, outline=True):
-    """SVG elements of the belt mark, scaled around the centre."""
-    vx, vy = _layout(scale)
-    w = WIDTH * scale
-    k = KNOT * scale
-    ow = OUTLINE_W * scale
-    arms = []
-    for angle, length in (SHORT, LONG):
-        L = length * scale
-        arms.append(
-            f'<g transform="translate({vx:.1f} {vy:.1f}) rotate({angle})">'
-            f'<rect x="{-w / 2:.1f}" y="{-w / 2:.1f}" width="{L + w / 2:.1f}" '
-            f'height="{w:.1f}" rx="{w * 0.08:.1f}"/></g>'
-        )
-    knot_angle = LONG[0]
-    # A bare <rect> (no <g>), so that it can also serve as a clip path.
-    knot = (
-        f'<rect transform="translate({vx:.1f} {vy:.1f}) rotate({knot_angle})" '
-        f'x="{-k / 2:.1f}" y="{-k / 2:.1f}" width="{k:.1f}" '
-        f'height="{k:.1f}" rx="{k * 0.16:.1f}"/>'
+def _bar(start, end, width):
+    """Rectangle from start to end (centre line), as a polygon."""
+    dx, dy = end[0] - start[0], end[1] - start[1]
+    length = math.hypot(dx, dy)
+    nx, ny = -dy / length * width / 2, dx / length * width / 2
+    return [
+        (start[0] + nx, start[1] + ny),
+        (end[0] + nx, end[1] + ny),
+        (end[0] - nx, end[1] - ny),
+        (start[0] - nx, start[1] - ny),
+    ]
+
+
+def _arm(centre, end, width):
+    """A bar from a little behind [centre] to [end], so arms meet cleanly."""
+    dx, dy = end[0] - centre[0], end[1] - centre[1]
+    length = math.hypot(dx, dy)
+    back = (centre[0] - dx / length * width / 2, centre[1] - dy / length * width / 2)
+    return _bar(back, end, width)
+
+
+def _clip(polygon, xmin, ymin, xmax, ymax):
+    """Sutherland–Hodgman clipping to an axis-aligned rectangle."""
+    def clip_edge(points, inside, intersect):
+        out = []
+        for i, current in enumerate(points):
+            previous = points[i - 1]
+            if inside(current):
+                if not inside(previous):
+                    out.append(intersect(previous, current))
+                out.append(current)
+            elif inside(previous):
+                out.append(intersect(previous, current))
+        return out
+
+    def at_x(x):
+        return lambda p, q: (x, p[1] + (q[1] - p[1]) * (x - p[0]) / (q[0] - p[0]))
+
+    def at_y(y):
+        return lambda p, q: (p[0] + (q[0] - p[0]) * (y - p[1]) / (q[1] - p[1]), y)
+
+    points = polygon
+    for inside, intersect in (
+        (lambda p: p[0] >= xmin, at_x(xmin)),
+        (lambda p: p[0] <= xmax, at_x(xmax)),
+        (lambda p: p[1] >= ymin, at_y(ymin)),
+        (lambda p: p[1] <= ymax, at_y(ymax)),
+    ):
+        points = clip_edge(points, inside, intersect)
+        if not points:
+            break
+    return points
+
+
+def mark_shapes():
+    """The mark as (colour, polygon) pairs, bottom layer first."""
+    w = WIDTH
+    leg = (APEX[0] - FOOT[0], APEX[1] - FOOT[1])
+    n = math.hypot(*leg)
+    u = (leg[0] / n, leg[1] / n)
+    vertex = (FOOT[0] + VERTEX * leg[0], FOOT[1] + VERTEX * leg[1])
+    a = math.radians(CROSS_ANGLE)
+    cross_end = (APEX[0], vertex[1] + (APEX[0] - vertex[0]) * math.tan(a))
+    short_end = (vertex[0] - SHORT_ARM * math.cos(a), vertex[1] - SHORT_ARM * math.sin(a))
+    past_apex = (APEX[0] + u[0] * w * 1.5, APEX[1] + u[1] * w * 1.5)
+    past_foot = (FOOT[0] - u[0] * w, FOOT[1] - u[1] * w)
+    right = APEX[0] + w / 2
+    shapes = [
+        (BLUE, _arm(vertex, past_foot, w)),         # left leg, lower part
+        (BLUE, _arm(vertex, cross_end, w)),         # crossbar, right part
+        (RED, _bar((APEX[0], TOP), (APEX[0], BASE), w)),  # right leg
+        (GREEN, _arm(vertex, short_end, w)),        # check: short stroke
+        (GREEN, _arm(vertex, past_apex, w)),        # check: long stroke
+    ]
+    # Flat top at the apex, straight baseline, nothing right of the red leg.
+    return [(c, _clip(p, -1e9, TOP, right, BASE)) for c, p in shapes]
+
+
+def fitted(shapes, size, *, fill=None, radius=None):
+    """Scales and centres the shapes in a size × size canvas: the bounding
+    box's longer side becomes [fill] × size, or every point stays within
+    [radius] × size of the centre (adaptive / maskable safe zones)."""
+    xs = [x for _, p in shapes for x, _ in p]
+    ys = [y for _, p in shapes for _, y in p]
+    cx, cy = (min(xs) + max(xs)) / 2, (min(ys) + max(ys)) / 2
+    if fill is not None:
+        scale = fill * size / max(max(xs) - min(xs), max(ys) - min(ys))
+    else:
+        far = max(math.hypot(x - cx, y - cy) for _, p in shapes for x, y in p)
+        scale = radius * size / far
+    return [
+        (c, [((x - cx) * scale + size / 2, (y - cy) * scale + size / 2) for x, y in p])
+        for c, p in shapes
+    ]
+
+
+def polygons_svg(shapes, colour=None):
+    return ''.join(
+        f'<polygon fill="{colour or c}" points="'
+        + ' '.join(f'{x:.2f},{y:.2f}' for x, y in p)
+        + '"/>'
+        for c, p in shapes
     )
-    stitches = []
-    for angle, length in (SHORT, LONG):
-        L = length * scale
-        for off in (-0.30, -0.10, 0.10, 0.30):
-            y = off * w
-            stitches.append(
-                f'<g transform="translate({vx:.1f} {vy:.1f}) rotate({angle})">'
-                f'<line x1="{k * 0.55:.1f}" y1="{y:.1f}" x2="{L - w * 0.22:.1f}" '
-                f'y2="{y:.1f}"/></g>'
-            )
-    # The wrap across the knot, kept inside it.
-    fold = (
-        f'<g transform="translate({vx:.1f} {vy:.1f}) rotate({knot_angle + 90})">'
-        f'<rect x="{-k:.1f}" y="{-k * 0.17:.1f}" width="{2 * k:.1f}" '
-        f'height="{k * 0.34:.1f}"/></g>'
+
+
+def svg(body, size=1024):
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {size} {size}" '
+        f'width="{size}" height="{size}">{body}</svg>'
     )
-    fold_edges = (
-        f'<g transform="translate({vx:.1f} {vy:.1f}) rotate({knot_angle + 90})">'
-        f'<line x1="{-k:.1f}" y1="{-k * 0.17:.1f}" x2="{k:.1f}" y2="{-k * 0.17:.1f}"/>'
-        f'<line x1="{-k:.1f}" y1="{k * 0.17:.1f}" x2="{k:.1f}" y2="{k * 0.17:.1f}"/></g>'
-    )
-    if mono:
-        # One colour (alpha only): the stitches and the knot's rim are cut out.
-        return (
-            '<defs><mask id="m">'
-            f'<g fill="#fff">{"".join(arms)}</g>'
-            f'<g fill="#000" stroke="#000" stroke-width="{ow * 1.2:.1f}">{knot}</g>'
-            f'<g fill="#fff">{knot}</g>'
-            f'<g stroke="#000" stroke-width="{9 * scale:.1f}" stroke-linecap="round">'
-            f'{"".join(stitches)}</g>'
-            '</mask></defs>'
-            '<rect width="1024" height="1024" fill="#000" mask="url(#m)"/>'
-        )
-    parts = []
-    if outline:
-        parts.append(
-            f'<g fill="{OUTLINE}" stroke="{OUTLINE}" stroke-width="{ow * 2:.1f}" '
-            f'stroke-linejoin="round">{"".join(arms)}</g>'
-        )
-    parts.append(f'<g fill="{BELT}">{"".join(arms)}</g>')
-    parts.append(
-        f'<g stroke="{STITCH}" stroke-width="{8 * scale:.1f}" '
-        f'stroke-linecap="round">{"".join(stitches)}</g>'
-    )
-    parts.append(
-        f'<g fill="{BELT}" stroke="{OUTLINE}" stroke-width="{ow:.1f}" '
-        f'paint-order="stroke">{knot}</g>'
-    )
-    parts.append(
-        f'<defs><clipPath id="knot{int(scale * 100)}">{knot}</clipPath></defs>'
-        f'<g clip-path="url(#knot{int(scale * 100)})">'
-        f'<g fill="#2B2B2B">{fold}</g>'
-        f'<g stroke="{STITCH}" stroke-width="{7 * scale:.1f}">{fold_edges}</g></g>'
-    )
-    return ''.join(parts)
 
 
 def background(rounded):
     rx = ' rx="225"' if rounded else ''
-    return (
-        '<defs><linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">'
-        f'<stop offset="0" stop-color="{BLUE_TOP}"/>'
-        f'<stop offset="1" stop-color="{BLUE_BOTTOM}"/>'
-        '</linearGradient></defs>'
-        f'<rect width="1024" height="1024"{rx} fill="url(#bg)"/>'
-    )
-
-
-def svg(body):
-    return (
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" '
-        f'width="1024" height="1024">{body}</svg>'
-    )
+    return f'<rect width="1024" height="1024"{rx} fill="{BACKGROUND}"/>'
 
 
 # Variants ------------------------------------------------------------------
 
-def full_icon(rounded=True, scale=1.0):
+# Android adaptive icons: 108 dp canvas, content safe within a 66 dp circle.
+ADAPTIVE_RADIUS = 0.30
+# Web maskable icons: content safe within a circle of 80 % of the size.
+MASKABLE_RADIUS = 0.36
+
+
+def full_icon(rounded=True):
     """Square icon (legacy launcher, Play, web): background + mark."""
-    return svg(background(rounded) + mark(scale))
+    return svg(background(rounded) + polygons_svg(fitted(mark_shapes(), 1024, fill=0.68)))
 
 
-# Inside the 66 dp safe circle of the 108 dp adaptive canvas.
-ADAPTIVE_SCALE = 0.74
+def maskable_icon():
+    shapes = fitted(mark_shapes(), 1024, radius=MASKABLE_RADIUS)
+    return svg(background(False) + polygons_svg(shapes))
 
 
 def adaptive_background():
@@ -165,12 +183,13 @@ def adaptive_background():
 
 
 def adaptive_foreground():
-    # 108 dp canvas; keep the mark inside the 66 dp safe circle.
-    return svg(mark(ADAPTIVE_SCALE))
+    return svg(polygons_svg(fitted(mark_shapes(), 1024, radius=ADAPTIVE_RADIUS)))
 
 
 def adaptive_monochrome():
-    return svg(mark(ADAPTIVE_SCALE, mono=True))
+    """Android 13 themed icon: only the alpha counts."""
+    shapes = fitted(mark_shapes(), 1024, radius=ADAPTIVE_RADIUS)
+    return svg(polygons_svg(shapes, colour='#000000'))
 
 
 # Rendering -----------------------------------------------------------------
@@ -204,39 +223,23 @@ DENSITIES = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
 
 def status_bar_icon():
     """24 dp white silhouette for the notification (VectorDrawable)."""
-    s = 24 / 1024
-    scale = 1.35  # fills about 21 of the 24 dp
-    vx, vy = _layout(scale)
-    vy -= 68  # the knot's corners make it look low; centre it optically
-    w = WIDTH * scale * s
-    k = KNOT * scale * s
-    groups = []
-    for angle, length in (SHORT, LONG):
-        L = length * scale * s
-        groups.append(
-            f'    <group android:translateX="{vx * s:.3f}" android:translateY="{vy * s:.3f}" '
-            f'android:rotation="{angle}">\n'
-            f'        <path android:fillColor="#FFFFFFFF" android:pathData="'
-            f'M{-w / 2:.3f},{-w / 2:.3f}h{L + w / 2:.3f}v{w:.3f}h{-(L + w / 2):.3f}z"/>\n'
-            '    </group>\n'
-        )
-    groups.append(
-        f'    <group android:translateX="{vx * s:.3f}" android:translateY="{vy * s:.3f}" '
-        f'android:rotation="{LONG[0]}">\n'
-        f'        <path android:fillColor="#FFFFFFFF" android:pathData="'
-        f'M{-k / 2:.3f},{-k / 2:.3f}h{k:.3f}v{k:.3f}h{-k:.3f}z"/>\n'
-        '    </group>\n'
+    shapes = fitted(mark_shapes(), 24, fill=21 / 24)
+    paths = ''.join(
+        '    <path android:fillColor="#FFFFFFFF" android:pathData="M'
+        + ' L'.join(f'{x:.3f},{y:.3f}' for x, y in p)
+        + ' Z"/>\n'
+        for _, p in shapes
     )
     return (
         '<?xml version="1.0" encoding="utf-8"?>\n'
-        '<!-- Status-bar icon of the reminders: the app icon\'s belt-check mark,\n'
+        '<!-- Status-bar icon of the reminders: the app icon\'s „A” mark,\n'
         '     white on transparent as Android requires (tool/branding/make_icons.py). -->\n'
         '<vector xmlns:android="http://schemas.android.com/apk/res/android"\n'
         '    android:width="24dp"\n'
         '    android:height="24dp"\n'
         '    android:viewportWidth="24"\n'
         '    android:viewportHeight="24">\n'
-        + ''.join(groups)
+        + paths
         + '</vector>\n'
     )
 
@@ -278,8 +281,7 @@ def main():
     # Web: "any" icons rounded; maskable ones full-bleed with a smaller mark.
     for size in (192, 512):
         save(render(full_icon(), size), 'web', 'icons', f'Icon-{size}.png')
-        save(render(full_icon(rounded=False, scale=0.78), size),
-             'web', 'icons', f'Icon-maskable-{size}.png')
+        save(render(maskable_icon(), size), 'web', 'icons', f'Icon-maskable-{size}.png')
     save(render(full_icon(), 32), 'web', 'favicon.png')
 
 

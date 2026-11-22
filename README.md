@@ -55,7 +55,7 @@ TestAcer/
 └─ USER-GUIDE.md
 ```
 
-**App icon:** a judo belt whose two ends form a check mark, on the app's blue. `assets/branding/icon.svg` is the source; `python3 tool/branding/make_icons.py` (needs `rsvg-convert` and Pillow) regenerates the Android launcher icons (legacy, adaptive, themed), the status-bar icon, the web icons and favicon, and `assets/branding/play-icon-512.png` for the Play listing.
+**App icon** (from the owner's sketch): a slanted „A” – as in Test**A**cer – made of three bars on white: a green check mark, a green–blue cross, and a red right leg. `assets/branding/icon.svg` is the source; `python3 tool/branding/make_icons.py` (needs `rsvg-convert` and Pillow) regenerates the Android launcher icons (legacy, adaptive, themed), the status-bar icon, the web icons and favicon, and `assets/branding/play-icon-512.png` for the Play listing.
 
 Question files are **not** committed (D-008). Keep them outside the repo or in a git-ignored `data/` folder.
 

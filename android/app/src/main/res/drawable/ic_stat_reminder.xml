@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Status-bar icon of the reminders: the app icon's belt-check mark,
+<!-- Status-bar icon of the reminders: the app icon's „A” mark,
      white on transparent as Android requires (tool/branding/make_icons.py). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-    <group android:translateX="9.144" android:translateY="16.953" android:rotation="-135.0">
-        <path android:fillColor="#FFFFFFFF" android:pathData="M-1.867,-1.867h9.777v3.734h-9.777z"/>
-    </group>
-    <group android:translateX="9.144" android:translateY="16.953" android:rotation="-46.6">
-        <path android:fillColor="#FFFFFFFF" android:pathData="M-1.867,-1.867h18.320v3.734h-18.320z"/>
-    </group>
-    <group android:translateX="9.144" android:translateY="16.953" android:rotation="-46.6">
-        <path android:fillColor="#FFFFFFFF" android:pathData="M-2.658,-2.658h5.316v5.316h-5.316z"/>
-    </group>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M10.677,11.972 L3.033,22.500 L6.711,22.500 L13.086,13.720 Z"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M8.948,14.488 L18.668,20.800 L20.289,18.304 L10.569,11.992 Z"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M17.990,1.500 L17.990,22.500 L20.967,22.500 L20.967,1.500 Z"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M13.066,13.613 L4.884,8.299 L3.263,10.796 L11.445,16.109 Z"/>
+    <path android:fillColor="#FFFFFFFF" android:pathData="M11.337,16.129 L20.967,2.865 L20.967,1.500 L18.280,1.500 L8.928,14.380 Z"/>
 </vector>
