@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.airdeux.testacer",
       "sha256_cert_fingerprints": [
-        "C7:D4:E5:88:BB:AC:81:C1:D4:E4:5F:C5:EB:DA:6D:0E:A7:08:E3:4B:1B:AE:EA:99:85:18:29:6B:63:65:12:FF"
+        "C7:D4:E5:88:BB:AC:81:C1:D4:E4:5F:C5:EB:DA:6D:0E:A7:08:E3:4B:1B:AE:EA:99:85:18:29:6B:63:65:12:FF",
+        "EC:29:EE:2C:C2:88:EA:2A:89:05:6C:93:46:95:2D:FA:E9:E5:C7:DE:BF:E8:A7:6B:0B:D0:45:E8:A3:F9:22:B8"
       ]
     }
   }

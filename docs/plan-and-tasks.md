@@ -94,7 +94,8 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 - [x] Permission flow (Android 13+) and a hint about battery optimisation – 2026-11-21
 - [x] Release signing config (`android/key.properties`, falls back to the debug key) and distribution steps (docs/setup.md § 7) – 2026-11-21
 - [ ] Owner: try reminders on the phone (debug build, docs/setup.md § 7.1)
-- [ ] Owner: release key, fingerprints to Firebase, SHA-256 to Claude for `assetlinks.json` (§ 7.2)
+- [x] Owner: release key created; its SHA-256 added to `assetlinks.json` by Claude – 2026-11-22
+- [x] Owner: release key's SHA-1 + SHA-256 in Firebase, `flutterfire configure`, `firebase deploy --only hosting` (§ 7.2); checked by Claude: live `assetlinks.json` lists the debug and release SHA-256, `google-services.json` has Android OAuth clients for both SHA-1 – 2026-11-22
 - [ ] Owner: release APK to the first testers via Firebase App Distribution (§ 7.3)
 
 ## Phase 6 – Answering in the notification → M3

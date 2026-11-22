@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "386828959446-6peqiqdmhspfrkqt2dj63ongr9nuikin.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.airdeux.testacer",
+            "certificate_hash": "92f51e6434ce6f4e93ad9492c887009f63acf26c"
+          }
+        },
+        {
           "client_id": "386828959446-3hvfjeu0cmu2lug45g23pejde1f66qci.apps.googleusercontent.com",
           "client_type": 3
         }
