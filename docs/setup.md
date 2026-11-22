@@ -146,18 +146,38 @@ keytool -list -v -keystore "$env:USERPROFILE\keys\testacer-upload.jks" -alias up
 1. Copy **SHA1** and **SHA256** to Firebase console → Project settings → Your apps → the Android app → **Add fingerprint** (Google sign-in in the release app needs them), then run `flutterfire configure` again (as in § 3) to refresh `google-services.json`.
 2. Send Claude the **SHA256** line: it goes into `firebase/hosting/.well-known/assetlinks.json` next to the debug key, so sign-in links open the release app too. Then `firebase deploy --only hosting`.
 
-### 7.3 Build and distribute
+### 7.3 Testers: Google Play internal testing (D-014)
 
-1. Raise the version in `pubspec.yaml` for every release, e.g. `version: 1.0.0+1` → `1.0.1+2` (the number after `+` must grow).
-2. Build: `flutter build apk --release` → `build\app\outputs\flutter-apk\app-release.apk`.
-3. First time only: Firebase console → **App Distribution** → choose the Android app → **Get started**.
-4. Upload and invite testers:
+**Once:**
+
+1. **Developer account:** https://play.google.com/console → sign up with your Google account → **Personal** account → USD 25 one-time fee → identity verification (an ID document; it can take a few days). Internal testing needs no review and no 12-tester / 14-day closed test – that is only for a public release.
+2. **Create the app:** **Create app** → name `Kvíz-maxoló`, default language **Magyar**, **App**, **Free**, accept the declarations. The package name is taken from the first upload (`com.airdeux.testacer`) and cannot change later.
+
+**Every release:**
+
+3. Raise the version in `pubspec.yaml`, e.g. `version: 1.0.0+1` → `1.0.1+2` (the number after `+` must grow with every upload).
+4. Build an app bundle (signed with your upload key from § 7.2): `flutter build appbundle --release` → `build\app\outputs\bundle\release\app-release.aab`.
+5. Play Console → the app → **Test and release → Testing → Internal testing → Create new release** → upload the `.aab` → release notes (Hungarian) → **Next → Save and publish**. Testers get it within minutes.
+
+**After the first upload, before inviting anyone:**
+
+6. **App signing key:** Play re-signs the app with Google's key (Play App Signing). Play Console → **Test and release → App integrity → App signing** → *App signing key certificate*: copy **SHA-1** and **SHA-256** → Firebase console → the Android app → **Add fingerprint** (both), then `flutterfire configure`. Send Claude the SHA-256 for `assetlinks.json`, then `firebase deploy --only hosting`. Without this, Google sign-in fails in the Play version and sign-in links open in the browser.
+7. **Testers:** Internal testing → **Testers** tab → **Create email list** with the Google accounts your testers use on their phones (up to 100) → **Save** → copy the **opt-in link**. Also invite the same addresses in the app (**Meghívások**, the „add people” icon at the top of the start page), so they get in after signing in.
+8. Send the testers the opt-in link: they tap *Become a tester* (the button is in Hungarian on a Hungarian phone), then the link to Google Play, and install the app like any other. Updates come through the Play Store.
+
+The first upload may show a temporary name and listing to testers for up to 48 hours. If an app with the same package name but another signature is on the phone (a debug build, or the App Distribution APK), uninstall it first.
+
+### 7.4 Quick checks for yourself: Firebase App Distribution (optional)
+
+1. Build: `flutter build apk --release` → `build\app\outputs\flutter-apk\app-release.apk`.
+2. First time only: Firebase console → **App Distribution** → choose the Android app → **Get started**.
+3. Upload:
 
    ```powershell
-   firebase appdistribution:distribute build\app\outputs\flutter-apk\app-release.apk --app 1:386828959446:android:8cbac790d88f4bc9755377 --testers "elso@example.com,masodik@example.com" --release-notes "Emlékeztetők"
+   firebase appdistribution:distribute build\app\outputs\flutter-apk\app-release.apk --app 1:386828959446:android:8cbac790d88f4bc9755377 --testers "airdeux@gmail.com" --release-notes "Próba"
    ```
 
-   Testers get an e-mail; they install the app through the **App Tester** app or the download page, and allow installing from that source when Android asks. Their e-mail addresses must also be invited in the app itself (allowlist).
+   Android warns about the download and Google Play Protect blocks the install until you choose **Telepítés mégis** – fine for yourself, but this is why testers use Google Play (D-014).
 
 ## Firestore rules tests (optional, also run by CI)
 

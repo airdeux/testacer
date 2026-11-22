@@ -4,7 +4,7 @@
 
 ## 1. Getting access
 
-- **Web:** open https://airdeux.github.io/testacer/ in any browser (on a phone you can add it to the home screen). **Android:** install the app from the link the admin sends.
+- **Web:** open https://airdeux.github.io/testacer/ in any browser (on a phone you can add it to the home screen). **Android:** open the Google Play invitation link the admin sends, tap *Become a tester* (in Hungarian on a Hungarian phone), then install the app from Google Play. Use the same Google account as on your phone's Play Store.
 - Ask the admin for an invitation (they need your email address).
 - Sign in with **Google**, with **email + password**, or with an **email link**: type your email address and open the link you receive – on the same phone or browser where you asked for it.
 - With a password account, open the verification email once before the first sign-in.
@@ -29,21 +29,21 @@
 
 ## 5. Reminders (Android app)
 
-- Install the app from the link the admin sends (Firebase App Distribution or an APK file).
+- Install the app from Google Play through the invitation link (see 1.); updates arrive through the Play Store.
 - Allow notifications when the app asks.
 - On the start page tap **Emlékeztetők**, switch them on, and set one or more time windows: days, first and last time (e.g. 09:00–22:00) and how often (e.g. óránként). Tap **Mentés**. **Próbaértesítés küldése** shows one at once. Times are Hungarian time.
-- A reminder names the topic of a question; tapping it opens a quiz that starts with that question and goes on until you close it.
+- A reminder („Jöhet egy kérdés?”) does not tell which question it is, so it cannot give the answer away; tapping it opens a quiz that starts with that question and goes on until you close it.
 - The app keeps a few days of reminders scheduled and renews them whenever you open it. If you do not open it for days, reminders continue for about 3 days, then pause until you open it again.
 - The settings are the same on all your phones; each phone schedules its own reminders. Signing out stops them on that phone.
 - If reminders arrive late or not at all: exclude Kvíz-maxoló from battery optimisation (Android settings → Apps → Kvíz-maxoló → Battery → Unrestricted). Exact names differ by phone brand.
 
 ## 6. Answering in the notification (optional)
 
-- In **Emlékeztetők**, choose "answer in the notification".
-- The notification shows one statement. Tap **Igaz** (true) or **Hamis** (false) – the app does not open.
-- The notification then shows the result and the next statement. Dismiss it to stop.
-- **Összes válasz** opens the app with the same question and all 4 answer options; pick one, see the result, then **Bezár** or **Következő** (continues as a short quiz). The skippable switch is here too.
-- Answers given this way are saved on the phone and synced the next time you open the app.
+- In **Emlékeztetők**, under *Az értesítésben*, choose **Igaz / Hamis**, then **Mentés**.
+- The notification („Igaz vagy hamis?”) shows one statement (pull it down to read a long one in full). Tap **Igaz** (true) or **Hamis** (false) – the app does not open.
+- The notification then shows the result („✔ Helyes!” or „✘ Nem jó”, with the correct statement) and the next statement. Answer again, or swipe it away to stop.
+- **Összes válasz** opens the app with the same question and all 4 answer options; pick one, see the result, then **Következő** (continues as a quiz) or ✕ to close. The „Bébikönnyű” switch is here too.
+- Answers given this way are saved on the phone and appear in **Haladás** after you next open the app.
 
 ## 7. Web version
 

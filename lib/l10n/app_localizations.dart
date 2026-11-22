@@ -988,18 +988,6 @@ abstract class AppLocalizations {
   /// **'Jöhet egy kérdés?'**
   String get reminderTitle;
 
-  /// No description provided for @reminderBodySubject.
-  ///
-  /// In hu, this message translates to:
-  /// **'Téma: {subject} – koppints, és válaszolj!'**
-  String reminderBodySubject(String subject);
-
-  /// No description provided for @reminderBodyPlain.
-  ///
-  /// In hu, this message translates to:
-  /// **'Koppints, és válaszolj egy kérdésre!'**
-  String get reminderBodyPlain;
-
   /// Android notification channel name.
   ///
   /// In hu, this message translates to:
@@ -1017,6 +1005,84 @@ abstract class AppLocalizations {
   /// In hu, this message translates to:
   /// **'Ez a kérdéssor már nem érhető el.'**
   String get reminderSetMissing;
+
+  /// No description provided for @remindersMode.
+  ///
+  /// In hu, this message translates to:
+  /// **'Az értesítésben'**
+  String get remindersMode;
+
+  /// No description provided for @remindersModeOpen.
+  ///
+  /// In hu, this message translates to:
+  /// **'Kvíz megnyitása'**
+  String get remindersModeOpen;
+
+  /// No description provided for @remindersModeTrueFalse.
+  ///
+  /// In hu, this message translates to:
+  /// **'Igaz / Hamis'**
+  String get remindersModeTrueFalse;
+
+  /// No description provided for @remindersModeOpenHint.
+  ///
+  /// In hu, this message translates to:
+  /// **'Koppintásra megnyílik egy kvíz egy kérdéssel; az értesítés nem árulja el, melyikkel.'**
+  String get remindersModeOpenHint;
+
+  /// No description provided for @remindersModeTrueFalseHint.
+  ///
+  /// In hu, this message translates to:
+  /// **'Az értesítésben egy állítás jelenik meg: válaszolj az Igaz vagy a Hamis gombbal – az alkalmazás nem nyílik meg –, vagy nézd meg az összes választ.'**
+  String get remindersModeTrueFalseHint;
+
+  /// No description provided for @reminderTrueFalseTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Igaz vagy hamis?'**
+  String get reminderTrueFalseTitle;
+
+  /// Notification button: the statement is true.
+  ///
+  /// In hu, this message translates to:
+  /// **'Igaz'**
+  String get answerTrue;
+
+  /// Notification button: the statement is false.
+  ///
+  /// In hu, this message translates to:
+  /// **'Hamis'**
+  String get answerFalse;
+
+  /// Notification button: open the question with all options.
+  ///
+  /// In hu, this message translates to:
+  /// **'Összes válasz'**
+  String get answerAll;
+
+  /// No description provided for @reminderResultCorrect.
+  ///
+  /// In hu, this message translates to:
+  /// **'✔ Helyes!'**
+  String get reminderResultCorrect;
+
+  /// No description provided for @reminderResultWrong.
+  ///
+  /// In hu, this message translates to:
+  /// **'✘ Nem jó'**
+  String get reminderResultWrong;
+
+  /// No description provided for @reminderCorrectStatement.
+  ///
+  /// In hu, this message translates to:
+  /// **'Helyes: {text}'**
+  String reminderCorrectStatement(String text);
+
+  /// No description provided for @reminderNextStatement.
+  ///
+  /// In hu, this message translates to:
+  /// **'Következő – igaz vagy hamis?\n{text}'**
+  String reminderNextStatement(String text);
 }
 
 class _AppLocalizationsDelegate

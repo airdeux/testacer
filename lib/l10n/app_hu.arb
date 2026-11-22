@@ -333,19 +333,46 @@
   "@reminderTitle": {
     "description": "Title of a reminder notification."
   },
-  "reminderBodySubject": "Téma: {subject} – koppints, és válaszolj!",
-  "@reminderBodySubject": {
-    "placeholders": {
-      "subject": {
-        "type": "String"
-      }
-    }
-  },
-  "reminderBodyPlain": "Koppints, és válaszolj egy kérdésre!",
   "reminderChannelName": "Emlékeztetők",
   "@reminderChannelName": {
     "description": "Android notification channel name."
   },
   "reminderChannelDescription": "Gyakorló kérdések a beállított időablakokban",
-  "reminderSetMissing": "Ez a kérdéssor már nem érhető el."
+  "reminderSetMissing": "Ez a kérdéssor már nem érhető el.",
+  "remindersMode": "Az értesítésben",
+  "remindersModeOpen": "Kvíz megnyitása",
+  "remindersModeTrueFalse": "Igaz / Hamis",
+  "remindersModeOpenHint": "Koppintásra megnyílik egy kvíz egy kérdéssel; az értesítés nem árulja el, melyikkel.",
+  "remindersModeTrueFalseHint": "Az értesítésben egy állítás jelenik meg: válaszolj az Igaz vagy a Hamis gombbal – az alkalmazás nem nyílik meg –, vagy nézd meg az összes választ.",
+  "reminderTrueFalseTitle": "Igaz vagy hamis?",
+  "answerTrue": "Igaz",
+  "@answerTrue": {
+    "description": "Notification button: the statement is true."
+  },
+  "answerFalse": "Hamis",
+  "@answerFalse": {
+    "description": "Notification button: the statement is false."
+  },
+  "answerAll": "Összes válasz",
+  "@answerAll": {
+    "description": "Notification button: open the question with all options."
+  },
+  "reminderResultCorrect": "✔ Helyes!",
+  "reminderResultWrong": "✘ Nem jó",
+  "reminderCorrectStatement": "Helyes: {text}",
+  "@reminderCorrectStatement": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderNextStatement": "Következő – igaz vagy hamis?\n{text}",
+  "@reminderNextStatement": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  }
 }

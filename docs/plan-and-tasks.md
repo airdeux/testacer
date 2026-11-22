@@ -1,6 +1,6 @@
 # Plan and tasks – TestAcer
 
-_Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https://airdeux.github.io/testacer/, owner checks pending · Phase 5 (Android reminders) built, waiting for the owner's device test_
+_Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https://airdeux.github.io/testacer/, owner checks pending · Phase 5 (Android reminders) built, waiting for the owner's device test · Phase 6 (answering in the notification) built, waiting for the device test · Google Play developer account in verification_
 
 ## Owner's answers (2026-11-21)
 
@@ -96,21 +96,31 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 - [ ] Owner: try reminders on the phone (debug build, docs/setup.md § 7.1)
 - [x] Owner: release key created; its SHA-256 added to `assetlinks.json` by Claude – 2026-11-22
 - [x] Owner: release key's SHA-1 + SHA-256 in Firebase, `flutterfire configure`, `firebase deploy --only hosting` (§ 7.2); checked by Claude: live `assetlinks.json` lists the debug and release SHA-256, `google-services.json` has Android OAuth clients for both SHA-1 – 2026-11-22
-- [ ] Owner: release APK to the first testers via Firebase App Distribution (§ 7.3)
+- [x] Owner: release APK 1.0.0 (1) built (54 MB, all ABIs) and distributed via Firebase App Distribution to the owner – 2026-11-22
+- [x] Owner: App Distribution install shows Android and Play Protect warnings → testers get the app from Google Play internal testing instead (D-014) – 2026-11-22
+- [ ] Owner: Google Play developer account (personal, USD 25, identity verification) and the app „Kvíz-maxoló” (docs/setup.md § 7.3)
+- [ ] Owner: first app bundle (`flutter build appbundle --release`) to Internal testing
+- [ ] Owner: app signing key's SHA-1 + SHA-256 to Firebase; SHA-256 to Claude for `assetlinks.json`; Hosting deploy
+- [ ] Owner: install from Play on your phone; check sign-in (Google, e-mail link opens the app) and reminders
+- [ ] Owner: tester e-mail list + opt-in link; invite the same addresses in the app
 
 ## Phase 6 – Answering in the notification → M3
 
-- [ ] True/false mode: statement + **Igaz** / **Hamis** / **Összes válasz** buttons
-- [ ] „Összes válasz”: open the app with a dialog of the same question (4 shuffled, single-select options), feedback with skippable toggle, **Bezár** / **Következő**
-- [ ] Background handler (`@pragma('vm:entry-point')`) for Igaz / Hamis: local answer queue, local progress update, result + next statement, re-plan remaining slots
-- [ ] Sync the queue to Firestore on app start (add counters, keep the later `lastAt`)
-- [ ] Unit tests for the handler logic; manual tests on at least two Android devices (one Android 13+)
+- [x] Mode switch in **Emlékeztetők**: „Kvíz megnyitása” / „Igaz / Hamis” – 2026-11-22
+- [x] True/false mode: statement (correct option or a wrong one, half and half) + **Igaz** / **Hamis** / **Összes válasz** buttons – 2026-11-22
+- [x] „Összes válasz”: opens the app on the quick quiz starting with the same question (4 shuffled, single-select options, feedback with emphasis, note and skippable toggle, **Következő**, ✕ to close) – the quiz page instead of a separate dialog (D-005 note) – 2026-11-22
+- [x] Background handler (`@pragma('vm:entry-point')`) for Igaz / Hamis: local progress update, answer queue, result + next statement in the same notification (quiet), re-plan remaining slots – 2026-11-22
+- [x] Sync the queue to Firestore on the next sync (home page, after a quiz): answers replayed on the stored record, a later `lastAt` kept; re-queued if Firestore cannot be read – 2026-11-22
+- [x] Unit tests for the handler logic (128 tests in all) – 2026-11-22
+- [ ] Owner: manual tests on at least two Android devices (one Android 13+): Igaz / Hamis with the app closed, in the background and open; Összes válasz; answers appear in Haladás after opening the app
 
 ## Phase 7 – Beta and polish → M4
 
 - [ ] 1–2 weeks with the testers; record findings in [qa-log.md](qa-log.md)
 - [ ] Fixes; tune weights and default settings
 - [ ] Accessibility (text scaling, contrast), dark mode
+- [ ] Watch `workmanager_android` for a Built-in Kotlin release (see the 2026-11-22 QA note); if a Flutter upgrade breaks the build first, drop the 12-hour background job – reminders then run about 3 days past the last app open
+- [ ] Optional: smaller downloads with `flutter build apk --release --split-per-abi` (upload the `arm64-v8a` APK)
 - [ ] Version 1.0.0; update [change-log.md](change-log.md)
 
 ## Phase 8 – User guide
@@ -126,3 +136,4 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 - Questions with several correct answers
 - Exam simulation: all 149 questions, timed, scored like the site
 - Export of statistics
+- Public Play Store release: a new personal developer account first needs a closed test with at least 12 testers for 14 days, plus the store listing, Data safety form and privacy policy

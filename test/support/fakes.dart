@@ -293,10 +293,16 @@ class FakeReminderNotifications implements ReminderNotifications {
   final shown = <ReminderNotice>[];
   ReminderLaunch? launch;
   void Function(ReminderLaunch)? onTap;
+  void Function(ReminderAnswer)? onAnswer;
 
   @override
-  Future<void> initialize({void Function(ReminderLaunch launch)? onTap}) async =>
-      this.onTap = onTap;
+  Future<void> initialize({
+    void Function(ReminderLaunch launch)? onTap,
+    void Function(ReminderAnswer answer)? onAnswer,
+  }) async {
+    this.onTap = onTap;
+    this.onAnswer = onAnswer;
+  }
 
   @override
   Future<ReminderLaunch?> launchedBy() async => launch;

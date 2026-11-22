@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_10y.dart' as tz_data;
 import 'package:workmanager/workmanager.dart';
 
@@ -28,8 +30,14 @@ ReminderService createReminderService({
   return ReminderService(
     store: SharedPrefsReminderStore(),
     notifications: LocalReminderNotifications(
-      channelName: l10n.reminderChannelName,
-      channelDescription: l10n.reminderChannelDescription,
+      labels: ReminderLabels(
+        channelName: l10n.reminderChannelName,
+        channelDescription: l10n.reminderChannelDescription,
+        isTrue: l10n.answerTrue,
+        isFalse: l10n.answerFalse,
+        all: l10n.answerAll,
+      ),
+      backgroundHandler: reminderActionInBackground,
     ),
     questionSets: questionSets,
     progress: progress,
@@ -83,4 +91,24 @@ void reminderBackgroundDispatcher() {
       return false;
     }
   });
+}
+
+/// Igaz / Hamis pressed while the app is not running: the plugin starts this
+/// in a background isolate (no Firebase there; the answer is queued).
+@pragma('vm:entry-point')
+void reminderActionInBackground(NotificationResponse response) {
+  final answer = ReminderResponse.fromNotification(response)?.answer;
+  if (answer == null) return;
+  DartPluginRegistrant.ensureInitialized();
+  unawaited(_answerInBackground(answer));
+}
+
+Future<void> _answerInBackground(ReminderAnswer answer) async {
+  try {
+    final service = createReminderService();
+    await service.notifications.initialize();
+    await service.answer(answer);
+  } on Object catch (error) {
+    debugPrint('Background answer failed: $error');
+  }
 }

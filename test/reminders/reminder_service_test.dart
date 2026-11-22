@@ -27,6 +27,18 @@ class MemoryReminderStore implements ReminderStore {
 
   @override
   Future<void> clear() async => snapshot = null;
+
+  final answers = <QueuedAnswer>[];
+
+  @override
+  Future<void> queueAnswer(QueuedAnswer answer) async => answers.add(answer);
+
+  @override
+  Future<List<QueuedAnswer>> takeAnswers(String uid) async {
+    final mine = answers.where((a) => a.uid == uid).toList();
+    answers.removeWhere((a) => a.uid == uid);
+    return mine;
+  }
 }
 
 /// Counts question loads.
@@ -90,10 +102,12 @@ void main() {
     expect(store.snapshot!.questions, hasLength(3));
   });
 
-  test('the body names the subject, not the answer', () async {
-    final yoshi = sampleQuestions().first;
-    expect(reminderBody(hu, yoshi), hu.reminderBodySubject('„Yoshi”'));
-    expect(reminderBody(hu, null), hu.reminderBodyPlain);
+  test('the reminder shows only its title: nothing to give the answer away',
+      () async {
+    for (final question in sampleQuestions()) {
+      expect(reminderBody(question), isNull);
+    }
+    expect(reminderBody(null), isNull);
   });
 
   test('skippable questions are left out', () async {
@@ -193,5 +207,199 @@ void main() {
   test('a broken snapshot is ignored', () {
     expect(ReminderSnapshot.fromJson('{'), isNull);
     expect(ReminderSnapshot.fromJson('{"version": 2}'), isNull);
+  });
+
+  group('true/false mode', () {
+    const trueFalse = ReminderSettings(
+      enabled: true,
+      mode: ReminderMode.trueFalse,
+    );
+
+    test('each reminder shows one statement with the answer buttons', () async {
+      await service.sync(uid: 'u1', set: set, settings: trueFalse);
+
+      final scheduled = notifications.scheduled;
+      expect(scheduled, hasLength(48));
+      final byKey = {for (final q in sampleQuestions()) q.key: q};
+      var correctOnes = 0;
+      for (final notice in scheduled) {
+        expect(notice.title, hu.reminderTrueFalseTitle);
+        expect(notice.answerButtons, isTrue);
+        final question = byKey[notice.payload.key]!;
+        final statement = notice.payload.statement!;
+        expect(notice.body, statementText(question, statement));
+        if (statement == correctStatement) correctOnes++;
+      }
+      // About half true, half false.
+      expect(correctOnes, inInclusiveRange(14, 34));
+    });
+
+    Future<ReminderLaunch> firstStatement() async {
+      await service.sync(uid: 'u1', set: set, settings: trueFalse);
+      return notifications.scheduled.first.payload;
+    }
+
+    test('a right answer: result, next statement, progress and queue', () async {
+      final launch = await firstStatement();
+      final saidTrue = launch.statement == correctStatement;
+
+      await service.answer(
+        ReminderAnswer(launch: launch, saidTrue: saidTrue, notificationId: 77),
+      );
+
+      final result = notifications.shown.single;
+      expect(result.id, 77);
+      expect(result.title, hu.reminderResultCorrect);
+      expect(result.quiet, isTrue);
+      expect(result.answerButtons, isTrue);
+      expect(result.payload.key, isNot(launch.key));
+      expect(result.payload.statement, isNotNull);
+      expect(store.snapshot!.progress[launch.key]!.box, 1);
+      // Synced to Firestore at once while the app runs; queue empty again.
+      expect(progress.data['set1']![launch.key]!.correct, 1);
+      expect(store.answers, isEmpty);
+      // The remaining reminders were planned again.
+      expect(notifications.scheduled, hasLength(48));
+    });
+
+    test('a wrong answer shows the correct statement', () async {
+      final launch = await firstStatement();
+      final saidTrue = launch.statement != correctStatement;
+      final question =
+          sampleQuestions().firstWhere((q) => q.key == launch.key);
+
+      await service.answer(
+        ReminderAnswer(launch: launch, saidTrue: saidTrue, notificationId: 5),
+      );
+
+      final result = notifications.shown.single;
+      expect(result.title, hu.reminderResultWrong);
+      expect(
+        result.body,
+        startsWith(hu.reminderCorrectStatement(question.correct.text)),
+      );
+      expect(store.snapshot!.progress[launch.key]!.wrong, 1);
+    });
+
+    test('in the background the answer waits in the queue', () async {
+      final launch = await firstStatement();
+      final background = ReminderService(
+        store: store,
+        notifications: notifications,
+        location: tz.getLocation(reminderTimeZone),
+        l10n: hu,
+        clock: () => now,
+        random: Random(3),
+      );
+
+      await background.answer(
+        ReminderAnswer(launch: launch, saidTrue: true, notificationId: 9),
+      );
+
+      expect(store.answers.single.key, launch.key);
+      expect(progress.data['set1']?[launch.key], isNull);
+
+      // The next app start writes it to Firestore.
+      await service.sync(uid: 'u1', set: set, settings: trueFalse);
+      expect(store.answers, isEmpty);
+      expect(progress.data['set1']![launch.key]!.seen, 1);
+    });
+
+    test('a test notification in this mode has the buttons', () async {
+      await service.sync(uid: 'u1', set: set, settings: trueFalse);
+      await service.sendTest(uid: 'u1', set: set);
+      expect(notifications.shown.single.answerButtons, isTrue);
+      expect(notifications.shown.single.payload.statement, isNotNull);
+    });
+  });
+
+  group('queued answers', () {
+    test('are replayed in order; a later lastAt from the app is kept', () {
+      final appTime = DateTime.utc(2026, 11, 22, 12);
+      final before = ItemProgress(box: 2, seen: 3, correct: 2, wrong: 1, lastAt: appTime);
+      final older = QueuedAnswer(
+        uid: 'u1',
+        setId: 's',
+        key: 'k',
+        correct: true,
+        at: DateTime.utc(2026, 11, 22, 9),
+      );
+      final after = replayAnswer(before, older);
+      expect(after.seen, 4);
+      expect(after.correct, 3);
+      expect(after.box, 3);
+      expect(after.lastAt, appTime);
+
+      final newer = QueuedAnswer(
+        uid: 'u1',
+        setId: 's',
+        key: 'k',
+        correct: false,
+        at: DateTime.utc(2026, 11, 22, 13),
+      );
+      final later = replayAnswer(after, newer);
+      expect(later.box, 0);
+      expect(later.lastAt, newer.at);
+    });
+
+    test("another user's answers stay queued", () async {
+      store.answers.add(
+        QueuedAnswer(uid: 'u2', setId: 'set1', key: 'k', correct: true, at: now),
+      );
+      await service.sync(uid: 'u1', set: set, settings: on);
+      expect(store.answers.single.uid, 'u2');
+    });
+
+    test('answers survive the JSON round trip', () {
+      final answer = QueuedAnswer(
+        uid: 'u1',
+        setId: 'set1',
+        key: 'k',
+        correct: false,
+        at: DateTime.fromMillisecondsSinceEpoch(1795300000000),
+      );
+      final copy = QueuedAnswer.fromMap(answer.toMap())!;
+      expect(
+        [copy.uid, copy.setId, copy.key, copy.correct, copy.at],
+        [answer.uid, answer.setId, answer.key, answer.correct, answer.at],
+      );
+      expect(QueuedAnswer.fromMap({'uid': 1}), isNull);
+    });
+  });
+
+  test('buttons are told apart from taps', () {
+    const launch = ReminderLaunch(setId: 'set1', key: 'k', statement: 2);
+    final payload = launch.encode();
+    expect(ReminderLaunch.decode(payload), launch);
+
+    final yes = ReminderResponse.parse(
+      actionId: ReminderActions.isTrue,
+      payload: payload,
+      notificationId: 12,
+    )!;
+    expect(yes.answer!.saidTrue, isTrue);
+    expect(yes.answer!.notificationId, 12);
+    expect(yes.launch, isNull);
+
+    final no = ReminderResponse.parse(
+      actionId: ReminderActions.isFalse,
+      payload: payload,
+      notificationId: 12,
+    )!;
+    expect(no.answer!.saidTrue, isFalse);
+
+    for (final actionId in [null, ReminderActions.all]) {
+      final open = ReminderResponse.parse(
+        actionId: actionId,
+        payload: payload,
+        notificationId: 12,
+      )!;
+      expect(open.launch, launch);
+      expect(open.answer, isNull);
+    }
+    expect(
+      ReminderResponse.parse(actionId: null, payload: 'x', notificationId: 1),
+      isNull,
+    );
   });
 }

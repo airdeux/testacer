@@ -6,6 +6,7 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Added
 
+- 2026-11-22 – Phase 6, answering in the notification: mode switch in **Emlékeztetők** („Kvíz megnyitása” / „Igaz / Hamis”); true/false reminders with one statement and **Igaz** / **Hamis** / **Összes válasz**; Igaz / Hamis answered in the background (progress on the phone, answer queue, result and next statement in the same notification, re-plan); queued answers written to Firestore on the next sync; „Összes válasz” opens the quiz on that question. 11 new tests (128 in all).
 - 2026-11-22 – Release key's SHA-256 in `firebase/hosting/.well-known/assetlinks.json`, so sign-in links also open the release build.
 - 2026-11-21 – Phase 5, Android reminders: **Emlékeztetők** screen (on/off, time windows with days, first/last time and interval, test notification, battery hint; synced per user); planner for the next 48 reminders in Europe/Budapest time with pre-picked questions (Leitner, no skippable, no repeats); re-planning on the home page, after quizzes, on settings changes and by a `workmanager` job every 12 hours from a snapshot on the phone; reboot handled by the plugin; tapping a reminder opens an endless quiz starting with its question; sign-out cancels reminders. Release signing via `android/key.properties`; Firebase App Distribution steps in `docs/setup.md` § 7. New packages: `flutter_local_notifications`, `timezone`, `workmanager`. 40 new tests (117 in all).
 - 2026-11-21 – Phase 4, web deploy: workflow `.github/workflows/deploy-web.yml` publishes the web app to GitHub Pages (https://airdeux.github.io/TestAcer/) after CI passes on `main`; web shell with Hungarian language tag, description and theme colour; owner's steps in `docs/setup.md` § 6.
@@ -20,6 +21,8 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Changed
 
+- 2026-11-22 – Reminders in „Kvíz megnyitása” mode no longer show the question's subject („Téma: …”): in some questions it gave the answer away (e.g. „dojo”). „Kvíz megnyitása” reminders show only the title „Jöhet egy kérdés?” (plus the question's prompt, if it has one), without „Koppints, és válaszolj egy kérdésre!”.
+- 2026-11-22 – Testers get the Android app through Google Play internal testing instead of Firebase App Distribution (D-014, supersedes D-011): the sideloaded APK triggers Android and Play Protect warnings. Steps in `docs/setup.md` § 7.3; App Distribution stays for the owner's own checks (§ 7.4).
 - 2026-11-21 – Display name „Kvíz-maxoló” (also the Firebase public-facing name, used in the sign-in e-mails) instead of „Test Acer”: app bar, sign-in screen, browser tab, web manifest, Android launcher label, Hosting redirect page, user guide. Repository, web address, package and code names stay `testacer` / `TestAcer`.
 - 2026-11-21 – Sign-in, verification and password e-mails are requested in Hungarian (`setLanguageCode('hu')`); owner sets the project's public-facing name so the e-mails no longer say „project-386828959446” (docs/setup.md § 5).
 - 2026-11-21 – Web address in lower case: https://airdeux.github.io/testacer/ (repository renamed `TestAcer` → `testacer`; GitHub Pages paths are case-sensitive). Updated: deploy workflow base path, `webAppUrl` (sign-in link return address), Firebase Hosting redirect page, docs.

@@ -521,14 +521,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get reminderTitle => 'Jöhet egy kérdés?';
 
   @override
-  String reminderBodySubject(String subject) {
-    return 'Téma: $subject – koppints, és válaszolj!';
-  }
-
-  @override
-  String get reminderBodyPlain => 'Koppints, és válaszolj egy kérdésre!';
-
-  @override
   String get reminderChannelName => 'Emlékeztetők';
 
   @override
@@ -537,4 +529,49 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get reminderSetMissing => 'Ez a kérdéssor már nem érhető el.';
+
+  @override
+  String get remindersMode => 'Az értesítésben';
+
+  @override
+  String get remindersModeOpen => 'Kvíz megnyitása';
+
+  @override
+  String get remindersModeTrueFalse => 'Igaz / Hamis';
+
+  @override
+  String get remindersModeOpenHint =>
+      'Koppintásra megnyílik egy kvíz egy kérdéssel; az értesítés nem árulja el, melyikkel.';
+
+  @override
+  String get remindersModeTrueFalseHint =>
+      'Az értesítésben egy állítás jelenik meg: válaszolj az Igaz vagy a Hamis gombbal – az alkalmazás nem nyílik meg –, vagy nézd meg az összes választ.';
+
+  @override
+  String get reminderTrueFalseTitle => 'Igaz vagy hamis?';
+
+  @override
+  String get answerTrue => 'Igaz';
+
+  @override
+  String get answerFalse => 'Hamis';
+
+  @override
+  String get answerAll => 'Összes válasz';
+
+  @override
+  String get reminderResultCorrect => '✔ Helyes!';
+
+  @override
+  String get reminderResultWrong => '✘ Nem jó';
+
+  @override
+  String reminderCorrectStatement(String text) {
+    return 'Helyes: $text';
+  }
+
+  @override
+  String reminderNextStatement(String text) {
+    return 'Következő – igaz vagy hamis?\n$text';
+  }
 }

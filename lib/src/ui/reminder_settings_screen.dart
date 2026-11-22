@@ -130,6 +130,36 @@ class _ReminderSettingsScreenState extends State<ReminderSettingsScreen> {
           onChanged: _busy ? null : _setEnabled,
         ),
         const SizedBox(height: 8),
+        Text(l10n.remindersMode, style: theme.textTheme.labelLarge),
+        const SizedBox(height: 4),
+        SegmentedButton<ReminderMode>(
+          segments: [
+            ButtonSegment(
+              value: ReminderMode.open,
+              label: Text(l10n.remindersModeOpen),
+              icon: const Icon(Icons.open_in_new),
+            ),
+            ButtonSegment(
+              value: ReminderMode.trueFalse,
+              label: Text(l10n.remindersModeTrueFalse),
+              icon: const Icon(Icons.rule),
+            ),
+          ],
+          selected: {_settings.mode},
+          onSelectionChanged: _busy
+              ? null
+              : (selection) => setState(
+                    () => _settings = _settings.copyWith(mode: selection.first),
+                  ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _settings.mode == ReminderMode.trueFalse
+              ? l10n.remindersModeTrueFalseHint
+              : l10n.remindersModeOpenHint,
+          style: theme.textTheme.bodySmall,
+        ),
+        const SizedBox(height: 16),
         for (var i = 0; i < windows.length; i++) ...[
           _WindowCard(
             number: i + 1,

@@ -2,7 +2,7 @@
 
 Shown to users as **Kvíz-maxoló**. A small practice-quiz app for exam preparation. First use case: the theory test of the judo 2nd dan exam (149 multiple-choice questions). One Flutter codebase builds the **web app** and the **Android app**; the Android app adds scheduled quiz reminders.
 
-> **Status:** sign-in and the quiz (import, practice, progress) work on web and Android; every push to `main` that passes CI is published at **https://airdeux.github.io/testacer/** (Phase 4); Android reminders are built (Phase 5), waiting for the device test. See [docs/plan-and-tasks.md](docs/plan-and-tasks.md).
+> **Status:** sign-in and the quiz (import, practice, progress) work on web and Android; every push to `main` that passes CI is published at **https://airdeux.github.io/testacer/** (Phase 4); Android reminders (Phase 5) and answering in the notification (Phase 6) are built, waiting for the device test; testers will get the app through Google Play internal testing. See [docs/plan-and-tasks.md](docs/plan-and-tasks.md).
 
 ## Planned features
 
@@ -22,7 +22,7 @@ Shown to users as **Kvíz-maxoló**. A small practice-quiz app for exam preparat
 | Data | Cloud Firestore | free daily quota is far above what <10 users need; offline cache (D-003) |
 | Reminders | on-device scheduled notifications (`flutter_local_notifications`) | no server and no paid plan needed (D-004) |
 | Web hosting | GitHub Pages, deployed by GitHub Actions | free for public repositories (D-002) |
-| Android distribution | Firebase App Distribution or direct APK | no Play Store needed for a small group (D-011) |
+| Android distribution | Google Play internal testing | trusted install from the Play Store, no review, up to 100 testers (D-014) |
 
 ## Documentation
 

@@ -16,9 +16,10 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 | D-008 | 2026-11-21 | Question content lives only in Firestore, not in the repository | Accepted |
 | D-009 | 2026-11-21 | Email is the login name; invite-only allowlist | Accepted |
 | D-010 | 2026-11-21 | Hungarian UI and user guide, prepared for translation | Accepted |
-| D-011 | 2026-11-21 | Android distribution via Firebase App Distribution or direct APK | Accepted |
+| D-011 | 2026-11-21 | Android distribution via Firebase App Distribution or direct APK | Superseded by D-014 |
 | D-012 | 2026-11-21 | No iOS app in v1 | Accepted |
 | D-013 | 2026-11-21 | Email link (passwordless) as a third sign-in method | Accepted |
+| D-014 | 2026-11-22 | Testers get the Android app from Google Play internal testing | Accepted |
 
 ---
 
@@ -56,6 +57,7 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
   - **Összes válasz** – opens the app with a dialog showing the same question with all 4 options (shuffled, single-select), then the usual feedback.
 - Every option in the question set is a full sentence, so each works as a standalone statement. The earlier idea of an „Ismert” (mark skippable) button is dropped because of the 3-button limit; the skippable toggle is in the dialog's feedback instead.
 - **Alternatives considered:** inline text reply ("A–D") – clumsy; a custom notification layout with 4 buttons – needs native Android code and is fragile across devices.
+- **Implementation note (2026-11-22):** the statement is the correct option half of the time, so „Igaz” and „Hamis” are equally often right. „Összes válasz” opens the existing quick-quiz page on that question instead of a separate dialog: it already has the shuffled single-select options, the feedback with the skippable toggle, „Következő” and ✕ (close); a dialog would have duplicated it.
 
 ### D-006 – Leitner boxes for question selection
 
@@ -87,6 +89,7 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 
 - **Context:** fewer than 10 testers; Play Store publishing needs a developer account and review.
 - **Decision:** Firebase App Distribution (no-cost) or a signed APK shared directly. Play Store later if the group grows.
+- **Superseded (2026-11-22) by D-014.** App Distribution stays available for the owner's own quick checks.
 
 ### D-012 – No iOS app in v1
 
@@ -99,3 +102,9 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 - **Consequences:** a link sign-in also verifies the e-mail. On Android the link opens the app through the project's Firebase Hosting domain (`<project-id>.firebaseapp.com`, path `/__/auth/links`), which needs an App Links intent filter and the SHA fingerprints; Firebase Dynamic Links, used for this earlier, shut down in August 2025. The link should be opened on the device where sign-in started, otherwise the app asks for the e-mail again. The sign-in e-mails come from a `firebaseapp.com` address and can land in spam.
 - **Implementation note (2026-11-21):** the Hosting domain had no site, so `assetlinks.json` could not be served. A minimal Firebase Hosting site (`firebase/hosting`, Spark plan) now serves it; its index page only redirects to the GitHub Pages app.
 - **Implementation note (2026-11-21, fix):** `ActionCodeSettings.linkDomain` must not be set to the default Hosting domain – Firebase rejects it (`INVALID_HOSTING_LINK_DOMAIN`: "cannot be a default hosting domain"), so every link request failed. Without `linkDomain` Firebase uses `<project-id>.firebaseapp.com` anyway; `linkDomain` is only for a custom Hosting domain.
+
+### D-014 – Google Play internal testing for testers
+
+- **Context:** installing the App Distribution APK shows "this file type can be harmful" and a Google Play Protect block („Az alkalmazás le van tiltva…”, unknown developer). For testers who are classmates, not close friends, that looks untrustworthy.
+- **Decision (owner, 2026-11-22):** testers install the app from Google Play through the **internal testing** track; the owner uses a personal Google Play developer account.
+- **Consequences:** one-time USD 25 registration fee and identity verification. Internal testing has no review and no 12-tester / 14-day requirement (that only gates a public production release for new personal accounts), allows up to 100 testers by e-mail list, and can start before the store listing and Data safety form are complete. Builds are uploaded as app bundles (`.aab`) signed with the upload key; Play App Signing re-signs them with Google's app signing key, so that key's SHA-1 and SHA-256 must be added to Firebase (Google sign-in) and to `assetlinks.json` (sign-in links open the app) **before** testers install. A Play-installed app cannot be updated by an APK signed with the upload key and vice versa – uninstall one to install the other. Updates reach testers through the Play Store.

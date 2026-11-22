@@ -8,6 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import '../../l10n/app_localizations.dart';
 import '../question_format/models.dart';
 import '../questions/question_set_repository.dart';
+import '../quiz/progress.dart';
 import '../quiz/progress_repository.dart';
 import '../quiz/selection.dart';
 import 'planner.dart';
@@ -113,7 +114,9 @@ class ReminderService implements Reminders {
     Random? random,
   })  : _l10n = l10n ?? lookupAppLocalizations(const Locale('hu')),
         _clock = clock ?? DateTime.now,
-        _picker = QuestionPicker(random: random);
+        _random = random ?? Random() {
+    _picker = QuestionPicker(random: _random);
+  }
 
   final ReminderStore store;
   final ReminderNotifications notifications;
@@ -124,7 +127,8 @@ class ReminderService implements Reminders {
   final tz.Location location;
   final AppLocalizations _l10n;
   final DateTime Function() _clock;
-  final QuestionPicker _picker;
+  final Random _random;
+  late final QuestionPicker _picker;
 
   @override
   final launches = ReminderLaunches();
@@ -144,7 +148,7 @@ class ReminderService implements Reminders {
 
   /// Hooks up taps; call once at app start.
   Future<void> start() async {
-    await notifications.initialize(onTap: launches.add);
+    await notifications.initialize(onTap: launches.add, onAnswer: answer);
     final launch = await notifications.launchedBy();
     if (launch != null) launches.add(launch);
   }
@@ -157,6 +161,7 @@ class ReminderService implements Reminders {
   }) =>
       _serial(() async {
         try {
+          await _flushAnswers(uid);
           if (!settings.enabled) {
             await notifications.cancelScheduled();
             await store.clear();
@@ -199,8 +204,14 @@ class ReminderService implements Reminders {
           );
           if (key == null) return false;
           final now = tz.TZDateTime.from(_clock(), location);
+          var reminder = PlannedReminder(now, key);
+          if (snapshot.settings.mode == ReminderMode.trueFalse) {
+            reminder = reminder.withStatement(
+              pickStatement(snapshot.question(key)!, _random),
+            );
+          }
           await notifications.showNow(
-            _notice(snapshot, PlannedReminder(now, key), scheduled: false),
+            _notice(snapshot, reminder, scheduled: false),
           );
           return true;
         } on Object catch (error) {
@@ -220,6 +231,107 @@ class ReminderService implements Reminders {
         await notifications.cancelScheduled();
         await store.clear();
       });
+
+  /// Igaz or Hamis pressed in a notification – in the background isolate
+  /// (without Firebase) or, rarely, while the app runs. Updates the progress
+  /// on the phone, queues the answer for Firestore, shows the result and the
+  /// next statement in the same notification, and re-plans.
+  Future<void> answer(ReminderAnswer answer) => _serial(() async {
+        try {
+          final launch = answer.launch;
+          final snapshot = await store.load();
+          final question = snapshot?.question(launch.key);
+          final statement = launch.statement;
+          if (snapshot == null ||
+              snapshot.setId != launch.setId ||
+              question == null ||
+              statement == null) {
+            return;
+          }
+          final correct = answer.saidTrue == (statement == correctStatement);
+          final at = _clock();
+          final records = {
+            ...snapshot.progress,
+            launch.key: (snapshot.progress[launch.key] ?? const ItemProgress())
+                .recordAnswer(correct: correct, at: at),
+          };
+          final updated = snapshot.copyWith(progress: records);
+          await store.save(updated);
+          await store.queueAnswer(
+            QueuedAnswer(
+              uid: snapshot.uid,
+              setId: snapshot.setId,
+              key: launch.key,
+              correct: correct,
+              at: at,
+            ),
+          );
+          // While the app runs, Firestore is at hand.
+          await _flushAnswers(snapshot.uid);
+
+          final nextKey = _picker.pick(
+            [for (final question in snapshot.questions) question.key],
+            records,
+            recent: [launch.key],
+            exclude: {launch.key},
+          );
+          final next = nextKey == null
+              ? null
+              : PlannedReminder(
+                  tz.TZDateTime.from(at, location),
+                  nextKey,
+                  statement: pickStatement(updated.question(nextKey)!, _random),
+                );
+          await notifications.showNow(
+            _result(
+              updated,
+              question,
+              statement: statement,
+              correct: correct,
+              next: next,
+              id: answer.notificationId,
+            ),
+          );
+          if (updated.settings.enabled) await _schedule(updated);
+        } on Object catch (error) {
+          debugPrint('Answer from notification failed: $error');
+        }
+      });
+
+  /// Writes the answers given in notifications to Firestore: each is
+  /// replayed on the stored record in order (counters add up, the box moves),
+  /// and a later `lastAt` from the app is kept. Needs the repositories, so
+  /// it does nothing in the background isolate.
+  Future<void> _flushAnswers(String uid) async {
+    final repository = progress;
+    if (repository == null) return;
+    final answers = await store.takeAnswers(uid);
+    if (answers.isEmpty) return;
+    try {
+      final bySet = <String, List<QueuedAnswer>>{};
+      for (final answer in answers) {
+        (bySet[answer.setId] ??= []).add(answer);
+      }
+      for (final MapEntry(key: setId, value: queued) in bySet.entries) {
+        final current = await repository.load(uid, setId);
+        final changed = <String, ItemProgress>{};
+        for (final answer in queued) {
+          final before =
+              changed[answer.key] ?? current[answer.key] ?? const ItemProgress();
+          changed[answer.key] = replayAnswer(before, answer);
+        }
+        for (final MapEntry(:key, :value) in changed.entries) {
+          // Offline the write completes only on reconnection; do not wait.
+          unawaited(repository.save(uid, setId, key, value));
+        }
+      }
+    } on Object {
+      for (final answer in answers) {
+        await store.queueAnswer(answer);
+      }
+      rethrow;
+    }
+  }
 
   /// Questions come from the stored snapshot while the set is unchanged
   /// (saves 149 reads); progress is always read again.
@@ -256,15 +368,24 @@ class ReminderService implements Reminders {
     ]);
   }
 
-  /// The reminders to schedule for [snapshot] after [now].
+  /// The reminders to schedule for [snapshot] after [now]; in true/false
+  /// mode each with its statement.
   @visibleForTesting
-  List<PlannedReminder> planFor(ReminderSnapshot snapshot, tz.TZDateTime now) =>
-      assignQuestions(
-        reminderSlots(snapshot.settings.windows, now),
-        [for (final question in snapshot.questions) question.key],
-        snapshot.progress,
-        picker: _picker,
-      );
+  List<PlannedReminder> planFor(ReminderSnapshot snapshot, tz.TZDateTime now) {
+    final plan = assignQuestions(
+      reminderSlots(snapshot.settings.windows, now),
+      [for (final question in snapshot.questions) question.key],
+      snapshot.progress,
+      picker: _picker,
+    );
+    if (snapshot.settings.mode != ReminderMode.trueFalse) return plan;
+    return [
+      for (final reminder in plan)
+        reminder.withStatement(
+          pickStatement(snapshot.question(reminder.key)!, _random),
+        ),
+    ];
+  }
 
   ReminderNotice _notice(
     ReminderSnapshot snapshot,
@@ -272,27 +393,98 @@ class ReminderService implements Reminders {
     bool scheduled = true,
   }) {
     final question = snapshot.question(reminder.key);
+    final statement = reminder.statement;
+    final trueFalse = question != null && statement != null;
     return ReminderNotice(
       id: scheduled ? reminder.id : testNotificationId,
-      title: _l10n.reminderTitle,
-      body: reminderBody(_l10n, question),
-      payload: ReminderLaunch(setId: snapshot.setId, key: reminder.key),
+      // No filler text: true/false shows the statement, otherwise only the
+      // title (and the prompt, if any).
+      title: trueFalse ? _l10n.reminderTrueFalseTitle : _l10n.reminderTitle,
+      body: trueFalse ? statementText(question, statement) : reminderBody(question),
+      payload: ReminderLaunch(
+        setId: snapshot.setId,
+        key: reminder.key,
+        statement: trueFalse ? statement : null,
+      ),
       time: scheduled ? reminder.time : null,
+      answerButtons: trueFalse,
     );
   }
+
+  /// The result of an answer, and the next statement if there is one.
+  ReminderNotice _result(
+    ReminderSnapshot snapshot,
+    Question question, {
+    required int statement,
+    required bool correct,
+    required PlannedReminder? next,
+    required int id,
+  }) {
+    final title =
+        correct ? _l10n.reminderResultCorrect : _l10n.reminderResultWrong;
+    final nextQuestion = next == null ? null : snapshot.question(next.key);
+    final lines = [
+      // Unless „Igaz” was rightly said to the correct statement, show it.
+      if (!(correct && statement == correctStatement))
+        _l10n.reminderCorrectStatement(question.correct.text),
+      if (next != null && nextQuestion != null)
+        _l10n.reminderNextStatement(
+          statementText(nextQuestion, next.statement!),
+        ),
+    ];
+    return ReminderNotice(
+      id: id,
+      title: title,
+      body: lines.isEmpty ? null : lines.join('\n\n'),
+      payload: ReminderLaunch(
+        setId: snapshot.setId,
+        key: next?.key ?? question.key,
+        statement: next?.statement,
+      ),
+      answerButtons: next != null && nextQuestion != null,
+      quiet: true,
+    );
+  }
+}
+
+/// True/false mode: the correct option or one of the wrong ones, half and
+/// half, so „Igaz” and „Hamis” are equally likely right.
+int pickStatement(Question question, Random random) =>
+    question.wrong.isEmpty || random.nextBool()
+        ? correctStatement
+        : random.nextInt(question.wrong.length);
+
+/// The text of [statement] of [question].
+String statementText(Question question, int statement) =>
+    statement == correctStatement || statement >= question.wrong.length
+        ? question.correct.text
+        : question.wrong[statement].text;
+
+/// [before] after a queued [answer]: counters and box as if answered now,
+/// but a later `lastAt` (from an answer given in the app) is kept.
+ItemProgress replayAnswer(ItemProgress before, QueuedAnswer answer) {
+  final after = before.recordAnswer(correct: answer.correct, at: answer.at);
+  final lastAt = before.lastAt;
+  if (lastAt == null || !lastAt.isAfter(answer.at)) return after;
+  return ItemProgress(
+    box: after.box,
+    seen: after.seen,
+    correct: after.correct,
+    wrong: after.wrong,
+    lastAt: lastAt,
+    skippable: after.skippable,
+  );
 }
 
 /// Outside the range of [reminderIdFor] for any realistic date.
 const testNotificationId = 1;
 
-/// The notification text: the question's prompt, or its subject, so the
-/// answer is not given away.
-String reminderBody(AppLocalizations l10n, Question? question) {
+/// The notification text: the question's prompt if it has one, otherwise
+/// nothing – not the subject, which in some questions gives the answer away
+/// (e.g. „dojo”).
+String? reminderBody(Question? question) {
   final prompt = question?.prompt;
-  if (prompt != null && prompt.isNotEmpty) return prompt;
-  final subjects = question?.correct.markedTexts(MarkKind.subject) ?? const [];
-  if (subjects.isEmpty) return l10n.reminderBodyPlain;
-  return l10n.reminderBodySubject(subjects.take(2).join(', '));
+  return prompt != null && prompt.isNotEmpty ? prompt : null;
 }
 
 /// The default reminder time zone, after the time-zone data is loaded.

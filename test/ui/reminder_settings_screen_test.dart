@@ -118,6 +118,17 @@ void main() {
     expect(find.text(hu.remindersWindowTitle(2)), findsOneWidget);
   });
 
+  testWidgets('answering in the notification can be chosen', (tester) async {
+    await pumpScreen(tester, initial: const ReminderSettings(enabled: true));
+    expect(find.text(hu.remindersModeOpenHint), findsOneWidget);
+
+    await tapVisible(tester, find.text(hu.remindersModeTrueFalse));
+    expect(find.text(hu.remindersModeTrueFalseHint), findsOneWidget);
+    await tapVisible(tester, find.text(hu.saveButton));
+
+    expect(t.settings.settings.value.reminders.mode, ReminderMode.trueFalse);
+  });
+
   testWidgets('sends a test notification', (tester) async {
     await pumpScreen(tester);
 

@@ -32,6 +32,17 @@ class ReminderSnapshot {
   final Map<String, ItemProgress> progress;
   final ReminderSettings settings;
 
+  ReminderSnapshot copyWith({Map<String, ItemProgress>? progress}) =>
+      ReminderSnapshot(
+        uid: uid,
+        setId: setId,
+        setTitle: setTitle,
+        setVersion: setVersion,
+        questions: questions,
+        progress: progress ?? this.progress,
+        settings: settings,
+      );
+
   Question? question(String key) {
     for (final question in questions) {
       if (question.key == key) return question;
@@ -90,10 +101,62 @@ class ReminderSnapshot {
   }
 }
 
+/// An answer given in a notification, waiting to be synced to Firestore
+/// (the background handler has no Firebase).
+class QueuedAnswer {
+  const QueuedAnswer({
+    required this.uid,
+    required this.setId,
+    required this.key,
+    required this.correct,
+    required this.at,
+  });
+
+  final String uid;
+  final String setId;
+  final String key;
+  final bool correct;
+  final DateTime at;
+
+  Map<String, Object?> toMap() => {
+        'uid': uid,
+        'set': setId,
+        'q': key,
+        'ok': correct,
+        'at': at.millisecondsSinceEpoch,
+      };
+
+  static QueuedAnswer? fromMap(Object? data) => switch (data) {
+        {
+          'uid': final String uid,
+          'set': final String setId,
+          'q': final String key,
+          'ok': final bool correct,
+          'at': final int at,
+        } =>
+          QueuedAnswer(
+            uid: uid,
+            setId: setId,
+            key: key,
+            correct: correct,
+            at: DateTime.fromMillisecondsSinceEpoch(at),
+          ),
+        _ => null,
+      };
+}
+
 abstract interface class ReminderStore {
   Future<ReminderSnapshot?> load();
   Future<void> save(ReminderSnapshot snapshot);
+
+  /// Forgets the snapshot; queued answers stay until they are synced.
   Future<void> clear();
+
+  Future<void> queueAnswer(QueuedAnswer answer);
+
+  /// Removes and returns the queued answers of [uid], oldest first; other
+  /// users' answers stay queued.
+  Future<List<QueuedAnswer>> takeAnswers(String uid);
 }
 
 /// [ReminderStore] in shared_preferences (also usable from the background
@@ -103,6 +166,7 @@ class SharedPrefsReminderStore implements ReminderStore {
       : _preferences = preferences ?? SharedPreferencesAsync();
 
   static const _key = 'reminders.snapshot';
+  static const _answersKey = 'reminders.answers';
 
   final SharedPreferencesAsync _preferences;
 
@@ -118,4 +182,36 @@ class SharedPrefsReminderStore implements ReminderStore {
 
   @override
   Future<void> clear() => _preferences.remove(_key);
+
+  Future<List<QueuedAnswer>> _answers() async {
+    final json = await _preferences.getString(_answersKey);
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json);
+      if (list is! List) return [];
+      return [for (final item in list) ?QueuedAnswer.fromMap(item)];
+    } on FormatException {
+      return [];
+    }
+  }
+
+  Future<void> _write(List<QueuedAnswer> answers) => answers.isEmpty
+      ? _preferences.remove(_answersKey)
+      : _preferences.setString(
+          _answersKey,
+          jsonEncode([for (final answer in answers) answer.toMap()]),
+        );
+
+  @override
+  Future<void> queueAnswer(QueuedAnswer answer) async =>
+      _write([...await _answers(), answer]);
+
+  @override
+  Future<List<QueuedAnswer>> takeAnswers(String uid) async {
+    final all = await _answers();
+    final mine = [for (final answer in all) if (answer.uid == uid) answer];
+    if (mine.isEmpty) return const [];
+    await _write([for (final answer in all) if (answer.uid != uid) answer]);
+    return mine..sort((a, b) => a.at.compareTo(b.at));
+  }
 }

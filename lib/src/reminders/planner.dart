@@ -12,16 +12,23 @@ const plannedReminderCount = 48;
 
 /// One scheduled reminder with its pre-picked question.
 class PlannedReminder {
-  const PlannedReminder(this.time, this.key);
+  const PlannedReminder(this.time, this.key, {this.statement});
 
   final tz.TZDateTime time;
   final String key;
+
+  /// True/false mode: the option shown (`correctStatement` or the index of
+  /// a wrong option).
+  final int? statement;
+
+  PlannedReminder withStatement(int statement) =>
+      PlannedReminder(time, key, statement: statement);
 
   /// Notification id, unique per reminder time (minutes since the epoch).
   int get id => reminderIdFor(time);
 
   @override
-  String toString() => 'PlannedReminder($time, $key)';
+  String toString() => 'PlannedReminder($time, $key, $statement)';
 }
 
 int reminderIdFor(DateTime time) =>
