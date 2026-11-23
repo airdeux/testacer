@@ -21,7 +21,7 @@
 - The result follows: green = correct, red = your wrong choice. Below it, the correct answer is shown with its ***subject*** and the **words that make it different** from the wrong answers highlighted, plus a note where there is one.
 - **Bébikönnyű – ne kérdezd többet:** switch it on for a question you already know well; it will not be asked again (undo it on the Haladás page).
 - **Tudtad?** After some answers – right or wrong – a short trivia item pops up (dates, names, places related to the question). Read it and tap **Bezár**.
-- **Következő** goes on; after the last question (or when you close the quiz with ✕) you see your score and can start a new round.
+- **Következő** (right below the answers) goes on; after the last question (or when you close the quiz with ✕) you see your score and can start a new round.
 - At least half of each quiz (3 of 5, 5 of 10) are questions you have not seen yet – or, when none are left, the ones you have seen the fewest times.
 - Questions you answer wrong come back more often; questions you keep answering right come up less and less.
 

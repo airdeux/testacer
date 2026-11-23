@@ -197,15 +197,24 @@ class _QuizScreenState extends State<QuizScreen> {
                     state: _optionState(current, i),
                     onTap: current.isAnswered ? null : () => _answer(i),
                   ),
-                if (current.isAnswered)
+                if (current.isAnswered) ...[
+                  // Right below the options, so it is usually on screen
+                  // without scrolling; the feedback follows.
+                  FilledButton(
+                    onPressed: _next,
+                    child: Text(
+                      total != null && session.number >= total
+                          ? l10n.finishQuiz
+                          : l10n.nextQuestion,
+                    ),
+                  ),
                   _Feedback(
                     current: current,
                     skippable:
                         session.progress[current.question.key]?.skippable ?? false,
                     onSkippable: _setSkippable,
-                    isLast: total != null && session.number >= total,
-                    onNext: _next,
                   ),
+                ],
               ],
             ),
           ),
@@ -333,15 +342,11 @@ class _Feedback extends StatelessWidget {
     required this.current,
     required this.skippable,
     required this.onSkippable,
-    required this.isLast,
-    required this.onNext,
   });
 
   final CurrentQuestion current;
   final bool skippable;
   final ValueChanged<bool> onSkippable;
-  final bool isLast;
-  final VoidCallback onNext;
 
   @override
   Widget build(BuildContext context) {
@@ -349,7 +354,7 @@ class _Feedback extends StatelessWidget {
     final theme = Theme.of(context);
     final correct = current.isCorrect;
     return Card(
-      margin: const EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(top: 12),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -370,10 +375,6 @@ class _Feedback extends StatelessWidget {
               title: Text(l10n.markSkippable),
               value: skippable,
               onChanged: onSkippable,
-            ),
-            FilledButton(
-              onPressed: onNext,
-              child: Text(isLast ? l10n.finishQuiz : l10n.nextQuestion),
             ),
           ],
         ),

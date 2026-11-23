@@ -66,6 +66,17 @@ void main() {
     expect(t.progress.saves.single, contains('box0'));
   });
 
+  testWidgets('Következő is right below the options, above the feedback',
+      (tester) async {
+    await pumpQuiz(tester, QuizLength.five);
+    final wrong = wrongText(tester);
+    await tapVisible(tester, find.text(wrong));
+
+    final next = tester.getTopLeft(find.text(hu.nextQuestion)).dy;
+    expect(next, greaterThan(tester.getTopLeft(find.text(wrong)).dy));
+    expect(next, lessThan(tester.getTopLeft(find.text(hu.answerWrong)).dy));
+  });
+
   testWidgets('a correct answer moves the question up a box', (tester) async {
     await pumpQuiz(tester, QuizLength.five);
 

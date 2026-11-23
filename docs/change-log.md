@@ -26,6 +26,7 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Changed
 
+- 2026-11-23 – Quiz: the **Következő** / **Eredmény** button is right below the answer options, above the feedback („Helyes!” / „Nem ez a helyes válasz.”, the correct answer, the „Bébikönnyű” switch), so it is usually on screen without scrolling.
 - 2026-11-23 – Haladás: the row „Új vagy legutóbb rontott” is now „Legutóbb rontott” – new questions are in „Még nem láttad”, so that row only ever held questions whose last answer was wrong.
 - 2026-11-22 – Haladás: new row „Bébikönnyűnek jelölt” under „Hol tartasz” (those questions are in no other row, so the rows add up to all questions); the list title shows the number: „Bébikönnyűnek jelölt kérdések (N db)”.
 - 2026-11-22 – Reminders in „Kvíz megnyitása” mode no longer show the question's subject („Téma: …”): in some questions it gave the answer away (e.g. „dojo”). „Kvíz megnyitása” reminders show only the title „Jöhet egy kérdés?” (plus the question's prompt, if it has one), without „Koppints, és válaszolj egy kérdésre!”.
