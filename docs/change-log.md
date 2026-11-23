@@ -6,6 +6,8 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Added
 
+- 2026-11-23 – Quizzes of more than one question: every other question (1st, 3rd, 5th…) is the least-seen one, so at least half are new – 3 of 5, 5 of 10 –, then once-seen ones and so on (D-015).
+- 2026-11-23 – **Haladás törlése** at the bottom of the Haladás page: deletes the answers and statistics of the set; asks whether to keep the Bébikönnyű list. Reminders are re-planned afterwards. 11 new tests (139 in all).
 - 2026-11-22 – App icon, after the owner's sketch: a slanted „A” (as in TestAcer) of three bars on white – a green check mark, a green–blue cross and a red right leg – replaces the Flutter logo on the Android launcher (legacy, adaptive and Android 13 themed icon), in the status bar of reminders, on the web (favicon, home-screen and maskable icons); `assets/branding/play-icon-512.png` for the Play listing. Sources and generator: `assets/branding/*.svg`, `tool/branding/make_icons.py`. (A first draft – a judo belt forming a check mark – was dropped: the app is not only for judo.)
 - 2026-11-22 – Phase 6, answering in the notification: mode switch in **Emlékeztetők** („Kvíz megnyitása” / „Igaz / Hamis”); true/false reminders with one statement and **Igaz** / **Hamis** / **Összes válasz**; Igaz / Hamis answered in the background (progress on the phone, answer queue, result and next statement in the same notification, re-plan); queued answers written to Firestore on the next sync; „Összes válasz” opens the quiz on that question. 11 new tests (128 in all).
 - 2026-11-22 – Release key's SHA-256 in `firebase/hosting/.well-known/assetlinks.json`, so sign-in links also open the release build.

@@ -579,4 +579,29 @@ class AppLocalizationsHu extends AppLocalizations {
   String reminderNextStatement(String text) {
     return 'Következő – igaz vagy hamis?\n$text';
   }
+
+  @override
+  String get resetProgress => 'Haladás törlése';
+
+  @override
+  String resetProgressBody(String title) {
+    return 'A(z) „$title” kérdéssorban adott összes válaszod és a statisztika törlődik. Ezt nem lehet visszavonni.';
+  }
+
+  @override
+  String resetProgressSkippableQuestion(int count) {
+    return 'A bébikönnyűnek jelölt kérdések listáját ($count db) is töröljük?';
+  }
+
+  @override
+  String get resetKeepSkippable => 'Csak a haladást';
+
+  @override
+  String get resetEverything => 'A listát is';
+
+  @override
+  String get resetConfirm => 'Törlés';
+
+  @override
+  String get resetDone => 'A haladás törölve.';
 }

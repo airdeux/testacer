@@ -9,4 +9,12 @@ abstract interface class ProgressRepository {
   /// returned future completes only when it reaches the server, so callers
   /// should not wait for it before continuing.
   Future<void> save(String uid, String setId, String key, ItemProgress item);
+
+  /// Deletes the progress on a set. Questions in [keepSkippable] stay marked
+  /// skippable (with their counters reset). Offline, completes on reconnect.
+  Future<void> reset(
+    String uid,
+    String setId, {
+    Set<String> keepSkippable = const {},
+  });
 }

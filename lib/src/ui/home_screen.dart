@@ -283,14 +283,18 @@ class _PracticePanelState extends State<_PracticePanel> {
                 ),
                 const SizedBox(height: 8),
                 OutlinedButton.icon(
-                  onPressed: () => widget.open(
-                    context,
-                    ProgressScreen(
-                      services: widget.services,
-                      user: widget.user,
-                      questionSet: active,
-                    ),
-                  ),
+                  // Progress may have been reset there: re-plan reminders.
+                  onPressed: () => Navigator.of(context)
+                      .push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => ProgressScreen(
+                            services: widget.services,
+                            user: widget.user,
+                            questionSet: active,
+                          ),
+                        ),
+                      )
+                      .then((_) => _syncReminders(force: true)),
                   icon: const Icon(Icons.insights),
                   label: Text(l10n.progressTitle),
                 ),

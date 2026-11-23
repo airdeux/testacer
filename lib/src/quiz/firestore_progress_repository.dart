@@ -26,6 +26,22 @@ class FirestoreProgressRepository implements ProgressRepository {
   }
 
   @override
+  Future<void> reset(
+    String uid,
+    String setId, {
+    Set<String> keepSkippable = const {},
+  }) {
+    if (keepSkippable.isEmpty) return _doc(uid, setId).delete();
+    // Without merge: replaces the whole document, i.e. all other records.
+    return _doc(uid, setId).set({
+      'items': {
+        for (final key in keepSkippable)
+          key: const ItemProgress(skippable: true).toMap(),
+      },
+    });
+  }
+
+  @override
   Future<void> save(String uid, String setId, String key, ItemProgress item) =>
       _doc(uid, setId).set({
         'items': {key: item.toMap()},

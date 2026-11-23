@@ -83,17 +83,21 @@ class QuizSession {
       return false;
     }
     final first = firstKey;
+    final keys = _byKey.keys.toList();
+    final exclude =
+        length == QuizLength.endless ? const <String>{} : _asked.toSet();
+    // D-015: in a quiz of more than one question every other question
+    // (the 1st, 3rd, 5th…) is the least-seen one – never seen if possible –
+    // so at least half of the quiz is new; the rest by Leitner weights.
+    final fresh = (limit == null || limit > 1) && _asked.length.isEven;
     final key = _asked.isEmpty &&
             first != null &&
             _byKey.containsKey(first) &&
             !(_progress[first]?.skippable ?? false)
         ? first
-        : _picker.pick(
-            _byKey.keys.toList(),
-            _progress,
-            recent: _asked,
-            exclude: length == QuizLength.endless ? const {} : _asked.toSet(),
-          );
+        : fresh
+            ? _picker.pickFresh(keys, _progress, recent: _asked, exclude: exclude)
+            : _picker.pick(keys, _progress, recent: _asked, exclude: exclude);
     if (key == null) {
       current = null;
       return false;

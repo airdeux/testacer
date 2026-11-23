@@ -20,6 +20,7 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 | D-012 | 2026-11-21 | No iOS app in v1 | Accepted |
 | D-013 | 2026-11-21 | Email link (passwordless) as a third sign-in method | Accepted |
 | D-014 | 2026-11-22 | Testers get the Android app from Google Play internal testing | Accepted |
+| D-015 | 2026-11-23 | At least half of every multi-question quiz is new (least-seen) questions | Accepted |
 
 ---
 
@@ -108,3 +109,10 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 - **Context:** installing the App Distribution APK shows "this file type can be harmful" and a Google Play Protect block („Az alkalmazás le van tiltva…”, unknown developer). For testers who are classmates, not close friends, that looks untrustworthy.
 - **Decision (owner, 2026-11-22):** testers install the app from Google Play through the **internal testing** track; the owner uses a personal Google Play developer account.
 - **Consequences:** one-time USD 25 registration fee and identity verification. Internal testing has no review and no 12-tester / 14-day requirement (that only gates a public production release for new personal accounts), allows up to 100 testers by e-mail list, and can start before the store listing and Data safety form are complete. Builds are uploaded as app bundles (`.aab`) signed with the upload key; Play App Signing re-signs them with Google's app signing key, so that key's SHA-1 and SHA-256 must be added to Firebase (Google sign-in) and to `assetlinks.json` (sign-in links open the app) **before** testers install. A Play-installed app cannot be updated by an APK signed with the upload key and vice versa – uninstall one to install the other. Updates reach testers through the Play Store.
+
+### D-015 – At least half of a quiz is new questions
+
+- **Context:** with Leitner weights alone (D-006), questions answered wrong keep coming back and a user may take a long time to see all questions once. The owner wants every quiz to bring new material.
+- **Decision (owner, 2026-11-23):** in a quiz of more than one question, at least half (rounded up: 3 of 5, 5 of 10) are questions not seen yet; if fewer are left, questions seen once fill the gap, then those seen twice, and so on.
+- **Implementation:** every other question – the 1st, 3rd, 5th… – is picked by `QuestionPicker.pickFresh`: the fewest `seen` among the eligible questions (skippable never, no repeats in the quiz, the last 5 left out as usual), random among equals. The other questions are picked by Leitner weights as before; when those happen to be new too, the quiz simply has more new questions. Applies to 5, 10, *Mind* (only the order changes) and ∞ (every other question), and to the quiz a reminder opens (after its own question). Not to 1-question quizzes or to the reminders' own picks.
+- **Consequences:** a quiz contains at least min(⌈n/2⌉, new questions left) new ones; once all are seen, the „fresh” half goes to the least-practised questions.

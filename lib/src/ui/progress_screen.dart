@@ -68,6 +68,66 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
+  /// Asks for confirmation – and, when there are any, whether the skippable
+  /// list goes too – then deletes the progress on this set.
+  Future<void> _confirmReset(List<Question> skipped) async {
+    final l10n = AppLocalizations.of(context);
+    final danger = TextButton.styleFrom(
+      foregroundColor: Theme.of(context).colorScheme.error,
+    );
+    final keepSkippable = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.resetProgress),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.resetProgressBody(widget.questionSet.title)),
+            if (skipped.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(l10n.resetProgressSkippableQuestion(skipped.length)),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancelButton),
+          ),
+          if (skipped.isNotEmpty) ...[
+            TextButton(
+              style: danger,
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.resetKeepSkippable),
+            ),
+            TextButton(
+              style: danger,
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.resetEverything),
+            ),
+          ] else
+            TextButton(
+              style: danger,
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.resetConfirm),
+            ),
+        ],
+      ),
+    );
+    if (keepSkippable == null || !mounted) return;
+    final keep = keepSkippable ? {for (final q in skipped) q.key} : <String>{};
+    setState(() {
+      _progress = {for (final key in keep) key: const ItemProgress(skippable: true)};
+    });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.resetDone)));
+    unawaited(
+      widget.services.progress
+          .reset(widget.user.uid, widget.questionSet.id, keepSkippable: keep)
+          .catchError((Object error) => debugPrint('Progress reset failed: $error')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -152,6 +212,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       child: Text(l10n.undoSkippable),
                     ),
                   ),
+                const SizedBox(height: 32),
+                Center(
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: theme.colorScheme.error,
+                    ),
+                    onPressed: stats.seen == 0 && stats.skipped.isEmpty
+                        ? null
+                        : () => _confirmReset(stats.skipped),
+                    icon: const Icon(Icons.delete_outline),
+                    label: Text(l10n.resetProgress),
+                  ),
+                ),
               ],
             ),
           ),

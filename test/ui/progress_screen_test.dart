@@ -48,4 +48,80 @@ void main() {
     expect(rowCount(tester, hu.progressSkippedRow), 0);
     expect(rowCount(tester, hu.progressBox4), 1);
   });
+
+  group('Haladás törlése', () {
+    late TestServices t;
+    late List questions;
+
+    Future<void> open(WidgetTester tester, {bool withSkippable = true}) async {
+      t = TestServices();
+      final qs = sampleQuestions();
+      questions = qs;
+      final set = t.questionSets.add('set1', 'Gyakorló teszt', qs);
+      t.progress.data['set1'] = {
+        qs[0].key: const ItemProgress(box: 2, seen: 3, correct: 2, wrong: 1),
+        if (withSkippable)
+          qs[1].key: const ItemProgress(box: 4, seen: 4, correct: 4, skippable: true),
+      };
+      await tester.pumpWidget(
+        localized(ProgressScreen(services: t.services, user: testUser(), questionSet: set)),
+      );
+      await tester.pumpAndSettle();
+      // The button is at the bottom of a lazily built list.
+      await tester.scrollUntilVisible(
+        find.text(hu.resetProgress),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tapVisible(tester, find.text(hu.resetProgress));
+    }
+
+    testWidgets('keeps the Bébikönnyű list if asked', (tester) async {
+      await open(tester);
+      expect(find.text(hu.resetProgressSkippableQuestion(1)), findsOneWidget);
+
+      await tapVisible(tester, find.text(hu.resetKeepSkippable));
+
+      expect(t.progress.resets, ['set1:keep1']);
+      expect(t.progress.data['set1']!.keys, [questions[1].key]);
+      expect(find.text(hu.progressSeen(0, 3)), findsOneWidget);
+      expect(find.text(hu.progressSkippedTitle(1)), findsOneWidget);
+      expect(find.text(hu.resetDone), findsOneWidget);
+    });
+
+    testWidgets('or deletes it too', (tester) async {
+      await open(tester);
+
+      await tapVisible(tester, find.text(hu.resetEverything));
+
+      expect(t.progress.resets, ['set1:keep0']);
+      expect(find.text(hu.progressSkippedTitle(0)), findsOneWidget);
+    });
+
+    testWidgets('Mégse changes nothing', (tester) async {
+      await open(tester);
+
+      await tapVisible(tester, find.text(hu.cancelButton));
+
+      expect(t.progress.resets, isEmpty);
+      expect(t.progress.data['set1'], hasLength(2));
+      expect(find.text(hu.resetDone), findsNothing);
+    });
+
+    testWidgets('without Bébikönnyű questions there is no list to ask about',
+        (tester) async {
+      await open(tester, withSkippable: false);
+      expect(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.textContaining('bébikönnyű'),
+        ),
+        findsNothing,
+      );
+      expect(find.text(hu.resetKeepSkippable), findsNothing);
+
+      await tapVisible(tester, find.text(hu.resetConfirm));
+      expect(t.progress.resets, ['set1:keep0']);
+    });
+  });
 }

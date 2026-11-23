@@ -101,7 +101,7 @@ The Firebase web configuration in the (public) repository is not a secret. Acces
 ## Quiz flow
 
 1. Load the active set (cache first, then Firestore) and the user's progress document.
-2. Pick the next question (D-006): leave out skippable questions and the last 5 asked; weighted random by Leitner box – box 0 → 8, box 1 → 4, box 2 → 2, box 3 → 1, box 4 → 0.5. Unseen questions start in box 0.
+2. Pick the next question (D-006): leave out skippable questions and the last 5 asked; weighted random by Leitner box – box 0 → 8, box 1 → 4, box 2 → 2, box 3 → 1, box 4 → 0.5. Unseen questions start in box 0. In a quiz of more than one question every other question (1st, 3rd, 5th…) is instead the least-seen one – never seen first, random among equals – so at least half of the quiz is new (D-015).
 3. Show the question with the 4 options **shuffled** and **without emphasis** (emphasis would give the answer away, D-007).
 4. After the answer: right/wrong, then the correct answer with emphasis (***subject***, **differs**) and any note. Correct → box + 1 (max 4); wrong → box 0.
 5. "Skippable" toggle on the feedback view; undo from the progress view.

@@ -118,6 +118,8 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 
 - [ ] 1–2 weeks with the testers; record findings in [qa-log.md](qa-log.md)
 - [ ] Fixes; tune weights and default settings
+- [x] At least half of every multi-question quiz is new questions, then the least seen (D-015) – 2026-11-23
+- [x] „Haladás törlése” on the Haladás page, optionally keeping the Bébikönnyű list; Haladás row „Bébikönnyűnek jelölt”, „Legutóbb rontott” label – 2026-11-23
 - [x] App icon instead of the Flutter logo: the owner's slanted „A” (green check, green–blue cross, red leg) on white; Android launcher (legacy, adaptive, themed), status-bar icon, web icons, Play listing icon – 2026-11-22
 - [ ] Accessibility (text scaling, contrast), dark mode
 - [ ] Watch `workmanager_android` for a Built-in Kotlin release (see the 2026-11-22 QA note); if a Flutter upgrade breaks the build first, drop the 12-hour background job – reminders then run about 3 days past the last app open

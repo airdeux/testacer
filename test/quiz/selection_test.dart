@@ -64,4 +64,27 @@ void main() {
       recent.add(key);
     }
   });
+
+  test('pickFresh takes a never-seen question first, then the least seen', () {
+    final picker = QuestionPicker(random: Random(2));
+    final progress = {
+      for (final key in keys) key: const ItemProgress(box: 4, seen: 5, correct: 5),
+    }
+      ..['q1'] = const ItemProgress(box: 1, seen: 1, correct: 1)
+      ..['q2'] = const ItemProgress(box: 0, seen: 2, wrong: 2)
+      ..remove('q7') // never seen
+      ..['q8'] = const ItemProgress(skippable: true); // never seen, but skippable
+
+    expect(picker.pickFresh(keys, progress), 'q7');
+    expect(picker.pickFresh(keys, progress, exclude: {'q7'}), 'q1');
+    expect(picker.pickFresh(keys, progress, exclude: {'q7', 'q1'}), 'q2');
+    // Recently asked ones wait, as with pick.
+    expect(picker.pickFresh(keys, progress, recent: ['q7']), 'q1');
+  });
+
+  test('pickFresh chooses randomly among equally fresh questions', () {
+    final picker = QuestionPicker(random: Random(3));
+    final picked = {for (var i = 0; i < 200; i++) picker.pickFresh(keys, const {})};
+    expect(picked, keys.toSet());
+  });
 }

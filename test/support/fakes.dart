@@ -208,6 +208,20 @@ class FakeProgressRepository implements ProgressRepository {
     (data[setId] ??= {})[key] = item;
     saves.add('$setId:$key:box${item.box}:skip${item.skippable}');
   }
+
+  final resets = <String>[];
+
+  @override
+  Future<void> reset(
+    String uid,
+    String setId, {
+    Set<String> keepSkippable = const {},
+  }) async {
+    data[setId] = {
+      for (final key in keepSkippable) key: const ItemProgress(skippable: true),
+    };
+    resets.add('$setId:keep${keepSkippable.length}');
+  }
 }
 
 class FakeUserSettingsRepository implements UserSettingsRepository {

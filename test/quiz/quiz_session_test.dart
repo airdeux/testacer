@@ -58,6 +58,100 @@ void main() {
     expect(skipped.current!.question.key, isNot(key));
   });
 
+  group('at least half of a quiz is new (D-015)', () {
+    List<String> run(QuizSession quiz) {
+      final keys = <String>[];
+      while (quiz.next()) {
+        keys.add(quiz.current!.question.key);
+        quiz.answer(quiz.current!.correctIndex);
+      }
+      return keys;
+    }
+
+    // Everything well known, except a few never-seen questions.
+    Map<String, ItemProgress> knownExcept(Set<int> unseen, {Map<int, int> seenOnce = const {}}) => {
+          for (var i = 0; i < questions.length; i++)
+            if (!unseen.contains(i))
+              questions[i].key: seenOnce.containsKey(i)
+                  ? const ItemProgress(box: 1, seen: 1, correct: 1)
+                  : const ItemProgress(box: 4, seen: 6, correct: 6),
+        };
+
+    test('5 questions: 3 new ones when there are enough', () {
+      for (var seed = 0; seed < 20; seed++) {
+        final quiz = QuizSession(
+          questions: questions,
+          progress: knownExcept({2, 5, 7, 9}),
+          length: QuizLength.five,
+          random: Random(seed),
+        );
+        final keys = run(quiz);
+        final unseen = {2, 5, 7, 9}.map((i) => questions[i].key).toSet();
+        expect(keys, hasLength(5));
+        expect(keys.where(unseen.contains).length, greaterThanOrEqualTo(3));
+        expect(unseen, contains(keys.first)); // the 1st, 3rd and 5th
+      }
+    });
+
+    test('10 questions: 5 new ones', () {
+      final unseenIdx = {0, 1, 2, 3, 4, 5};
+      final quiz = QuizSession(
+        questions: questions,
+        progress: knownExcept(unseenIdx),
+        length: QuizLength.ten,
+        random: Random(4),
+      );
+      final keys = run(quiz);
+      final unseen = unseenIdx.map((i) => questions[i].key).toSet();
+      expect(keys.where(unseen.contains).length, greaterThanOrEqualTo(5));
+    });
+
+    test('too few new ones: once-seen questions fill the rest', () {
+      for (var seed = 0; seed < 20; seed++) {
+        final quiz = QuizSession(
+          questions: questions,
+          // One never seen, two seen once, the rest seen six times.
+          progress: knownExcept({3}, seenOnce: {6: 1, 8: 1}),
+          length: QuizLength.five,
+          random: Random(seed),
+        );
+        final keys = run(quiz);
+        // The new one and both once-seen ones are in (the in-between picks
+        // may take one of them too, which only adds to the count).
+        expect(keys.first, questions[3].key);
+        expect(keys, containsAll([questions[6].key, questions[8].key]));
+      }
+    });
+
+    test('a single question is picked the usual way', () {
+      final quiz = QuizSession(
+        questions: questions,
+        progress: knownExcept({3}),
+        length: QuizLength.one,
+        random: Random(1),
+      );
+      expect(run(quiz), hasLength(1));
+    });
+
+    test('endless: the new ones come within the first five', () {
+      final quiz = QuizSession(
+        questions: questions,
+        progress: knownExcept({1, 4, 10}),
+        length: QuizLength.endless,
+        random: Random(5),
+      );
+      final keys = <String>[];
+      for (var i = 0; i < 5 && quiz.next(); i++) {
+        keys.add(quiz.current!.question.key);
+        quiz.answer(quiz.current!.correctIndex);
+      }
+      expect(
+        keys,
+        containsAll([questions[1].key, questions[4].key, questions[10].key]),
+      );
+    });
+  });
+
   test('a 10-question quiz asks 10 different questions, then ends', () {
     final quiz = session(QuizLength.ten);
     final seen = <String>{};

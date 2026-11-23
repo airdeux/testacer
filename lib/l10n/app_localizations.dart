@@ -1089,6 +1089,48 @@ abstract class AppLocalizations {
   /// In hu, this message translates to:
   /// **'Következő – igaz vagy hamis?\n{text}'**
   String reminderNextStatement(String text);
+
+  /// No description provided for @resetProgress.
+  ///
+  /// In hu, this message translates to:
+  /// **'Haladás törlése'**
+  String get resetProgress;
+
+  /// No description provided for @resetProgressBody.
+  ///
+  /// In hu, this message translates to:
+  /// **'A(z) „{title}” kérdéssorban adott összes válaszod és a statisztika törlődik. Ezt nem lehet visszavonni.'**
+  String resetProgressBody(String title);
+
+  /// No description provided for @resetProgressSkippableQuestion.
+  ///
+  /// In hu, this message translates to:
+  /// **'A bébikönnyűnek jelölt kérdések listáját ({count} db) is töröljük?'**
+  String resetProgressSkippableQuestion(int count);
+
+  /// No description provided for @resetKeepSkippable.
+  ///
+  /// In hu, this message translates to:
+  /// **'Csak a haladást'**
+  String get resetKeepSkippable;
+
+  /// No description provided for @resetEverything.
+  ///
+  /// In hu, this message translates to:
+  /// **'A listát is'**
+  String get resetEverything;
+
+  /// No description provided for @resetConfirm.
+  ///
+  /// In hu, this message translates to:
+  /// **'Törlés'**
+  String get resetConfirm;
+
+  /// No description provided for @resetDone.
+  ///
+  /// In hu, this message translates to:
+  /// **'A haladás törölve.'**
+  String get resetDone;
 }
 
 class _AppLocalizationsDelegate

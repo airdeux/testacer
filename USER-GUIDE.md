@@ -21,11 +21,13 @@
 - The result follows: green = correct, red = your wrong choice. Below it, the correct answer is shown with its ***subject*** and the **words that make it different** from the wrong answers highlighted, plus a note where there is one.
 - **Bébikönnyű – ne kérdezd többet:** switch it on for a question you already know well; it will not be asked again (undo it on the Haladás page).
 - **Következő** goes on; after the last question (or when you close the quiz with ✕) you see your score and can start a new round.
+- At least half of each quiz (3 of 5, 5 of 10) are questions you have not seen yet – or, when none are left, the ones you have seen the fewest times.
 - Questions you answer wrong come back more often; questions you keep answering right come up less and less.
 
 ## 4. Progress (Haladás)
 
-- How many questions you have seen, your overall accuracy, how many questions are in each stage (new / wrong → "jól megy"), the questions you get wrong most often, and the list of "known" questions with **Visszavétel** (undo).
+- How many questions you have seen, your overall accuracy, how many questions are in each stage („Még nem láttad”, „Legutóbb rontott” … „Jól megy”, „Bébikönnyűnek jelölt”), the questions you get wrong most often, and the list of bébikönnyű questions with **Visszavétel** (undo).
+- **Haladás törlése** (at the bottom) starts this question set over: all your answers and statistics go. If you have bébikönnyű questions, it asks whether to keep that list (**Csak a haladást**) or delete it too (**A listát is**). This cannot be undone.
 
 ## 5. Reminders (Android app)
 

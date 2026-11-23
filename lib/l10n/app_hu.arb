@@ -382,5 +382,26 @@
         "type": "String"
       }
     }
-  }
+  },
+  "resetProgress": "Haladás törlése",
+  "resetProgressBody": "A(z) „{title}” kérdéssorban adott összes válaszod és a statisztika törlődik. Ezt nem lehet visszavonni.",
+  "@resetProgressBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "resetProgressSkippableQuestion": "A bébikönnyűnek jelölt kérdések listáját ({count} db) is töröljük?",
+  "@resetProgressSkippableQuestion": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "resetKeepSkippable": "Csak a haladást",
+  "resetEverything": "A listát is",
+  "resetConfirm": "Törlés",
+  "resetDone": "A haladás törölve."
 }
