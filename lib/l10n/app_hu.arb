@@ -403,5 +403,14 @@
   "resetKeepSkippable": "Csak a haladást",
   "resetEverything": "A listát is",
   "resetConfirm": "Törlés",
-  "resetDone": "A haladás törölve."
+  "resetDone": "A haladás törölve.",
+  "triviaClose": "Bezár",
+  "importTriviaCount": "Érdekességek: {count}",
+  "@importTriviaCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

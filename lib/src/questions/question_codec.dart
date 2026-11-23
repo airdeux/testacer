@@ -7,6 +7,7 @@ Map<String, Object?> questionToMap(Question question) => {
       if (question.prompt != null) 'prompt': question.prompt,
       'correct': _optionToMap(question.correct),
       'wrong': [for (final option in question.wrong) _optionToMap(option)],
+      if (question.previousKeys.isNotEmpty) 'previousKeys': question.previousKeys,
     };
 
 Question questionFromMap(Map<String, Object?> map) => Question(
@@ -18,7 +19,33 @@ Question questionFromMap(Map<String, Object?> map) => Question(
           _optionFromMap(option! as Map<String, Object?>),
       ],
       line: 0,
+      previousKeys: [
+        for (final key in (map['previousKeys'] as List<Object?>?) ?? const [])
+          if (key is String) key,
+      ],
     );
+
+/// Firestore representation of a trivia item (in the set document's
+/// `trivia` list, D-016).
+Map<String, Object?> triviaToMap(Trivia trivia) => {
+      'title': trivia.title,
+      'body': trivia.body,
+      'keywords': trivia.keywords,
+    };
+
+Trivia? triviaFromMap(Object? data) => switch (data) {
+      {
+        'title': final String title,
+        'body': final String body,
+        'keywords': final List<Object?> keywords,
+      } =>
+        Trivia(
+          title: title,
+          body: body,
+          keywords: [for (final k in keywords) if (k is String) k],
+        ),
+      _ => null,
+    };
 
 Map<String, Object?> _optionToMap(QuestionOption option) => {
       'text': option.text,

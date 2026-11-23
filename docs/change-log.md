@@ -6,6 +6,8 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Added
 
+- 2026-11-23 – Trivia (D-016): a `# Trivia` part after the questions holds „Tudtad?” items with [keywords]; after an answer (right or wrong) the items whose keywords occur in the correct option pop up in a bottom sheet. The import preview shows the number of items; the validator too.
+- 2026-11-23 – Updating a set carries progress over to questions whose correct answer was edited but kept its number (`previousKeys`, D-017) – e.g. typo fixes. 13 new tests (152 in all).
 - 2026-11-23 – Quizzes of more than one question: every other question (1st, 3rd, 5th…) is the least-seen one, so at least half are new – 3 of 5, 5 of 10 –, then once-seen ones and so on (D-015).
 - 2026-11-23 – **Haladás törlése** at the bottom of the Haladás page: deletes the answers and statistics of the set; asks whether to keep the Bébikönnyű list. Reminders are re-planned afterwards. 11 new tests (139 in all).
 - 2026-11-22 – App icon, after the owner's sketch: a slanted „A” (as in TestAcer) of three bars on white – a green check mark, a green–blue cross and a red right leg – replaces the Flutter logo on the Android launcher (legacy, adaptive and Android 13 themed icon), in the status bar of reminders, on the web (favicon, home-screen and maskable icons); `assets/branding/play-icon-512.png` for the Play listing. Sources and generator: `assets/branding/*.svg`, `tool/branding/make_icons.py`. (A first draft – a judo belt forming a check mark – was dropped: the app is not only for judo.)

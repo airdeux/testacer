@@ -8,6 +8,10 @@ final _heading = RegExp(r'^##\s+(\d+)\.?\s*(.*)$');
 final _option = RegExp(r'^\d+\.\s+(.*)$');
 final _check = RegExp('^✔️?\\s*');
 final _note = RegExp(r'\s*\*\(([^*]*)\)\*$');
+final _rule = RegExp(r'^\s*(-{3,}|_{3,}|\*{3,})\s*$');
+final _subheading = RegExp(r'^##\s+(.+)$');
+final _keywordLine = RegExp(r'^\s*\[[^\]]*\](\s*,?\s*\[[^\]]*\])*\s*$');
+final _keywordGroup = RegExp(r'\[([^\]]*)\]');
 
 /// Parses a question file in the format described in docs/question-format.md.
 ParseResult parseQuestionSet(String markdown) => _Parser().parse(markdown);
@@ -121,12 +125,27 @@ class _DraftQuestion {
   final options = <_DraftOption>[];
 }
 
+class _DraftTrivia {
+  _DraftTrivia(this.title, this.line);
+
+  final String title;
+  final int line;
+  final body = <String>[];
+  final keywords = <String>[];
+}
+
 class _Parser {
   final _issues = <ParseIssue>[];
   final _questions = <Question>[];
   final _description = <String>[];
+  final _trivia = <Trivia>[];
   String? _setTitle;
   _DraftQuestion? _draft;
+
+  /// After the questions, a level-1 heading (e.g. `# Trivia`) starts the
+  /// trivia part (D-016).
+  bool _inTrivia = false;
+  _DraftTrivia? _triviaDraft;
 
   ParseResult parse(String markdown) {
     final lines = const LineSplitter().convert(markdown);
@@ -134,12 +153,14 @@ class _Parser {
       _readLine(lines[i].trimRight(), i + 1);
     }
     _finishQuestion();
+    _finishTrivia();
     _checkSet();
     return ParseResult(
       QuestionSet(
         title: _setTitle,
         description: _description.join('\n'),
         questions: List.unmodifiable(_questions),
+        trivia: List.unmodifiable(_trivia),
       ),
       List.unmodifiable(_issues),
     );
@@ -147,6 +168,21 @@ class _Parser {
 
   void _readLine(String line, int lineNo) {
     if (line.trim().isEmpty) return;
+
+    // A horizontal rule (`---`) only separates parts.
+    if (_rule.hasMatch(line)) {
+      _finishQuestion();
+      return;
+    }
+    if (_inTrivia) {
+      _readTriviaLine(line, lineNo);
+      return;
+    }
+    if (_title.hasMatch(line) && (_draft != null || _questions.isNotEmpty)) {
+      _finishQuestion();
+      _inTrivia = true;
+      return;
+    }
 
     final heading = _heading.firstMatch(line);
     if (heading != null) {
@@ -188,6 +224,68 @@ class _Parser {
       _issue(IssueLevel.warning, lineNo, problem, draft.order);
     }
     draft.options.add(_DraftOption(check != null, parsed, lineNo));
+  }
+
+  void _readTriviaLine(String line, int lineNo) {
+    final heading = _subheading.firstMatch(line);
+    if (heading != null) {
+      _finishTrivia();
+      _triviaDraft = _DraftTrivia(heading.group(1)!.trim(), lineNo);
+      return;
+    }
+    final draft = _triviaDraft;
+    if (draft == null) {
+      // Text between `# Trivia` and the first `## …` item.
+      _issue(
+        IssueLevel.warning,
+        lineNo,
+        'trivia text outside an item is ignored: "${_shorten(line)}"',
+      );
+      return;
+    }
+    if (_keywordLine.hasMatch(line)) {
+      for (final group in _keywordGroup.allMatches(line)) {
+        for (final keyword in group.group(1)!.split(',')) {
+          if (keyword.trim().isNotEmpty) draft.keywords.add(keyword.trim());
+        }
+      }
+      return;
+    }
+    final text = line.trimLeft().startsWith('- ')
+        ? line.trimLeft().substring(2)
+        : line;
+    for (final problem in parseEmphasis(text).problems) {
+      _issue(IssueLevel.warning, lineNo, 'trivia „${draft.title}”: $problem');
+    }
+    draft.body.add(line.trim());
+  }
+
+  void _finishTrivia() {
+    final draft = _triviaDraft;
+    if (draft == null) return;
+    _triviaDraft = null;
+    var keywords = draft.keywords;
+    if (keywords.isEmpty) {
+      _issue(
+        IssueLevel.warning,
+        draft.line,
+        'trivia „${draft.title}” has no [keywords] line – its heading is '
+        'used as the keyword',
+      );
+      keywords = [draft.title];
+    }
+    if (draft.body.isEmpty) {
+      _issue(IssueLevel.warning, draft.line, 'trivia „${draft.title}” is empty');
+      return;
+    }
+    _trivia.add(
+      Trivia(
+        title: draft.title,
+        body: draft.body.join('\n'),
+        keywords: List.unmodifiable(keywords),
+        line: draft.line,
+      ),
+    );
   }
 
   void _finishQuestion() {

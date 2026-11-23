@@ -6,6 +6,7 @@ import '../../l10n/app_localizations.dart';
 import '../app_services.dart';
 import '../auth/auth_models.dart';
 import '../question_format/models.dart';
+import '../questions/key_history.dart';
 import '../questions/question_set_repository.dart';
 import '../quiz/progress.dart';
 import 'centered_panel.dart';
@@ -45,7 +46,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
     try {
       final setId = widget.questionSet.id;
       final questions = await widget.services.questionSets.loadQuestions(setId);
-      final progress = await widget.services.progress.load(widget.user.uid, setId);
+      final progress = carryOverProgress(
+        await widget.services.progress.load(widget.user.uid, setId),
+        questions,
+      );
       if (mounted) {
         setState(() {
           _questions = questions;

@@ -66,6 +66,7 @@ class Question {
     required this.wrong,
     required this.line,
     this.prompt,
+    this.previousKeys = const [],
   }) : key = questionKey(correct.text);
 
   /// Display order: the number in the `## 12.` heading.
@@ -83,6 +84,19 @@ class Question {
   /// Stable identifier derived from the correct option's text.
   final String key;
 
+  /// Keys this question had before its correct answer was edited (newest
+  /// first), so progress recorded under them is carried over (D-017).
+  final List<String> previousKeys;
+
+  Question withPreviousKeys(List<String> keys) => Question(
+        order: order,
+        prompt: prompt,
+        correct: correct,
+        wrong: wrong,
+        line: line,
+        previousKeys: keys,
+      );
+
   /// 1-based line number of the question's heading in the source file.
   final int line;
 
@@ -96,6 +110,7 @@ class QuestionSet {
     required this.questions,
     this.title,
     this.description = '',
+    this.trivia = const [],
   });
 
   /// Text of the first level-1 heading, if any.
@@ -106,6 +121,46 @@ class QuestionSet {
 
   /// The questions in file order.
   final List<Question> questions;
+
+  /// The items of the „Trivia” part, in file order (D-016).
+  final List<Trivia> trivia;
+}
+
+/// A „Tudtad?” item from the `# Trivia` part of a question file (D-016):
+/// shown after an answer whose correct option contains one of its keywords.
+class Trivia {
+  const Trivia({
+    required this.title,
+    required this.body,
+    required this.keywords,
+    this.line = 0,
+  });
+
+  /// The `## …` heading.
+  final String title;
+
+  /// The lines under the heading, as written: paragraphs and `- ` bullets,
+  /// with `***subject***` and `**bold**` emphasis.
+  final String body;
+
+  /// Words or phrases from the `[…]` line(s).
+  final List<String> keywords;
+
+  /// 1-based line number of the heading in the source file.
+  final int line;
+
+  /// Whether [text] contains one of the keywords (ignoring case and the
+  /// amount of white space).
+  bool matches(String text) {
+    final haystack = _fold(text);
+    return keywords.any((keyword) {
+      final needle = _fold(keyword);
+      return needle.isNotEmpty && haystack.contains(needle);
+    });
+  }
+
+  static String _fold(String text) =>
+      text.toLowerCase().replaceAll(RegExp(r'\s+'), ' ').trim();
 }
 
 /// Severity of a [ParseIssue]. Errors block the import; warnings do not.

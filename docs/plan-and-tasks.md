@@ -118,6 +118,9 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 
 - [ ] 1–2 weeks with the testers; record findings in [qa-log.md](qa-log.md)
 - [ ] Fixes; tune weights and default settings
+- [x] Trivia part in the question file („Tudtad?” items with [keywords]) popping up after matching answers (D-016) – 2026-11-23
+- [x] Updating a set keeps progress on questions whose correct answer only had typos fixed (same number, D-017) – 2026-11-23
+- [ ] Owner: re-import `gyakorlo_teszt_osszes_valasz.md` into the existing set (typo fixes + Trivia)
 - [x] At least half of every multi-question quiz is new questions, then the least seen (D-015) – 2026-11-23
 - [x] „Haladás törlése” on the Haladás page, optionally keeping the Bébikönnyű list; Haladás row „Bébikönnyűnek jelölt”, „Legutóbb rontott” label – 2026-11-23
 - [x] App icon instead of the Flutter logo: the owner's slanted „A” (green check, green–blue cross, red leg) on white; Android launcher (legacy, adaptive, themed), status-bar icon, web icons, Play listing icon – 2026-11-22

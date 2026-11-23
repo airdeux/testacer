@@ -7,12 +7,14 @@ import '../../l10n/app_localizations.dart';
 import '../app_services.dart';
 import '../auth/auth_models.dart';
 import '../question_format/models.dart';
+import '../questions/key_history.dart';
 import '../questions/question_set_repository.dart';
 import '../quiz/progress.dart';
 import '../quiz/quiz_length.dart';
 import '../quiz/quiz_session.dart';
 import 'centered_panel.dart';
 import 'emphasized_text.dart';
+import 'trivia_sheet.dart';
 
 /// Colours for right and wrong answers.
 const _correctColor = Color(0xFF2E7D32);
@@ -47,6 +49,7 @@ class QuizScreen extends StatefulWidget {
 class _QuizScreenState extends State<QuizScreen> {
   QuizSession? _session;
   bool _loading = true;
+  List<Trivia> _trivia = const [];
   bool _failed = false;
   bool _finished = false;
 
@@ -65,8 +68,14 @@ class _QuizScreenState extends State<QuizScreen> {
     try {
       final setId = widget.questionSet.id;
       final questions = await widget.services.questionSets.loadQuestions(setId);
-      final progress =
-          await widget.services.progress.load(widget.user.uid, setId);
+      final progress = carryOverProgress(
+        await widget.services.progress.load(widget.user.uid, setId),
+        questions,
+      );
+      // Optional: a set without trivia, or a failed read, just shows none.
+      _trivia = await widget.services.questionSets
+          .loadTrivia(setId)
+          .catchError((Object _) => const <Trivia>[]);
       final session = QuizSession(
         questions: questions,
         progress: progress,
@@ -103,8 +112,15 @@ class _QuizScreenState extends State<QuizScreen> {
   void _answer(int index) {
     final session = _session!;
     final item = session.answer(index);
-    _save(session.current!.question.key, item);
+    final question = session.current!.question;
+    _save(question.key, item);
     setState(() {});
+    // D-016: trivia whose keywords appear in the correct answer pop up.
+    final matching = [
+      for (final item in _trivia)
+        if (item.matches(question.correct.text)) item,
+    ];
+    if (matching.isNotEmpty) unawaited(showTrivia(context, matching));
   }
 
   void _setSkippable(bool value) {

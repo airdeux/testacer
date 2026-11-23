@@ -165,6 +165,7 @@ class Latest<T> {
 class FakeQuestionSetRepository implements QuestionSetRepository {
   final sets = Latest<List<QuestionSetInfo>>(const []);
   final questions = <String, List<Question>>{};
+  final trivia = <String, List<Trivia>>{};
   final imports = <String>[];
 
   /// Adds a set with [items] and returns its info.
@@ -182,15 +183,20 @@ class FakeQuestionSetRepository implements QuestionSetRepository {
   Future<List<Question>> loadQuestions(String setId) async => questions[setId] ?? const [];
 
   @override
+  Future<List<Trivia>> loadTrivia(String setId) async => trivia[setId] ?? const [];
+
+  @override
   Future<String> importSet({
     String? setId,
     required String title,
     required String sourceFile,
     required List<Question> questions,
+    List<Trivia> trivia = const [],
   }) async {
     final id = setId ?? 'set${sets.value.length + 1}';
-    imports.add('$id:$title:$sourceFile:${questions.length}');
+    imports.add('$id:$title:$sourceFile:${questions.length}:${trivia.length}');
     this.questions[id] = questions;
+    this.trivia[id] = trivia;
     return id;
   }
 }

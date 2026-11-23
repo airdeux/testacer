@@ -50,14 +50,16 @@ lib/
 
 ```
 allowlist/{email}                      { invitedAt, role: "admin" | "learner" }
-questionSets/{setId}                   { title, sourceFile, importedAt, version, questionCount }
-questionSets/{setId}/questions/{key}   { order, prompt?, correct: { text, marks[] }, wrong: [ { text, note? } ] }
+questionSets/{setId}                   { title, sourceFile, importedAt, questionCount, trivia: [ { title, body, keywords[] } ] }
+questionSets/{setId}/questions/{key}   { order, prompt?, correct: { text, marks[] }, wrong: [ { text, note? } ], previousKeys[]? }
 users/{uid}                            { displayName, email, activeSetId, settings { … } }
 users/{uid}/progress/{setId}           { items: { <key>: { box, seen, correct, wrong, lastAt, skippable } } }
 ```
 
 - `key` – stable hash of the normalised correct-answer text ([question-format.md](question-format.md#question-key)), so re-importing an edited file keeps progress for unchanged questions.
 - `marks[]` – emphasis ranges of the correct answer (`subject`, `differs`); used only in the feedback view.
+- `previousKeys[]` – keys a question had before its correct answer was edited (same number, D-017). Progress is not rewritten: when the quiz, the Haladás page or the reminders load a user's progress, a question without a record under its key takes the record of its newest previous key (`carryOverProgress`); new answers are saved under the current key.
+- `trivia` – the „Tudtad?” items of the set's file (D-016), read once when a quiz starts; after each answer the items whose keywords occur in the correct option are shown in a bottom sheet.
 - Progress for a whole set is **one document** (149 small entries, roughly 15 KB): one read when a session starts, far below the free daily quota.
 - `settings`: `quizLength` (`one`, `five`, `ten`, `all`, `endless`), `notifications { enabled, mode: "open" | "trueFalse", windows: [ { days: [1..7], start: "09:00", end: "22:00", everyMinutes: 60 } ] }` (Monday = 1; `end` is the last reminder of the day; `mode` is used from Phase 6).
 - Progress records store `lastAt` as milliseconds since the epoch (the quiz code stays plain Dart).

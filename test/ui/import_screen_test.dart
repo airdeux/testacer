@@ -52,7 +52,7 @@ void main() {
 
     await tapVisible(tester, find.text(hu.importButton));
 
-    expect(t.questionSets.imports, ['set1:Minta kérdéssor:minta.md:1']);
+    expect(t.questionSets.imports, ['set1:Minta kérdéssor:minta.md:1:0']);
     expect(find.text('open'), findsOneWidget); // back on the launcher
     expect(find.text(hu.importDone(1)), findsOneWidget);
   });

@@ -7,6 +7,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../../l10n/app_localizations.dart';
 import '../question_format/models.dart';
+import '../questions/key_history.dart';
 import '../questions/question_set_repository.dart';
 import '../quiz/progress.dart';
 import '../quiz/progress_repository.dart';
@@ -349,7 +350,8 @@ class ReminderService implements Reminders {
         previous.questions.isNotEmpty;
     final questions =
         reuse ? previous.questions : await questionSets!.loadQuestions(set.id);
-    final records = await progress!.load(uid, set.id);
+    final records =
+        carryOverProgress(await progress!.load(uid, set.id), questions);
     return ReminderSnapshot(
       uid: uid,
       setId: set.id,

@@ -21,6 +21,8 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 | D-013 | 2026-11-21 | Email link (passwordless) as a third sign-in method | Accepted |
 | D-014 | 2026-11-22 | Testers get the Android app from Google Play internal testing | Accepted |
 | D-015 | 2026-11-23 | At least half of every multi-question quiz is new (least-seen) questions | Accepted |
+| D-016 | 2026-11-23 | Trivia items in the question file pop up after matching answers | Accepted |
+| D-017 | 2026-11-23 | Progress follows a question whose correct answer was edited at the same number | Accepted |
 
 ---
 
@@ -116,3 +118,17 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 - **Decision (owner, 2026-11-23):** in a quiz of more than one question, at least half (rounded up: 3 of 5, 5 of 10) are questions not seen yet; if fewer are left, questions seen once fill the gap, then those seen twice, and so on.
 - **Implementation:** every other question – the 1st, 3rd, 5th… – is picked by `QuestionPicker.pickFresh`: the fewest `seen` among the eligible questions (skippable never, no repeats in the quiz, the last 5 left out as usual), random among equals. The other questions are picked by Leitner weights as before; when those happen to be new too, the quiz simply has more new questions. Applies to 5, 10, *Mind* (only the order changes) and ∞ (every other question), and to the quiz a reminder opens (after its own question). Not to 1-question quizzes or to the reminders' own picks.
 - **Consequences:** a quiz contains at least min(⌈n/2⌉, new questions left) new ones; once all are seen, the „fresh” half goes to the least-practised questions.
+
+### D-016 – Trivia that pops up after matching answers
+
+- **Context:** the owner added a `# Trivia` part to the question file: short „Tudtad?” items (dates, names, places) with keywords in square brackets, to be shown after an answer whose correct option mentions them.
+- **Decision (owner, 2026-11-23):** after the user picks an answer – right or wrong – every trivia item with a keyword contained in the correct option pops up (bottom sheet, „Bezár” to close; the feedback stays underneath). Matching ignores case and extra spaces; keywords are plain text, so the file author chooses word stems where needed („olimpi”). Format in [question-format.md](question-format.md#trivia-d-016).
+- **Implementation:** the parser reads the items after a level-1 heading that follows the questions; the import stores them in the set document (`trivia` list, a few KB); the quiz loads them once per quiz. Not shown in notifications.
+- **Consequences:** an item matching many questions comes up often; that is up to the keywords. A „don't show again” option can be added if it gets repetitive.
+
+### D-017 – Progress follows a question whose answer text was fixed
+
+- **Context:** question keys come from the correct option's text (D-008 storage, [question-format.md](question-format.md#question-key)). Fixing a typo there gave the question a new key, so everyone's progress on it – including the „Bébikönnyű” mark – started again. The 2026-11-23 file fixes typos in 5 correct answers (questions 7, 18, 56, 107, 127).
+- **Decision:** when updating a set, a question with a new key that has the same number as a question that disappears is the same question: it records the old key (and that question's earlier keys) as `previousKeys`. Wherever a user's progress is loaded, a question without a record under its key takes the record of its newest previous key; new answers are saved under the new key.
+- **Alternatives considered:** keys from the question number (breaks when questions are reordered); rewriting every user's progress at import (needs admin access to other users' data, which the rules do not give).
+- **Consequences:** typo fixes keep progress as long as the numbering stays; changing the numbering and the answer text in the same import does not carry progress over. The old record stays in the progress document unused (until „Haladás törlése”).

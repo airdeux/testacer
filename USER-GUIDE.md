@@ -20,6 +20,7 @@
 - Each question shows its four answers (A–D) in a random order. Tap the one you think is correct.
 - The result follows: green = correct, red = your wrong choice. Below it, the correct answer is shown with its ***subject*** and the **words that make it different** from the wrong answers highlighted, plus a note where there is one.
 - **Bébikönnyű – ne kérdezd többet:** switch it on for a question you already know well; it will not be asked again (undo it on the Haladás page).
+- **Tudtad?** After some answers – right or wrong – a short trivia item pops up (dates, names, places related to the question). Read it and tap **Bezár**.
 - **Következő** goes on; after the last question (or when you close the quiz with ✕) you see your score and can start a new round.
 - At least half of each quiz (3 of 5, 5 of 10) are questions you have not seen yet – or, when none are left, the ones you have seen the fewest times.
 - Questions you answer wrong come back more often; questions you keep answering right come up less and less.
@@ -64,5 +65,6 @@
 
 ## 9. For the admin
 
-- **Import a question set:** the ⬆ (Kérdéssor importálása) button on the start page → **Fájl kiválasztása (.md)** → a Markdown file in the [question format](docs/question-format.md) → check the report and the preview → choose **Új kérdéssor** or an existing set to update → **Importálás**. Updating keeps everyone's progress for unchanged questions; questions no longer in the file are removed.
+- **Import a question set:** the ⬆ (Kérdéssor importálása) button on the start page → **Fájl kiválasztása (.md)** → a Markdown file in the [question format](docs/question-format.md) → check the report and the preview → choose **Új kérdéssor** or an existing set to update → **Importálás**. Updating keeps everyone's progress for unchanged questions, and also for questions whose correct answer you only corrected (as long as the question keeps its number); questions no longer in the file are removed.
+- **Trivia:** a `# Trivia` part after the last question holds „Tudtad?” items: `## Title`, the text, and a line of keywords in square brackets, e.g. `[olimpia], [Kano]`. An item pops up after an answer whose correct option contains one of its keywords – see [question-format.md](docs/question-format.md#trivia-d-016).
 - **Invite a user:** Admin → Users → add email address.

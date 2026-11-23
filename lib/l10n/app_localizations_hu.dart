@@ -604,4 +604,12 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get resetDone => 'A haladás törölve.';
+
+  @override
+  String get triviaClose => 'Bezár';
+
+  @override
+  String importTriviaCount(int count) {
+    return 'Érdekességek: $count';
+  }
 }

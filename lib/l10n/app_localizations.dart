@@ -1131,6 +1131,18 @@ abstract class AppLocalizations {
   /// In hu, this message translates to:
   /// **'A haladás törölve.'**
   String get resetDone;
+
+  /// No description provided for @triviaClose.
+  ///
+  /// In hu, this message translates to:
+  /// **'Bezár'**
+  String get triviaClose;
+
+  /// No description provided for @importTriviaCount.
+  ///
+  /// In hu, this message translates to:
+  /// **'Érdekességek: {count}'**
+  String importTriviaCount(int count);
 }
 
 class _AppLocalizationsDelegate

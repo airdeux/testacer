@@ -2,11 +2,13 @@ import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:testacer/src/question_format/models.dart';
 import 'package:testacer/src/questions/question_set_repository.dart';
 import 'package:testacer/src/quiz/progress.dart';
 import 'package:testacer/src/quiz/quiz_length.dart';
 import 'package:testacer/src/ui/emphasized_text.dart';
 import 'package:testacer/src/ui/quiz_screen.dart';
+import 'package:testacer/src/ui/trivia_sheet.dart';
 
 import '../support/fakes.dart';
 
@@ -130,5 +132,57 @@ void main() {
 
     expect(find.text('megjegyzés'), findsOneWidget);
     expect(find.byType(Card), findsWidgets);
+  });
+
+  group('trivia (D-016)', () {
+    const tatami = Trivia(
+      title: 'A tatamiról',
+      body: 'Tudtad, hogy\n- a ***„Tatami”*** **szalmából** készült?',
+      keywords: ['tatami'],
+    );
+    const kyu = Trivia(title: 'Övek', body: 'Övszínek…', keywords: ['kyu']);
+
+    Future<void> answer(WidgetTester tester, String startKey, {bool right = true}) async {
+      t.questionSets.trivia['set1'] = [tatami, kyu];
+      await tester.pumpWidget(
+        localized(
+          QuizScreen(
+            services: t.services,
+            user: testUser(),
+            questionSet: set,
+            length: QuizLength.one,
+            startKey: startKey,
+            random: Random(1),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final question = sampleQuestions().firstWhere((q) => q.key == startKey);
+      final option = right ? question.correct : question.wrong.first;
+      await tester.tap(find.text(option.text));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('pops up after a right answer when a keyword matches', (tester) async {
+      await answer(tester, sampleQuestions()[2].key); // „Tatami”
+      expect(find.byType(TriviaSheet), findsOneWidget);
+      expect(find.text('A tatamiról'), findsOneWidget);
+      expect(find.text('Övek'), findsNothing);
+
+      await tester.tap(find.text(hu.triviaClose));
+      await tester.pumpAndSettle();
+      expect(find.byType(TriviaSheet), findsNothing);
+      expect(find.text(hu.answerCorrect), findsOneWidget); // feedback still there
+    });
+
+    testWidgets('and after a wrong one', (tester) async {
+      await answer(tester, sampleQuestions()[1].key, right: false); // 2. kyu
+      expect(find.text('Övek'), findsOneWidget);
+    });
+
+    testWidgets('nothing pops up without a matching keyword', (tester) async {
+      await answer(tester, sampleQuestions()[0].key); // „Yoshi”
+      expect(find.byType(TriviaSheet), findsNothing);
+    });
   });
 }

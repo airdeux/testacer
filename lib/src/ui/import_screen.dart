@@ -67,6 +67,7 @@ class _ImportScreenState extends State<ImportScreen> {
         title: _title.text.trim(),
         sourceFile: _file!.name,
         questions: questions,
+        trivia: _result!.questionSet.trivia,
       );
       messenger.showSnackBar(
         SnackBar(content: Text(l10n.importDone(questions.length))),
@@ -117,6 +118,8 @@ class _ImportScreenState extends State<ImportScreen> {
                   const SizedBox(height: 16),
                   Text(l10n.importFileLabel(_file!.name)),
                   Text(l10n.questionCount(questions.length)),
+                  if (result.questionSet.trivia.isNotEmpty)
+                    Text(l10n.importTriviaCount(result.questionSet.trivia.length)),
                   const SizedBox(height: 16),
                   Text(l10n.importIssuesTitle, style: theme.textTheme.titleMedium),
                   const SizedBox(height: 4),

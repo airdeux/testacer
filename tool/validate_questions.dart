@@ -28,6 +28,7 @@ void main(List<String> args) {
 
   stdout.writeln('Title:     ${set.title ?? '(none)'}');
   stdout.writeln('Questions: ${set.questions.length}');
+  stdout.writeln('Trivia:    ${set.trivia.length}');
   stdout.writeln(
     'Options:   ${optionCounts.entries.map((e) => '${e.value} × ${e.key}').join(', ')}',
   );
