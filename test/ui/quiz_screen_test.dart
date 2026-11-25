@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:testacer/src/localization.dart';
 import 'package:testacer/src/question_format/models.dart';
 import 'package:testacer/src/questions/question_set_repository.dart';
 import 'package:testacer/src/quiz/progress.dart';
@@ -55,7 +56,7 @@ void main() {
   testWidgets('shows plain options, then feedback with emphasis', (tester) async {
     await pumpQuiz(tester, QuizLength.five);
 
-    expect(find.text(hu.quizQuestionOf(1, 3)), findsOneWidget);
+    expect(find.text(hu.quizQuestionOf(1, 5)), findsOneWidget);
     expect(find.byType(EmphasizedText), findsNothing);
 
     await tapVisible(tester, find.text(wrongText(tester)));
@@ -96,18 +97,20 @@ void main() {
   });
 
   testWidgets('after the last question it shows the score', (tester) async {
+    // 3 questions, 5 asked: two of them come again (D-019).
     await pumpQuiz(tester, QuizLength.five);
 
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 5; i++) {
+      expect(find.text(hu.quizQuestionOf(i + 1, 5)), findsOneWidget);
       await tapVisible(tester, find.text(correctText(tester)).first);
       await tapVisible(
         tester,
-        find.text(i < 2 ? hu.nextQuestion : hu.finishQuiz),
+        find.text(i < 4 ? hu.nextQuestion : hu.finishQuiz),
       );
     }
 
     expect(find.text(hu.summaryTitle), findsOneWidget);
-    expect(find.text(hu.summaryScore(3, 3)), findsOneWidget);
+    expect(find.text(hu.summaryScore(5, 5)), findsOneWidget);
   });
 
   testWidgets('closing an endless quiz shows the score so far', (tester) async {
@@ -143,6 +146,38 @@ void main() {
 
     expect(find.text('megjegyzés'), findsOneWidget);
     expect(find.byType(Card), findsWidgets);
+  });
+
+  testWidgets('the note is bluish on light, yellowish on dark', (tester) async {
+    Future<Color?> noteColor(Brightness brightness) async {
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(brightness: brightness),
+          locale: const Locale('hu'),
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: appSupportedLocales,
+          home: QuizScreen(
+            services: t.services,
+            user: testUser(),
+            questionSet: set,
+            length: QuizLength.twentyFive,
+            random: Random(1),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      for (var i = 0; i < 3; i++) {
+        if (find.text('A 2. kyu övszíne kék.').evaluate().isNotEmpty) break;
+        await tapVisible(tester, find.text(correctText(tester)).first);
+        await tapVisible(tester, find.text(hu.nextQuestion));
+      }
+      await tapVisible(tester, find.text('A 2. kyu övszíne zöld.'));
+      return tester.widget<Text>(find.text('megjegyzés')).style?.color;
+    }
+
+    expect(await noteColor(Brightness.light), noteColorLight);
+    expect(await noteColor(Brightness.dark), noteColorDark);
   });
 
   group('timer', () {

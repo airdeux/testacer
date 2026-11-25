@@ -16,10 +16,10 @@
 
 ## 3. Practising
 
-- Choose how many questions (**Kérdések száma**): 1, 5, 10, 25, or **∞** (until you close the quiz). Then tap **Gyakorlás indítása**.
+- Choose how many questions (**Kérdések száma**): 1, 5, 10, 25, or **∞** (until you close the quiz). Then tap **Gyakorlás indítása**. You always get that many: if fewer questions are left (the rest marked „Bébikönnyű”), they come again in random order.
 - A timer (hours:minutes:seconds) runs in the top right corner from the first question until you answer the last one; the result page shows the time. In an ∞ quiz it stops when you close the quiz.
 - Each question shows its four answers (A–D) in a random order. Tap the one you think is correct.
-- The result follows: green = correct, red = your wrong choice. Below it, the correct answer is shown with its ***subject*** and the **words that make it different** from the wrong answers highlighted, plus a note where there is one.
+- The result follows: green = correct, red = your wrong choice. Below it, the correct answer is shown with its ***subject*** and the **words that make it different** from the wrong answers highlighted, plus a note where there is one (in yellow on a dark screen, blue on a light one) – under any option, the right one included.
 - **Bébikönnyű – ne kérdezd többet:** switch it on for a question you already know well; it will not be asked again (undo it on the Haladás page).
 - **Tudtad?** After some answers – right or wrong – a short trivia item pops up (dates, names, places related to the question). Read it and tap **Bezár**.
 - **Következő** (right below the answers) goes on; after the last question (or when you close the quiz with ✕) you see your score and can start a new round.

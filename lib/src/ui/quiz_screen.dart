@@ -20,6 +20,10 @@ import 'trivia_sheet.dart';
 /// Colours for right and wrong answers.
 const _correctColor = Color(0xFF2E7D32);
 
+/// Option notes (`*(…)*`) stand out: yellowish on dark, bluish on light.
+const noteColorDark = Color(0xFFFFD54F);
+const noteColorLight = Color(0xFF1565C0);
+
 /// One quiz run over the chosen question set.
 class QuizScreen extends StatefulWidget {
   const QuizScreen({
@@ -400,7 +404,13 @@ class _OptionCard extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
                             note,
-                            style: const TextStyle(fontStyle: FontStyle.italic),
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? noteColorDark
+                                  : noteColorLight,
+                            ),
                           ),
                         ),
                     ],

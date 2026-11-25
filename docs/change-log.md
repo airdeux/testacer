@@ -27,6 +27,8 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Changed
 
+- 2026-11-25 – A quiz of 1 / 5 / 10 / 25 always asks that many questions: when fewer non-„Bébikönnyű” questions are left, they are repeated in random rounds (D-019). 4 new tests (166 in all).
+- 2026-11-25 – Quiz: option notes (`*(…)*`) are shown in a highlight colour – yellowish on the dark theme, bluish on the light one.
 - 2026-11-25 – Quiz length „Mind” (every question once) replaced by **25** (D-018); a saved „Mind” setting becomes 25.
 - 2026-11-23 – Quiz: the **Következő** / **Eredmény** button is right below the answer options, above the feedback („Helyes!” / „Nem ez a helyes válasz.”, the correct answer, the „Bébikönnyű” switch), so it is usually on screen without scrolling.
 - 2026-11-23 – Haladás: the row „Új vagy legutóbb rontott” is now „Legutóbb rontott” – new questions are in „Még nem láttad”, so that row only ever held questions whose last answer was wrong.

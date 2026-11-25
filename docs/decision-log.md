@@ -24,6 +24,7 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 | D-016 | 2026-11-23 | Trivia items in the question file pop up after matching answers | Accepted |
 | D-017 | 2026-11-23 | Progress follows a question whose correct answer was edited at the same number | Accepted |
 | D-018 | 2026-11-25 | Quiz length 25 instead of „Mind”; a timer for every quiz | Accepted |
+| D-019 | 2026-11-25 | A quiz always asks the chosen number; too few questions left → they are repeated in rounds | Accepted |
 
 ---
 
@@ -138,5 +139,12 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 
 - **Context:** „Mind” asked every question once – 149 for the judo set, too long for one sitting. The owner wants a longer standard round and to see how long a round takes.
 - **Decision (owner, 2026-11-25):** the lengths are 1, 5, 10, **25** and ∞. A timer (`hh:mm:ss`) in the quiz's app bar starts with the first question and stops when the last question is answered; the result page shows the time. An ∞ quiz has no last question: its timer stops when the quiz is closed.
-- **Implementation:** `QuizLength.twentyFive` replaces `all`; a stored `all` setting reads as 25. 25 follows D-015 (13 of 25 new where possible) and asks fewer when fewer questions are left. The timer measures wall-clock time (`QuizClock`, start/stop timestamps), so it stays right when the app or tab is in the background; it is not saved.
+- **Implementation:** `QuizLength.twentyFive` replaces `all`; a stored `all` setting reads as 25. 25 follows D-015 (13 of 25 new where possible); with fewer questions left the remaining ones are repeated (D-019). The timer measures wall-clock time (`QuizClock`, start/stop timestamps), so it stays right when the app or tab is in the background; it is not saved.
 - **Consequences:** going through every question once is no longer one option; ∞ covers long sessions.
+
+### D-019 – The chosen number of questions, repeating when too few are left
+
+- **Context:** a fixed-length quiz never repeated a question, so with most questions marked „Bébikönnyű” a 25-question quiz asked only what was left (say 4) and ended.
+- **Decision (owner, 2026-11-25):** a quiz of 1, 5, 10 or 25 always asks that many questions. When fewer non-skippable questions are left, they are asked again, in random order, until the number is reached.
+- **Implementation:** the quiz runs in rounds: within a round no question repeats; when every non-skippable question has been asked, a new round starts. The usual rules still pick within a round (D-006 weights, D-015 least-seen every other question, the last 5 avoided where possible, never the same one twice in a row unless only one is left). A question marked „Bébikönnyű” during the quiz does not come again. Every answer, repeats included, updates the progress. If everything is skippable, the quiz says so, as before.
+- **Consequences:** with few questions left, a quiz is mostly repeats – that is the point (drilling the rest). The 1-question quiz and ∞ are unchanged.

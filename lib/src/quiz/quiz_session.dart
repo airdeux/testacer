@@ -40,7 +40,9 @@ class QuizSession {
         .where((q) => !(_progress[q.key]?.skippable ?? false))
         .length;
     final count = length.count;
-    total = count == null ? null : min(count, eligible);
+    // D-019: always the chosen number; with fewer questions left (the rest
+    // is skippable) they are repeated.
+    total = count == null ? null : (eligible == 0 ? 0 : count);
   }
 
   final Map<String, Question> _byKey;
@@ -54,6 +56,10 @@ class QuizSession {
   /// tapped reminder).
   final String? firstKey;
   final _asked = <String>[];
+
+  /// Where the current round starts in [_asked]: a round asks every
+  /// non-skippable question once, in random order (D-019).
+  var _roundStart = 0;
 
   /// Number of questions in this quiz; `null` for an endless quiz.
   late final int? total;
@@ -80,20 +86,31 @@ class QuizSession {
     }
     final first = firstKey;
     final keys = _byKey.keys.toList();
-    final exclude =
-        length == QuizLength.endless ? const <String>{} : _asked.toSet();
     // D-015: in a quiz of more than one question every other question
     // (the 1st, 3rd, 5th…) is the least-seen one – never seen if possible –
     // so at least half of the quiz is new; the rest by Leitner weights.
     final fresh = (limit == null || limit > 1) && _asked.length.isEven;
-    final key = _asked.isEmpty &&
-            first != null &&
-            _byKey.containsKey(first) &&
-            !(_progress[first]?.skippable ?? false)
-        ? first
-        : fresh
-            ? _picker.pickFresh(keys, _progress, recent: _asked, exclude: exclude)
-            : _picker.pick(keys, _progress, recent: _asked, exclude: exclude);
+    String? pick(Set<String> exclude) => fresh
+        ? _picker.pickFresh(keys, _progress, recent: _asked, exclude: exclude)
+        : _picker.pick(keys, _progress, recent: _asked, exclude: exclude);
+
+    String? key;
+    if (_asked.isEmpty &&
+        first != null &&
+        _byKey.containsKey(first) &&
+        !(_progress[first]?.skippable ?? false)) {
+      key = first;
+    } else if (length == QuizLength.endless) {
+      key = pick(const {});
+    } else {
+      // No repeats within a round; when every question has been asked,
+      // a new round starts (D-019).
+      key = pick(_asked.sublist(_roundStart).toSet());
+      if (key == null && _asked.length > _roundStart) {
+        _roundStart = _asked.length;
+        key = pick(const {});
+      }
+    }
     if (key == null) {
       current = null;
       return false;

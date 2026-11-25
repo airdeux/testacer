@@ -65,7 +65,7 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 
 - [x] Admin import screen: pick an .md file → validate → preview → upload (batched writes); re-import keeps keys and progress, removes questions no longer in the file – 2026-11-21
 - [x] Question-set picker (active set per user, synced in `users/{uid}`) – 2026-11-21
-- [x] Selection engine (D-006) with unit tests: skippable never chosen, box 0 ≈ 16× as likely as box 4, no repeats within 5 (none at all within a fixed-length quiz) – 2026-11-21
+- [x] Selection engine (D-006) with unit tests: skippable never chosen, box 0 ≈ 16× as likely as box 4, no repeats within 5 (none at all within a fixed-length quiz – until D-019 rounds) – 2026-11-21
 - [x] Quiz screen: shuffled options (A–D), answer, feedback with emphasis and note, skippable switch, next / result, close (endless mode shows the score so far) – 2026-11-21
 - [x] Quiz length setting: 1 / 5 / 10 / Mind / ∞ – 2026-11-21
 - [x] Progress screen: seen count, accuracy, questions per box, weakest 20, skippable list with undo – 2026-11-21
@@ -118,6 +118,7 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 
 - [ ] 1–2 weeks with the testers; record findings in [qa-log.md](qa-log.md)
 - [ ] Fixes; tune weights and default settings
+- [x] A quiz always asks the chosen number; with fewer questions left they are repeated in rounds (D-019); option notes in a highlight colour – 2026-11-25
 - [x] Quiz length 25 instead of „Mind”; a quiz timer (hh:mm:ss) from the first question to the last answer, shown on the result page too (D-018) – 2026-11-25
 - [x] Quiz: Következő right below the answer options – 2026-11-23
 - [x] Trivia part in the question file („Tudtad?” items with [keywords]) popping up after matching answers (D-016) – 2026-11-23

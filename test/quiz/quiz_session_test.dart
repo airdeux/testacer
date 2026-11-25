@@ -167,8 +167,9 @@ void main() {
     expect(quiz.isOver, isTrue);
   });
 
-  test('25 asks every non-skippable question once when there are fewer',
+  test('with fewer questions left than chosen, they come again in rounds',
       () {
+    // D-019: 11 non-skippable questions, 25 asked: 11 + 11 + 3.
     final skipped = questions.first.key;
     final quiz = session(
       QuizLength.twentyFive,
@@ -181,9 +182,57 @@ void main() {
       quiz.answer(0);
     }
 
-    expect(seen, hasLength(11));
-    expect(seen.toSet(), hasLength(11));
+    expect(quiz.total, 25);
+    expect(seen, hasLength(25));
     expect(seen, isNot(contains(skipped)));
+    expect(seen.sublist(0, 11).toSet(), hasLength(11));
+    expect(seen.sublist(11, 22).toSet(), hasLength(11));
+    expect(seen.sublist(22).toSet(), hasLength(3));
+    for (var i = 1; i < seen.length; i++) {
+      expect(seen[i], isNot(seen[i - 1]), reason: 'no question twice in a row');
+    }
+  });
+
+  test('a single question left is asked again and again', () {
+    final quiz = session(
+      QuizLength.five,
+      progress: {
+        for (final q in questions.skip(1)) q.key: const ItemProgress(skippable: true),
+      },
+    );
+    var asked = 0;
+    while (quiz.next()) {
+      expect(quiz.current!.question.key, questions.first.key);
+      quiz.answer(0);
+      asked++;
+    }
+    expect(asked, 5);
+  });
+
+  test('everything skippable: nothing to ask', () {
+    final quiz = session(
+      QuizLength.ten,
+      progress: {
+        for (final q in questions) q.key: const ItemProgress(skippable: true),
+      },
+    );
+    expect(quiz.total, 0);
+    expect(quiz.next(), isFalse);
+  });
+
+  test('questions marked skippable during the quiz are not repeated', () {
+    final quiz = session(QuizLength.twentyFive);
+    final seen = <String>[];
+    while (quiz.next()) {
+      final key = quiz.current!.question.key;
+      seen.add(key);
+      quiz.answer(0);
+      // The first 10 of the 12 get marked „Bébikönnyű” as they come: only
+      // the other two can come again.
+      if (seen.length <= 10) quiz.setSkippable(key, true);
+    }
+    expect(seen, hasLength(25));
+    expect(seen.sublist(12).toSet(), seen.sublist(10, 12).toSet());
   });
 
   test('an endless quiz keeps going', () {

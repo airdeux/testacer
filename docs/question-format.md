@@ -26,7 +26,7 @@ Forrás: judo.maze.hu, Gyakorló teszt (próbálkozás 8986, 2026-11-21).
 | `✔ ` right after the list number | the correct option – exactly one per question |
 | `***text***` in the correct option | subject |
 | `**text**` in the correct option | words that distinguish it from the wrong options |
-| `*(text)*` at the end of an option | note, shown only in feedback (e.g. `*(a teszt ezt is elfogadja, de nem helyes)*`) |
+| `*(text)*` at the end of an option | note, right or wrong option; shown under the option only after answering, in a highlight colour (yellowish on dark, bluish on light) – e.g. `*(a teszt ezt is elfogadja, de nem helyes)*`, `*(1860 + 22 = 1882)*`. Both `*` are needed: without the closing one the text stays in the option, visible before answering (warning) |
 | blank lines, `---` | ignored |
 | a level-1 heading **after** the questions (`# Trivia`) | starts the trivia part – see below |
 
