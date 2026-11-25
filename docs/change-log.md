@@ -6,6 +6,7 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Added
 
+- 2026-11-25 – The start page shows the app version next to the title („Kvíz-maxoló  v1.0.5+6”), embedded at build time from `pubspec.yaml`, so on the web it shows the version actually running. 3 new tests (169 in all).
 - 2026-11-25 – Quiz timer (D-018): `hh:mm:ss` in the app bar from the first question until the last one is answered (an ∞ quiz: until it is closed); the result page shows the time. 9 new tests (162 in all).
 - 2026-11-23 – Trivia (D-016): a `# Trivia` part after the questions holds „Tudtad?” items with [keywords]; after an answer (right or wrong) the items whose keywords occur in the correct option pop up in a bottom sheet. The import preview shows the number of items; the validator too.
 - 2026-11-23 – Updating a set carries progress over to questions whose correct answer was edited but kept its number (`previousKeys`, D-017) – e.g. typo fixes. 13 new tests (152 in all).

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:testacer/src/access/access_repository.dart';
+import 'package:testacer/src/app_version.dart';
 import 'package:testacer/src/quiz/quiz_length.dart';
 import 'package:testacer/src/reminders/reminder_notifications.dart';
 import 'package:testacer/src/reminders/reminder_settings.dart';
@@ -37,6 +38,13 @@ void main() {
     await tapVisible(tester, find.text(hu.startQuiz));
     expect(find.byType(QuizScreen), findsOneWidget);
     expect(tester.widget<QuizScreen>(find.byType(QuizScreen)).length, QuizLength.five);
+  });
+
+  testWidgets('the title shows the app version', (tester) async {
+    t.questionSets.add('set1', 'Gyakorló teszt', sampleQuestions());
+    await pumpHome(tester);
+
+    expect(find.text('${hu.appTitle}  ${appVersionLabel()}'), findsOneWidget);
   });
 
   testWidgets('the lengths are 1, 5, 10, 25 and ∞', (tester) async {

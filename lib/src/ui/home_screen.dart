@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../l10n/app_localizations.dart';
 import '../access/access_repository.dart';
 import '../app_services.dart';
+import '../app_version.dart';
 import '../auth/auth_models.dart';
 import '../questions/question_set_repository.dart';
 import '../quiz/quiz_length.dart';
@@ -37,9 +38,24 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final version = appVersionLabel();
     return CenteredPanel(
       appBar: AppBar(
-        title: Text(l10n.appTitle),
+        title: Text.rich(
+          TextSpan(
+            text: l10n.appTitle,
+            children: [
+              if (version != null)
+                TextSpan(
+                  text: '  $version',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+            ],
+          ),
+        ),
         actions: [
           if (_isAdmin) ...[
             IconButton(

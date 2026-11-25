@@ -16,6 +16,7 @@
 
 ## 3. Practising
 
+- The version of the app is shown next to its name in the top left (e.g. `v1.0.5+6`).
 - Choose how many questions (**Kérdések száma**): 1, 5, 10, 25, or **∞** (until you close the quiz). Then tap **Gyakorlás indítása**. You always get that many: if fewer questions are left (the rest marked „Bébikönnyű”), they come again in random order.
 - A timer (hours:minutes:seconds) runs in the top right corner from the first question until you answer the last one; the result page shows the time. In an ∞ quiz it stops when you close the quiz.
 - Each question shows its four answers (A–D) in a random order. Tap the one you think is correct.

@@ -105,7 +105,8 @@ How it works:
 
 - *Deploy web* starts when *CI* finishes on a push to `main`, and only builds if CI passed; it builds the exact commit CI tested (`flutter build web --release --base-href /testacer/`).
 - Pushes to other branches and pull requests are tested by CI but not published.
-- GitHub Pages caches files for about 10 minutes; after a deploy, reload the page (Ctrl+F5) if the old version still shows.
+- GitHub Pages caches files for about 10 minutes; after a deploy, reload the page (Ctrl+Shift+R) if the old version still shows. The start page shows the version of the code that is running next to the title (e.g. `v1.0.5+6`, from `pubspec.yaml`), so you can see which one you have.
+- If a push gets no *CI* run (it happens now and then on GitHub's side) or *Deploy web* fails, the site keeps the previous version: run **Actions → Deploy web → Run workflow** (it builds the latest `main`), or push again.
 - The Firebase web config in `lib/firebase_options.dart` is public by design; access is protected by the sign-in, the allowlist and the Firestore rules.
 
 ## 7. Android reminders and release build (Phase 5)

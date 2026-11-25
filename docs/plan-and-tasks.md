@@ -118,6 +118,7 @@ _Last updated: 2026-11-21 · Phases 0–3 done · Phase 4: web app live at https
 
 - [ ] 1–2 weeks with the testers; record findings in [qa-log.md](qa-log.md)
 - [ ] Fixes; tune weights and default settings
+- [x] App version next to the title on the start page – 2026-11-25
 - [x] A quiz always asks the chosen number; with fewer questions left they are repeated in rounds (D-019); option notes in a highlight colour – 2026-11-25
 - [x] Quiz length 25 instead of „Mind”; a quiz timer (hh:mm:ss) from the first question to the last answer, shown on the result page too (D-018) – 2026-11-25
 - [x] Quiz: Következő right below the answer options – 2026-11-23
