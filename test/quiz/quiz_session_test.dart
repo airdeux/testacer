@@ -167,10 +167,11 @@ void main() {
     expect(quiz.isOver, isTrue);
   });
 
-  test('"all" asks every non-skippable question once', () {
+  test('25 asks every non-skippable question once when there are fewer',
+      () {
     final skipped = questions.first.key;
     final quiz = session(
-      QuizLength.all,
+      QuizLength.twentyFive,
       progress: {skipped: const ItemProgress(skippable: true)},
     );
     final seen = <String>[];

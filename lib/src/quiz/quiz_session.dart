@@ -40,11 +40,7 @@ class QuizSession {
         .where((q) => !(_progress[q.key]?.skippable ?? false))
         .length;
     final count = length.count;
-    total = switch (length) {
-      QuizLength.endless => null,
-      QuizLength.all => eligible,
-      _ => min(count!, eligible),
-    };
+    total = count == null ? null : min(count, eligible);
   }
 
   final Map<String, Question> _byKey;

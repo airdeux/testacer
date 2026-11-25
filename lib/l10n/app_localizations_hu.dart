@@ -237,9 +237,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get quizLengthLabel => 'Kérdések száma';
 
   @override
-  String get quizLengthAll => 'Mind';
-
-  @override
   String get quizLengthEndless => 'Végtelen';
 
   @override
@@ -289,6 +286,14 @@ class AppLocalizationsHu extends AppLocalizations {
   String summaryScore(int correct, int answered) {
     return '$correct / $answered helyes válasz';
   }
+
+  @override
+  String summaryTime(String time) {
+    return 'Idő: $time';
+  }
+
+  @override
+  String get elapsedTime => 'Eltelt idő';
 
   @override
   String get summaryNothingAsked => 'Nem volt mit kérdezni.';

@@ -23,6 +23,7 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 | D-015 | 2026-11-23 | At least half of every multi-question quiz is new (least-seen) questions | Accepted |
 | D-016 | 2026-11-23 | Trivia items in the question file pop up after matching answers | Accepted |
 | D-017 | 2026-11-23 | Progress follows a question whose correct answer was edited at the same number | Accepted |
+| D-018 | 2026-11-25 | Quiz length 25 instead of „Mind”; a timer for every quiz | Accepted |
 
 ---
 
@@ -116,7 +117,7 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 
 - **Context:** with Leitner weights alone (D-006), questions answered wrong keep coming back and a user may take a long time to see all questions once. The owner wants every quiz to bring new material.
 - **Decision (owner, 2026-11-23):** in a quiz of more than one question, at least half (rounded up: 3 of 5, 5 of 10) are questions not seen yet; if fewer are left, questions seen once fill the gap, then those seen twice, and so on.
-- **Implementation:** every other question – the 1st, 3rd, 5th… – is picked by `QuestionPicker.pickFresh`: the fewest `seen` among the eligible questions (skippable never, no repeats in the quiz, the last 5 left out as usual), random among equals. The other questions are picked by Leitner weights as before; when those happen to be new too, the quiz simply has more new questions. Applies to 5, 10, *Mind* (only the order changes) and ∞ (every other question), and to the quiz a reminder opens (after its own question). Not to 1-question quizzes or to the reminders' own picks.
+- **Implementation:** every other question – the 1st, 3rd, 5th… – is picked by `QuestionPicker.pickFresh`: the fewest `seen` among the eligible questions (skippable never, no repeats in the quiz, the last 5 left out as usual), random among equals. The other questions are picked by Leitner weights as before; when those happen to be new too, the quiz simply has more new questions. Applies to 5, 10, 25 (*Mind* until D-018) and ∞ (every other question), and to the quiz a reminder opens (after its own question). Not to 1-question quizzes or to the reminders' own picks.
 - **Consequences:** a quiz contains at least min(⌈n/2⌉, new questions left) new ones; once all are seen, the „fresh” half goes to the least-practised questions.
 
 ### D-016 – Trivia that pops up after matching answers
@@ -132,3 +133,10 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 - **Decision:** when updating a set, a question with a new key that has the same number as a question that disappears is the same question: it records the old key (and that question's earlier keys) as `previousKeys`. Wherever a user's progress is loaded, a question without a record under its key takes the record of its newest previous key; new answers are saved under the new key.
 - **Alternatives considered:** keys from the question number (breaks when questions are reordered); rewriting every user's progress at import (needs admin access to other users' data, which the rules do not give).
 - **Consequences:** typo fixes keep progress as long as the numbering stays; changing the numbering and the answer text in the same import does not carry progress over. The old record stays in the progress document unused (until „Haladás törlése”).
+
+### D-018 – 25 questions instead of „Mind”; a quiz timer
+
+- **Context:** „Mind” asked every question once – 149 for the judo set, too long for one sitting. The owner wants a longer standard round and to see how long a round takes.
+- **Decision (owner, 2026-11-25):** the lengths are 1, 5, 10, **25** and ∞. A timer (`hh:mm:ss`) in the quiz's app bar starts with the first question and stops when the last question is answered; the result page shows the time. An ∞ quiz has no last question: its timer stops when the quiz is closed.
+- **Implementation:** `QuizLength.twentyFive` replaces `all`; a stored `all` setting reads as 25. 25 follows D-015 (13 of 25 new where possible) and asks fewer when fewer questions are left. The timer measures wall-clock time (`QuizClock`, start/stop timestamps), so it stays right when the app or tab is in the background; it is not saved.
+- **Consequences:** going through every question once is no longer one option; ∞ covers long sessions.

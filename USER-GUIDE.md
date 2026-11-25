@@ -16,7 +16,8 @@
 
 ## 3. Practising
 
-- Choose how many questions (**Kérdések száma**): 1, 5, 10, **Mind** (every question once), or **∞** (until you close the quiz). Then tap **Gyakorlás indítása**.
+- Choose how many questions (**Kérdések száma**): 1, 5, 10, 25, or **∞** (until you close the quiz). Then tap **Gyakorlás indítása**.
+- A timer (hours:minutes:seconds) runs in the top right corner from the first question until you answer the last one; the result page shows the time. In an ∞ quiz it stops when you close the quiz.
 - Each question shows its four answers (A–D) in a random order. Tap the one you think is correct.
 - The result follows: green = correct, red = your wrong choice. Below it, the correct answer is shown with its ***subject*** and the **words that make it different** from the wrong answers highlighted, plus a note where there is one.
 - **Bébikönnyű – ne kérdezd többet:** switch it on for a question you already know well; it will not be asked again (undo it on the Haladás page).

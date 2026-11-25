@@ -130,7 +130,7 @@ void main() {
   });
 
   testWidgets('a note on a wrong option appears after answering', (tester) async {
-    await pumpQuiz(tester, QuizLength.all);
+    await pumpQuiz(tester, QuizLength.twentyFive);
     // Answer until the question with the note is on screen.
     for (var i = 0; i < 3; i++) {
       if (find.text('A 2. kyu övszíne kék.').evaluate().isNotEmpty) break;
@@ -143,6 +143,62 @@ void main() {
 
     expect(find.text('megjegyzés'), findsOneWidget);
     expect(find.byType(Card), findsWidgets);
+  });
+
+  group('timer', () {
+    late DateTime time;
+
+    Future<void> pumpTimed(WidgetTester tester, QuizLength length) async {
+      time = DateTime(2026, 11, 25, 10);
+      await tester.pumpWidget(
+        localized(
+          QuizScreen(
+            services: t.services,
+            user: testUser(),
+            questionSet: set,
+            length: length,
+            random: Random(1),
+            now: () => time,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('starts with the first question and keeps counting',
+        (tester) async {
+      await pumpTimed(tester, QuizLength.five);
+      expect(find.text('00:00:00'), findsOneWidget);
+
+      time = time.add(const Duration(hours: 1, minutes: 2, seconds: 3));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('01:02:03'), findsOneWidget);
+    });
+
+    testWidgets('stops when the last question is answered; the result shows it',
+        (tester) async {
+      await pumpTimed(tester, QuizLength.one);
+      time = time.add(const Duration(seconds: 42));
+      await tapVisible(tester, find.text(wrongText(tester)));
+
+      time = time.add(const Duration(minutes: 5));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('00:00:42'), findsOneWidget);
+
+      await tapVisible(tester, find.text(hu.finishQuiz));
+      expect(find.text(hu.summaryTime('00:00:42')), findsOneWidget);
+    });
+
+    testWidgets('keeps running while questions are left', (tester) async {
+      await pumpTimed(tester, QuizLength.five);
+      await tapVisible(tester, find.text(wrongText(tester)));
+
+      time = time.add(const Duration(seconds: 7));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('00:00:07'), findsOneWidget);
+    });
   });
 
   group('trivia (D-016)', () {

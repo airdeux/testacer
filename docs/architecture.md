@@ -33,7 +33,7 @@ lib/
    ├─ access/                     AccessRepository interface + Firestore allowlist
    ├─ question_format/            Markdown question parser (Phase 1)
    ├─ questions/                  QuestionSetRepository + Firestore codec
-   ├─ quiz/                       progress records, Leitner picker, QuizSession,
+   ├─ quiz/                       progress records, Leitner picker, QuizSession, QuizClock,
    │                              ProgressRepository
    ├─ settings/                   UserSettings (active set, quiz length, reminders)
    ├─ reminders/                  reminder settings, planner, snapshot store,
@@ -61,7 +61,7 @@ users/{uid}/progress/{setId}           { items: { <key>: { box, seen, correct, w
 - `previousKeys[]` – keys a question had before its correct answer was edited (same number, D-017). Progress is not rewritten: when the quiz, the Haladás page or the reminders load a user's progress, a question without a record under its key takes the record of its newest previous key (`carryOverProgress`); new answers are saved under the current key.
 - `trivia` – the „Tudtad?” items of the set's file (D-016), read once when a quiz starts; after each answer the items whose keywords occur in the correct option are shown in a bottom sheet.
 - Progress for a whole set is **one document** (149 small entries, roughly 15 KB): one read when a session starts, far below the free daily quota.
-- `settings`: `quizLength` (`one`, `five`, `ten`, `all`, `endless`), `notifications { enabled, mode: "open" | "trueFalse", windows: [ { days: [1..7], start: "09:00", end: "22:00", everyMinutes: 60 } ] }` (Monday = 1; `end` is the last reminder of the day; `mode` is used from Phase 6).
+- `settings`: `quizLength` (`one`, `five`, `ten`, `twentyFive`, `endless`; a stored `all` – the former „Mind” – reads as `twentyFive`, D-018), `notifications { enabled, mode: "open" | "trueFalse", windows: [ { days: [1..7], start: "09:00", end: "22:00", everyMinutes: 60 } ] }` (Monday = 1; `end` is the last reminder of the day; `mode` is used from Phase 6).
 - Progress records store `lastAt` as milliseconds since the epoch (the quiz code stays plain Dart).
 - Writes are not awaited by the UI: offline, Firestore completes a write only after reconnecting, but the local cache (also enabled on the web) already has it.
 

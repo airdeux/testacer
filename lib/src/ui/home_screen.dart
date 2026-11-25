@@ -324,7 +324,6 @@ class _PracticePanelState extends State<_PracticePanel> {
 
   static String _lengthLabel(AppLocalizations l10n, QuizLength length) =>
       switch (length) {
-        QuizLength.all => l10n.quizLengthAll,
         QuizLength.endless => '∞',
         _ => '${length.count}',
       };

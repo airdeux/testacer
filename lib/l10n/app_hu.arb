@@ -131,7 +131,6 @@
     }
   },
   "quizLengthLabel": "Kérdések száma",
-  "quizLengthAll": "Mind",
   "quizLengthEndless": "Végtelen",
   "importTitle": "Kérdéssor importálása",
   "progressTitle": "Haladás",
@@ -174,6 +173,15 @@
       }
     }
   },
+  "summaryTime": "Idő: {time}",
+  "@summaryTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "elapsedTime": "Eltelt idő",
   "summaryNothingAsked": "Nem volt mit kérdezni.",
   "newRound": "Új kör",
   "backButton": "Vissza",

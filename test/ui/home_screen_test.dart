@@ -39,6 +39,19 @@ void main() {
     expect(tester.widget<QuizScreen>(find.byType(QuizScreen)).length, QuizLength.five);
   });
 
+  testWidgets('the lengths are 1, 5, 10, 25 and ∞', (tester) async {
+    t.questionSets.add('set1', 'Gyakorló teszt', sampleQuestions());
+    await pumpHome(tester);
+
+    for (final label in ['1', '5', '10', '25', '∞']) {
+      expect(find.text(label), findsOneWidget);
+    }
+    expect(find.text('Mind'), findsNothing);
+
+    await tapVisible(tester, find.text('25'));
+    expect(t.settings.settings.value.quizLength, QuizLength.twentyFive);
+  });
+
   testWidgets('uses the remembered set when there are several', (tester) async {
     t.questionSets
       ..add('a', 'Első', sampleQuestions())

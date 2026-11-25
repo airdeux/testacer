@@ -496,12 +496,6 @@ abstract class AppLocalizations {
   /// **'Kérdések száma'**
   String get quizLengthLabel;
 
-  /// No description provided for @quizLengthAll.
-  ///
-  /// In hu, this message translates to:
-  /// **'Mind'**
-  String get quizLengthAll;
-
   /// No description provided for @quizLengthEndless.
   ///
   /// In hu, this message translates to:
@@ -591,6 +585,18 @@ abstract class AppLocalizations {
   /// In hu, this message translates to:
   /// **'{correct} / {answered} helyes válasz'**
   String summaryScore(int correct, int answered);
+
+  /// No description provided for @summaryTime.
+  ///
+  /// In hu, this message translates to:
+  /// **'Idő: {time}'**
+  String summaryTime(String time);
+
+  /// No description provided for @elapsedTime.
+  ///
+  /// In hu, this message translates to:
+  /// **'Eltelt idő'**
+  String get elapsedTime;
 
   /// No description provided for @summaryNothingAsked.
   ///

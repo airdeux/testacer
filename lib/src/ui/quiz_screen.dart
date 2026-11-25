@@ -10,6 +10,7 @@ import '../question_format/models.dart';
 import '../questions/key_history.dart';
 import '../questions/question_set_repository.dart';
 import '../quiz/progress.dart';
+import '../quiz/quiz_clock.dart';
 import '../quiz/quiz_length.dart';
 import '../quiz/quiz_session.dart';
 import 'centered_panel.dart';
@@ -29,6 +30,7 @@ class QuizScreen extends StatefulWidget {
     required this.length,
     this.startKey,
     this.random,
+    this.now,
   });
 
   final AppServices services;
@@ -42,6 +44,9 @@ class QuizScreen extends StatefulWidget {
   /// Fixed in tests for predictable shuffling.
   final Random? random;
 
+  /// The clock of the quiz timer; fixed in tests.
+  final DateTime Function()? now;
+
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
@@ -52,6 +57,7 @@ class _QuizScreenState extends State<QuizScreen> {
   List<Trivia> _trivia = const [];
   bool _failed = false;
   bool _finished = false;
+  late final QuizClock _clock = QuizClock(now: widget.now);
 
   @override
   void initState() {
@@ -89,6 +95,8 @@ class _QuizScreenState extends State<QuizScreen> {
         _finished = !session.next();
         _loading = false;
       });
+      // The timer runs from the first question to the last answer.
+      if (!_finished) _clock.start();
     } on Exception catch (error) {
       debugPrint('Quiz load failed: $error');
       if (mounted) {
@@ -114,7 +122,10 @@ class _QuizScreenState extends State<QuizScreen> {
     final item = session.answer(index);
     final question = session.current!.question;
     _save(question.key, item);
-    setState(() {});
+    final total = session.total;
+    setState(() {
+      if (total != null && session.number >= total) _clock.stop();
+    });
     // D-016: trivia whose keywords appear in the correct answer pop up.
     final matching = [
       for (final item in _trivia)
@@ -130,11 +141,17 @@ class _QuizScreenState extends State<QuizScreen> {
     setState(() {});
   }
 
-  void _next() => setState(() => _finished = !_session!.next());
+  void _next() => setState(() {
+        _finished = !_session!.next();
+        if (_finished) _clock.stop();
+      });
 
   void _close() {
     if ((_session?.answered ?? 0) > 0 && !_finished) {
-      setState(() => _finished = true);
+      setState(() {
+        _finished = true;
+        _clock.stop();
+      });
     } else {
       Navigator.of(context).pop();
     }
@@ -171,6 +188,12 @@ class _QuizScreenState extends State<QuizScreen> {
               ? l10n.quizQuestionEndless(session.number)
               : l10n.quizQuestionOf(session.number, total),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: _ElapsedTime(clock: _clock),
+          ),
+        ],
         bottom: total == null
             ? null
             : PreferredSize(
@@ -241,6 +264,13 @@ class _QuizScreenState extends State<QuizScreen> {
           style: Theme.of(context).textTheme.titleMedium,
           textAlign: TextAlign.center,
         ),
+        if (!nothingAsked) ...[
+          const SizedBox(height: 8),
+          Text(
+            l10n.summaryTime(formatElapsed(_clock.elapsed)),
+            textAlign: TextAlign.center,
+          ),
+        ],
         const SizedBox(height: 24),
         FilledButton.icon(
           onPressed: _start,
@@ -264,6 +294,58 @@ class _QuizScreenState extends State<QuizScreen> {
 }
 
 enum _OptionState { open, correct, wrongChoice, other }
+
+/// The quiz timer (`hh:mm:ss`), updated while the clock runs.
+class _ElapsedTime extends StatefulWidget {
+  const _ElapsedTime({required this.clock});
+
+  final QuizClock clock;
+
+  @override
+  State<_ElapsedTime> createState() => _ElapsedTimeState();
+}
+
+class _ElapsedTimeState extends State<_ElapsedTime> {
+  late final Timer _ticker;
+  String _shown = '';
+
+  String get _text => formatElapsed(widget.clock.elapsed);
+
+  @override
+  void initState() {
+    super.initState();
+    // Checked a few times a second so no second is skipped; rebuilt only
+    // when the shown text changes.
+    _ticker = Timer.periodic(const Duration(milliseconds: 250), (_) {
+      if (widget.clock.running && _text != _shown) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _shown = _text;
+    return Tooltip(
+      message: AppLocalizations.of(context).elapsedTime,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.timer_outlined, size: 20),
+          const SizedBox(width: 4),
+          Text(
+            _shown,
+            style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _OptionCard extends StatelessWidget {
   const _OptionCard({
