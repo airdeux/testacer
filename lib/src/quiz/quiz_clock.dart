@@ -1,29 +1,51 @@
-/// The time spent on one quiz: started with the first question, stopped
-/// when the last one is answered (or the quiz is closed).
+/// The time spent on one quiz: started with the first question, paused from
+/// each answer until the next question shows (D-020), stopped when the last
+/// one is answered (or the quiz is closed).
 class QuizClock {
   QuizClock({DateTime Function()? now}) : _now = now ?? DateTime.now;
 
   final DateTime Function() _now;
-  DateTime? _started;
-  DateTime? _stopped;
+
+  /// Time of the finished stretches.
+  Duration _done = Duration.zero;
+
+  /// Start of the current stretch, while running.
+  DateTime? _since;
+  bool _started = false;
+  bool _stopped = false;
 
   /// Starts from zero (also when already running).
   void start() {
-    _started = _now();
-    _stopped = null;
+    _done = Duration.zero;
+    _since = _now();
+    _started = true;
+    _stopped = false;
   }
 
-  /// Freezes the time; does nothing if not running.
+  /// Holds the time until [resume]; does nothing if not running.
+  void pause() {
+    final since = _since;
+    if (since == null) return;
+    _done += _now().difference(since);
+    _since = null;
+  }
+
+  /// Goes on after [pause]; does nothing after [stop] or before [start].
+  void resume() {
+    if (_started && !_stopped && _since == null) _since = _now();
+  }
+
+  /// Freezes the time for good (until the next [start]).
   void stop() {
-    if (running) _stopped = _now();
+    pause();
+    if (_started) _stopped = true;
   }
 
-  bool get running => _started != null && _stopped == null;
+  bool get running => _since != null;
 
   Duration get elapsed {
-    final started = _started;
-    if (started == null) return Duration.zero;
-    return (_stopped ?? _now()).difference(started);
+    final since = _since;
+    return since == null ? _done : _done + _now().difference(since);
   }
 }
 

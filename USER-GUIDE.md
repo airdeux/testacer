@@ -17,8 +17,10 @@
 ## 3. Practising
 
 - The version of the app is shown next to its name in the top left (e.g. `v1.0.5+6`).
-- Choose how many questions (**Kérdések száma**): 1, 5, 10, 25, or **∞** (until you close the quiz). Then tap **Gyakorlás indítása**. You always get that many: if fewer questions are left (the rest marked „Bébikönnyű”), they come again in random order.
-- A timer (hours:minutes:seconds) runs in the top right corner from the first question until you answer the last one; the result page shows the time. In an ∞ quiz it stops when you close the quiz.
+- Choose how many questions (**Kérdések száma**): 5, 10, 25 or **Mind**. Then tap **Gyakorlás indítása**.
+  - 5, 10 and 25 leave out the questions marked „Bébikönnyű”. You always get that many: if fewer questions are left, they come again in random order.
+  - **Mind** asks **every** question exactly once, in random order – the „Bébikönnyű” ones too. A prompt reminds you of this before it starts.
+- A timer (hours:minutes:seconds) runs in the top right corner from the first question until you answer the last one; the result page shows the time. Only the time spent on the questions counts: from an answer until the next question appears (reading the feedback, a trivia pop-up) the timer waits. A quiz opened from a reminder has no end; its timer stops when you close it.
 - Each question shows its four answers (A–D) in a random order. Tap the one you think is correct.
 - The result follows: green = correct, red = your wrong choice. Below it, the correct answer is shown with its ***subject*** and the **words that make it different** from the wrong answers highlighted, plus a note where there is one (in yellow on a dark screen, blue on a light one) – under any option, the right one included.
 - **Bébikönnyű – ne kérdezd többet:** switch it on for a question you already know well; it will not be asked again (undo it on the Haladás page).

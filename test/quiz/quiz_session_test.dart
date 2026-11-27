@@ -123,16 +123,6 @@ void main() {
       }
     });
 
-    test('a single question is picked the usual way', () {
-      final quiz = QuizSession(
-        questions: questions,
-        progress: knownExcept({3}),
-        length: QuizLength.one,
-        random: Random(1),
-      );
-      expect(run(quiz), hasLength(1));
-    });
-
     test('endless: the new ones come within the first five', () {
       final quiz = QuizSession(
         questions: questions,
@@ -191,6 +181,34 @@ void main() {
     for (var i = 1; i < seen.length; i++) {
       expect(seen[i], isNot(seen[i - 1]), reason: 'no question twice in a row');
     }
+  });
+
+  test('Mind asks every question once, Bébikönnyű too, in random order',
+      () {
+    List<String> run(int seed) {
+      final quiz = QuizSession(
+        questions: questions,
+        progress: {
+          for (final q in questions.take(4))
+            q.key: const ItemProgress(skippable: true),
+        },
+        length: QuizLength.all,
+        random: Random(seed),
+      );
+      expect(quiz.total, questions.length);
+      final seen = <String>[];
+      while (quiz.next()) {
+        seen.add(quiz.current!.question.key);
+        quiz.answer(0);
+      }
+      return seen;
+    }
+
+    final first = run(1);
+    expect(first, hasLength(questions.length));
+    expect(first.toSet(), {for (final q in questions) q.key});
+    final orders = {for (var seed = 1; seed <= 5; seed++) run(seed).join()};
+    expect(orders.length, greaterThan(1), reason: 'the order is random');
   });
 
   test('a single question left is asked again and again', () {

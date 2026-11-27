@@ -49,9 +49,41 @@ void main() {
     expect(formatElapsed(const Duration(seconds: -3)), '00:00:00');
   });
 
-  test('the stored length "all" (replaced by 25) reads as 25', () {
-    expect(QuizLength.fromName('all'), QuizLength.twentyFive);
+  test('paused from an answer until the next question (D-020)', () {
+    clock.start();
+    time = time.add(const Duration(seconds: 10));
+    clock.pause();
+    expect(clock.running, isFalse);
+    time = time.add(const Duration(minutes: 3));
+    expect(clock.elapsed, const Duration(seconds: 10));
+
+    clock.resume();
+    time = time.add(const Duration(seconds: 5));
+    expect(clock.elapsed, const Duration(seconds: 15));
+
+    clock
+      ..pause()
+      ..pause();
+    time = time.add(const Duration(minutes: 1));
+    clock.stop();
+    expect(clock.elapsed, const Duration(seconds: 15));
+  });
+
+  test('resume does nothing before the start or after the stop', () {
+    clock.resume();
+    expect(clock.running, isFalse);
+    clock
+      ..start()
+      ..stop()
+      ..resume();
+    expect(clock.running, isFalse);
+  });
+
+  test('stored lengths: only the offered ones; anything else is 10', () {
+    expect(QuizLength.fromName('all'), QuizLength.all);
     expect(QuizLength.fromName('twentyFive'), QuizLength.twentyFive);
+    expect(QuizLength.fromName('one'), QuizLength.ten);
+    expect(QuizLength.fromName('endless'), QuizLength.ten);
     expect(QuizLength.fromName('nonsense'), QuizLength.ten);
   });
 }

@@ -20,8 +20,9 @@ class CurrentQuestion {
   bool get isCorrect => chosenIndex == correctIndex;
 }
 
-/// One quiz run: picks questions (D-006), shuffles options (D-007) and
-/// updates the progress records. Storage is the caller's job.
+/// One quiz run: picks questions (D-006; „Mind”: all of them in random
+/// order, D-020), shuffles options (D-007) and updates the progress records.
+/// Storage is the caller's job.
 class QuizSession {
   QuizSession({
     required List<Question> questions,
@@ -40,9 +41,15 @@ class QuizSession {
         .where((q) => !(_progress[q.key]?.skippable ?? false))
         .length;
     final count = length.count;
-    // D-019: always the chosen number; with fewer questions left (the rest
-    // is skippable) they are repeated.
-    total = count == null ? null : (eligible == 0 ? 0 : count);
+    if (length == QuizLength.all) {
+      // D-020: every question once, „Bébikönnyű” included, random order.
+      _order = _byKey.keys.toList()..shuffle(_random);
+      total = _order!.length;
+    } else {
+      // D-019: always the chosen number; with fewer questions left (the
+      // rest is skippable) they are repeated.
+      total = count == null ? null : (eligible == 0 ? 0 : count);
+    }
   }
 
   final Map<String, Question> _byKey;
@@ -60,6 +67,9 @@ class QuizSession {
   /// Where the current round starts in [_asked]: a round asks every
   /// non-skippable question once, in random order (D-019).
   var _roundStart = 0;
+
+  /// The whole quiz in advance, for [QuizLength.all].
+  List<String>? _order;
 
   /// Number of questions in this quiz; `null` for an endless quiz.
   late final int? total;
@@ -95,7 +105,9 @@ class QuizSession {
         : _picker.pick(keys, _progress, recent: _asked, exclude: exclude);
 
     String? key;
-    if (_asked.isEmpty &&
+    if (_order case final order?) {
+      key = order[_asked.length];
+    } else if (_asked.isEmpty &&
         first != null &&
         _byKey.containsKey(first) &&
         !(_progress[first]?.skippable ?? false)) {

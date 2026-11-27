@@ -211,28 +211,39 @@ void main() {
       expect(find.text('01:02:03'), findsOneWidget);
     });
 
-    testWidgets('stops when the last question is answered; the result shows it',
+    testWidgets('waits from an answer until the next question (D-020)',
         (tester) async {
-      await pumpTimed(tester, QuizLength.one);
-      time = time.add(const Duration(seconds: 42));
-      await tapVisible(tester, find.text(wrongText(tester)));
-
-      time = time.add(const Duration(minutes: 5));
-      await tester.pump(const Duration(seconds: 1));
-      expect(find.text('00:00:42'), findsOneWidget);
-
-      await tapVisible(tester, find.text(hu.finishQuiz));
-      expect(find.text(hu.summaryTime('00:00:42')), findsOneWidget);
-    });
-
-    testWidgets('keeps running while questions are left', (tester) async {
       await pumpTimed(tester, QuizLength.five);
+      time = time.add(const Duration(seconds: 10));
       await tapVisible(tester, find.text(wrongText(tester)));
 
+      // Reading the feedback does not count…
+      time = time.add(const Duration(minutes: 3));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('00:00:10'), findsOneWidget);
+
+      // …the next question does.
+      await tapVisible(tester, find.text(hu.nextQuestion));
       time = time.add(const Duration(seconds: 7));
       await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('00:00:17'), findsOneWidget);
+    });
 
-      expect(find.text('00:00:07'), findsOneWidget);
+    testWidgets('stops when the last question is answered; the result shows it',
+        (tester) async {
+      // „Mind” with the 3 sample questions: 10 + 20 + 12 seconds.
+      await pumpTimed(tester, QuizLength.all);
+      for (final (i, seconds) in [10, 20, 12].indexed) {
+        time = time.add(Duration(seconds: seconds));
+        await tapVisible(tester, find.text(wrongText(tester)));
+        time = time.add(const Duration(minutes: 5));
+        await tester.pump(const Duration(seconds: 1));
+        await tapVisible(
+          tester,
+          find.text(i < 2 ? hu.nextQuestion : hu.finishQuiz),
+        );
+      }
+      expect(find.text(hu.summaryTime('00:00:42')), findsOneWidget);
     });
   });
 
@@ -252,7 +263,7 @@ void main() {
             services: t.services,
             user: testUser(),
             questionSet: set,
-            length: QuizLength.one,
+            length: QuizLength.endless,
             startKey: startKey,
             random: Random(1),
           ),

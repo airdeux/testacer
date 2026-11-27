@@ -237,7 +237,19 @@ class AppLocalizationsHu extends AppLocalizations {
   String get quizLengthLabel => 'Kérdések száma';
 
   @override
-  String get quizLengthEndless => 'Végtelen';
+  String get quizLengthAll => 'Mind';
+
+  @override
+  String allQuizTitle(int count) {
+    return 'Mind a $count kérdés';
+  }
+
+  @override
+  String get allQuizBody =>
+      'Minden kérdés pontosan egyszer jön, véletlen sorrendben – a bébikönnyűnek jelöltek is.';
+
+  @override
+  String get allQuizStart => 'Indítás';
 
   @override
   String get importTitle => 'Kérdéssor importálása';

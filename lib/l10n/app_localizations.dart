@@ -496,11 +496,29 @@ abstract class AppLocalizations {
   /// **'Kérdések száma'**
   String get quizLengthLabel;
 
-  /// No description provided for @quizLengthEndless.
+  /// No description provided for @quizLengthAll.
   ///
   /// In hu, this message translates to:
-  /// **'Végtelen'**
-  String get quizLengthEndless;
+  /// **'Mind'**
+  String get quizLengthAll;
+
+  /// No description provided for @allQuizTitle.
+  ///
+  /// In hu, this message translates to:
+  /// **'Mind a {count} kérdés'**
+  String allQuizTitle(int count);
+
+  /// No description provided for @allQuizBody.
+  ///
+  /// In hu, this message translates to:
+  /// **'Minden kérdés pontosan egyszer jön, véletlen sorrendben – a bébikönnyűnek jelöltek is.'**
+  String get allQuizBody;
+
+  /// No description provided for @allQuizStart.
+  ///
+  /// In hu, this message translates to:
+  /// **'Indítás'**
+  String get allQuizStart;
 
   /// No description provided for @importTitle.
   ///

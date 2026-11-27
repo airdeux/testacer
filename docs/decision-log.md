@@ -23,8 +23,9 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 | D-015 | 2026-11-23 | At least half of every multi-question quiz is new (least-seen) questions | Accepted |
 | D-016 | 2026-11-23 | Trivia items in the question file pop up after matching answers | Accepted |
 | D-017 | 2026-11-23 | Progress follows a question whose correct answer was edited at the same number | Accepted |
-| D-018 | 2026-11-25 | Quiz length 25 instead of „Mind”; a timer for every quiz | Accepted |
+| D-018 | 2026-11-25 | Quiz length 25 instead of „Mind”; a timer for every quiz | Accepted (lengths changed by D-020) |
 | D-019 | 2026-11-25 | A quiz always asks the chosen number; too few questions left → they are repeated in rounds | Accepted |
+| D-020 | 2026-11-27 | Lengths 5, 10, 25 and „Mind” (every question once, Bébikönnyű too, random order); the timer waits between an answer and the next question | Accepted |
 
 ---
 
@@ -137,6 +138,8 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 
 ### D-018 – 25 questions instead of „Mind”; a quiz timer
 
+*The lengths were changed again by D-020 („Mind” back, 1 and ∞ gone from the start page).*
+
 - **Context:** „Mind” asked every question once – 149 for the judo set, too long for one sitting. The owner wants a longer standard round and to see how long a round takes.
 - **Decision (owner, 2026-11-25):** the lengths are 1, 5, 10, **25** and ∞. A timer (`hh:mm:ss`) in the quiz's app bar starts with the first question and stops when the last question is answered; the result page shows the time. An ∞ quiz has no last question: its timer stops when the quiz is closed.
 - **Implementation:** `QuizLength.twentyFive` replaces `all`; a stored `all` setting reads as 25. 25 follows D-015 (13 of 25 new where possible); with fewer questions left the remaining ones are repeated (D-019). The timer measures wall-clock time (`QuizClock`, start/stop timestamps), so it stays right when the app or tab is in the background; it is not saved.
@@ -148,3 +151,13 @@ All decisions D-001 – D-013 were accepted by the owner on 2026-11-21.
 - **Decision (owner, 2026-11-25):** a quiz of 1, 5, 10 or 25 always asks that many questions. When fewer non-skippable questions are left, they are asked again, in random order, until the number is reached.
 - **Implementation:** the quiz runs in rounds: within a round no question repeats; when every non-skippable question has been asked, a new round starts. The usual rules still pick within a round (D-006 weights, D-015 least-seen every other question, the last 5 avoided where possible, never the same one twice in a row unless only one is left). A question marked „Bébikönnyű” during the quiz does not come again. Every answer, repeats included, updates the progress. If everything is skippable, the quiz says so, as before.
 - **Consequences:** with few questions left, a quiz is mostly repeats – that is the point (drilling the rest). The 1-question quiz and ∞ are unchanged.
+
+### D-020 – „Mind” back (all questions, Bébikönnyű too); 1 and ∞ gone; the timer waits between questions
+
+- **Context:** the owner wants to go through the whole set once, timed, like a full mock exam – including the questions marked „Bébikönnyű”. The 1-question and ∞ quizzes were not used from the start page.
+- **Decision (owner, 2026-11-27):**
+  - The start page offers **5, 10, 25 and „Mind”**.
+  - **Mind** asks every question of the set exactly once, in random order, the „Bébikönnyű” ones included. Before it starts, a prompt says so („Mind a N kérdés … a bébikönnyűnek jelöltek is”; Mégse / Indítás).
+  - The timer counts only the time spent on questions: it waits from an answer until the next question appears, in every quiz.
+- **Implementation:** `QuizLength.all` shuffles all question keys at the start (no Leitner weights, no D-015 / D-019 rules). `QuizLength.one` is gone; `endless` stays only for a quiz opened from a reminder; stored `one` / `endless` read as 10. `QuizClock` gets `pause` / `resume`. Answers in „Mind” update the progress as usual; marking a question „Bébikönnyű” there does not change the quiz.
+- **Consequences:** a full run of the judo set is 149 questions; closing early shows the result so far (with the time).

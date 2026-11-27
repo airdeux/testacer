@@ -131,7 +131,17 @@
     }
   },
   "quizLengthLabel": "Kérdések száma",
-  "quizLengthEndless": "Végtelen",
+  "quizLengthAll": "Mind",
+  "allQuizTitle": "Mind a {count} kérdés",
+  "@allQuizTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allQuizBody": "Minden kérdés pontosan egyszer jön, véletlen sorrendben – a bébikönnyűnek jelöltek is.",
+  "allQuizStart": "Indítás",
   "importTitle": "Kérdéssor importálása",
   "progressTitle": "Haladás",
   "quizQuestionOf": "{current}. kérdés / {total}",

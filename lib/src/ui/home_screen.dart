@@ -172,6 +172,32 @@ class _PracticePanelState extends State<_PracticePanel> {
     _openQuiz(set, QuizLength.endless, startKey: launch.key);
   }
 
+  /// „Mind” asks the „Bébikönnyű” questions too: a reminder first (D-020).
+  Future<void> _startQuiz(QuestionSetInfo set, QuizLength length) async {
+    if (length == QuizLength.all) {
+      final l10n = AppLocalizations.of(context);
+      final go = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.allQuizTitle(set.questionCount)),
+          content: Text(l10n.allQuizBody),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.cancelButton),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.allQuizStart),
+            ),
+          ],
+        ),
+      );
+      if (go != true || !mounted) return;
+    }
+    _openQuiz(set, length);
+  }
+
   void _openQuiz(QuestionSetInfo set, QuizLength length, {String? startKey}) {
     Navigator.of(context)
         .push(
@@ -278,13 +304,10 @@ class _PracticePanelState extends State<_PracticePanel> {
                 SegmentedButton<QuizLength>(
                   showSelectedIcon: false,
                   segments: [
-                    for (final length in QuizLength.values)
+                    for (final length in QuizLength.choices)
                       ButtonSegment(
                         value: length,
                         label: Text(_lengthLabel(l10n, length)),
-                        tooltip: length == QuizLength.endless
-                            ? l10n.quizLengthEndless
-                            : null,
                       ),
                   ],
                   selected: {settings.quizLength},
@@ -293,7 +316,7 @@ class _PracticePanelState extends State<_PracticePanel> {
                 ),
                 const SizedBox(height: 20),
                 FilledButton.icon(
-                  onPressed: () => _openQuiz(active, settings.quizLength),
+                  onPressed: () => _startQuiz(active, settings.quizLength),
                   icon: const Icon(Icons.play_arrow),
                   label: Text(l10n.startQuiz),
                 ),
@@ -340,7 +363,7 @@ class _PracticePanelState extends State<_PracticePanel> {
 
   static String _lengthLabel(AppLocalizations l10n, QuizLength length) =>
       switch (length) {
-        QuizLength.endless => '∞',
+        QuizLength.all => l10n.quizLengthAll,
         _ => '${length.count}',
       };
 }

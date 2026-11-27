@@ -128,7 +128,12 @@ class _QuizScreenState extends State<QuizScreen> {
     _save(question.key, item);
     final total = session.total;
     setState(() {
-      if (total != null && session.number >= total) _clock.stop();
+      // The time from an answer to the next question does not count.
+      if (total != null && session.number >= total) {
+        _clock.stop();
+      } else {
+        _clock.pause();
+      }
     });
     // D-016: trivia whose keywords appear in the correct answer pop up.
     final matching = [
@@ -147,7 +152,11 @@ class _QuizScreenState extends State<QuizScreen> {
 
   void _next() => setState(() {
         _finished = !_session!.next();
-        if (_finished) _clock.stop();
+        if (_finished) {
+          _clock.stop();
+        } else {
+          _clock.resume();
+        }
       });
 
   void _close() {

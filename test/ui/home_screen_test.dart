@@ -47,17 +47,51 @@ void main() {
     expect(find.text('${hu.appTitle}  ${appVersionLabel()}'), findsOneWidget);
   });
 
-  testWidgets('the lengths are 1, 5, 10, 25 and ∞', (tester) async {
+  testWidgets('the lengths are 5, 10, 25 and Mind', (tester) async {
     t.questionSets.add('set1', 'Gyakorló teszt', sampleQuestions());
     await pumpHome(tester);
 
-    for (final label in ['1', '5', '10', '25', '∞']) {
+    for (final label in ['5', '10', '25', hu.quizLengthAll]) {
       expect(find.text(label), findsOneWidget);
     }
-    expect(find.text('Mind'), findsNothing);
+    expect(find.text('1'), findsNothing);
+    expect(find.text('∞'), findsNothing);
 
     await tapVisible(tester, find.text('25'));
     expect(t.settings.settings.value.quizLength, QuizLength.twentyFive);
+  });
+
+  testWidgets('Mind reminds that the Bébikönnyű questions come too (D-020)',
+      (tester) async {
+    t.questionSets.add('set1', 'Gyakorló teszt', sampleQuestions());
+    await pumpHome(tester);
+    await tapVisible(tester, find.text(hu.quizLengthAll));
+    expect(t.settings.settings.value.quizLength, QuizLength.all);
+
+    await tapVisible(tester, find.text(hu.startQuiz));
+    expect(find.text(hu.allQuizTitle(3)), findsOneWidget);
+    expect(find.text(hu.allQuizBody), findsOneWidget);
+
+    await tester.tap(find.text(hu.cancelButton));
+    await tester.pumpAndSettle();
+    expect(find.byType(QuizScreen), findsNothing);
+
+    await tapVisible(tester, find.text(hu.startQuiz));
+    await tester.tap(find.text(hu.allQuizStart));
+    await tester.pumpAndSettle();
+    expect(tester.widget<QuizScreen>(find.byType(QuizScreen)).length,
+        QuizLength.all);
+  });
+
+  testWidgets('the other lengths start without a question', (tester) async {
+    t.questionSets.add('set1', 'Gyakorló teszt', sampleQuestions());
+    await pumpHome(tester);
+
+    await tapVisible(tester, find.text(hu.startQuiz));
+
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(tester.widget<QuizScreen>(find.byType(QuizScreen)).length,
+        QuizLength.ten);
   });
 
   testWidgets('uses the remembered set when there are several', (tester) async {

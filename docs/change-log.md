@@ -28,6 +28,7 @@ All notable changes are listed here. Format: [Keep a Changelog](https://keepacha
 
 ### Changed
 
+- 2026-11-27 – Start page lengths: 5, 10, 25 and **Mind** (D-020) – 1 and ∞ removed. „Mind” asks every question once in random order, „Bébikönnyű” included, after a reminder prompt. The quiz timer now waits from each answer until the next question. 4 new tests (173 in all).
 - 2026-11-25 – A quiz of 1 / 5 / 10 / 25 always asks that many questions: when fewer non-„Bébikönnyű” questions are left, they are repeated in random rounds (D-019). 4 new tests (166 in all).
 - 2026-11-25 – Quiz: option notes (`*(…)*`) are shown in a highlight colour – yellowish on the dark theme, bluish on the light one.
 - 2026-11-25 – Quiz length „Mind” (every question once) replaced by **25** (D-018); a saved „Mind” setting becomes 25.
